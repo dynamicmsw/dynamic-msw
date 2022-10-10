@@ -1,0 +1,39 @@
+name: Quality-assurance
+on:
+  workflow_call:
+
+jobs:
+  quality-assurance:
+    name: quality-assurance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - run: yarn --frozen-lockfile
+
+      - run: yarn nx workspace-lint
+      - run: yarn nx format:check
+      - run: yarn nx affected:lint --parallel=3
+      - run: yarn nx affected:test --parallel=3 --ci --code-coverage
+      - run: yarn nx affected:build --parallel=3

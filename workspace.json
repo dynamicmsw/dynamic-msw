@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json",
+  "version": 2,
+  "projects": {
+    "core": "libs/core",
+    "dashboard": "libs/dashboard",
+    "mock-example": "libs/mock-example",
+    "next": "examples/next",
+    "next-e2e": "examples/next-e2e"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@dynamic-msw/dashboard",
+  "sideEffects": false,
+  "version": "0.0.1",
+  "files": [
+    "./copyHtmlFile.js",
+    "./index.html"
+  ],
+  "bin": {
+    "setupMockServer": "node copyHtmlFile.js"
+  }
+}
