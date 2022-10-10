@@ -1,7 +1,7 @@
 {
   "name": "@dynamic-msw/dashboard",
   "sideEffects": false,
-  "version": "0.0.1",
+  "version": "0.0.0",
   "files": [
     "./copyHtmlFile.js",
     "./index.html"
