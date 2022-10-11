@@ -39,8 +39,10 @@ const updateMockOptions = (
     options
   );
 
-const getPageUrl = (config: ConvertedOptions, openPage: string | OpenPageFn) =>
-  typeof openPage === 'function' ? openPage(config) : openPage;
+const getPageURL = (
+  config: ConvertedOptions,
+  openPageURL: string | OpenPageFn
+) => (typeof openPageURL === 'function' ? openPageURL(config) : openPageURL);
 
 export const createMock = <T extends Options = Options>(
   {
@@ -56,7 +58,6 @@ export const createMock = <T extends Options = Options>(
 ): CreateMockFnReturnType<T> => {
   let convertedConfig = convertMockOptions(mockOptions);
 
-  // pageUrl: getPageUrl(convertedConfig, openPage),
   const returnValue: CreateMockFnReturnType<T> = {
     mocks: setupMocks(convertedConfig, mockFn),
     updateMock: (updateValues: Partial<ConvertedOptions<T>>) => {
@@ -65,7 +66,7 @@ export const createMock = <T extends Options = Options>(
       state.updateMock({
         scenarioTitle,
         mockOptions: updateMockOptions(mockOptions, updateValues),
-        pageUrl: getPageUrl(convertedConfig, openPageURL),
+        pageUrl: getPageURL(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
       });
@@ -76,7 +77,7 @@ export const createMock = <T extends Options = Options>(
       state.updateMock({
         scenarioTitle,
         mockOptions,
-        pageUrl: getPageUrl(convertedConfig, openPageURL),
+        pageUrl: getPageURL(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
       });
@@ -86,7 +87,7 @@ export const createMock = <T extends Options = Options>(
   state.addMock({
     scenarioTitle,
     mockOptions,
-    pageUrl: getPageUrl(convertedConfig, openPageURL),
+    pageUrl: getPageURL(convertedConfig, openPageURL),
     updateMock: returnValue.updateMock,
     resetMock: returnValue.resetMock,
   });
