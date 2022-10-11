@@ -27,6 +27,18 @@ const setupMocks: SetupMocksFn = (options, mockFn) => {
   return arrayOfMocks;
 };
 
+const updateMockOptions = (
+  options: Options,
+  updatedOptions: Partial<ConvertedOptions>
+) =>
+  Object.keys(updatedOptions).reduce(
+    (prev, curr) => ({
+      ...prev,
+      [curr]: { ...options[curr], selectedValue: updatedOptions[curr] },
+    }),
+    options
+  );
+
 const getPageUrl = (config: ConvertedOptions, openPage: string | OpenPageFn) =>
   typeof openPage === 'function' ? openPage(config) : openPage;
 
@@ -52,7 +64,7 @@ export const createMock = <T extends Options = Options>(
       returnValue.mocks = setupMocks(convertedConfig, mockFn);
       state.updateMock({
         scenarioTitle,
-        mockOptions,
+        mockOptions: updateMockOptions(mockOptions, updateValues),
         pageUrl: getPageUrl(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,

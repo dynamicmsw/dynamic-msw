@@ -18,7 +18,7 @@ export const saveToStorage = (state: MocksState[]) => {
 
 export const loadFromStorage = (): MocksState[] => {
   if (typeof sessionStorage !== 'undefined') {
-    return JSON.parse(sessionStorage.getItem(dynamicMswStorageKey)) || [];
+    return JSON.parse(sessionStorage.getItem(dynamicMswStorageKey) || '[]');
   }
   return [];
 };
