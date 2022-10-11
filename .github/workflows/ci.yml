@@ -1,0 +1,10 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  quality-assurance:
+    uses: ./.github/workflows/quality-assurance.yml
