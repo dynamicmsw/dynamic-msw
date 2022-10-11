@@ -46,7 +46,7 @@ jobs:
       - run: yarn --frozen-lockfile
 
       - name: Version
-        run: yarn nx affected --base=ff8d017523832d10e4ec2a4b2471f1e4ce0cb706 --target=versionCI --parallel 1 --nx-bail
+        run: yarn nx affected --base=ff8d017523832d10e4ec2a4b2471f1e4ce0cb706 --releaseAs=major --target=versionCI --parallel 1 --nx-bail
       - name: Publish changes
         run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
         env:
