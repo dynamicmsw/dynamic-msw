@@ -41,9 +41,7 @@ jobs:
       - run: yarn --frozen-lockfile
 
       - name: Version
-        run: yarn nx affected --base=ec88dcf2af18bb2d4a4cb0ccd19171187b7632ee --releaseAs=prerelease --target=versionCI --parallel 1 --nx-bail
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+        run: yarn nx affected --base=3068a76d35c83c524db3b91d9c98d2fe4bb80747 --releaseAs=prerelease --target=versionCI --parallel 1 --nx-bail
       - name: Tag last-release
         run: |
           git tag -f last-release
@@ -54,3 +52,7 @@ jobs:
         run: git push origin HEAD --follow-tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish changes
+        run: yarn nx affected--target=publishCI --parallel 1 --nx-bail
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
