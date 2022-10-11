@@ -36,4 +36,5 @@ jobs:
       - run: yarn nx format:check
       - run: yarn nx affected:lint --parallel=3
       - run: yarn nx affected:test --parallel=3 --ci --code-coverage
+      - run: yarn nx affected:testTypes --parallel=3
       - run: yarn nx affected:build --parallel=3
