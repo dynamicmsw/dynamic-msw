@@ -16,8 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@dynamic-msw/core": ["libs/core/src/index.ts"],
-      "@dynamic-msw/mock-example": ["libs/mock-example/src/index.ts"],
-      "msw": ["node_modules/msw"]
+      "@dynamic-msw/mock-example": ["libs/mock-example/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

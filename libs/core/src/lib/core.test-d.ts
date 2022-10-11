@@ -7,8 +7,14 @@ describe('createMock type definitions', () => {
   it('passes down converted config types', () => {
     createMock(
       {
-        id: 'example',
-        openPage: (config) => {
+        scenarioTitle: 'example',
+        mockOptions: {
+          success: {
+            options: [true, false],
+            defaultValue: true,
+          },
+        },
+        openPageURL: (config) => {
           // ✅
           satisfies<typeof config>()({
             success: false,
@@ -29,12 +35,6 @@ describe('createMock type definitions', () => {
           });
 
           return config.success ? 'yes-page' : 'no-page';
-        },
-        config: {
-          success: {
-            options: [true, false],
-            defaultValue: true,
-          },
         },
       },
       (config) => {

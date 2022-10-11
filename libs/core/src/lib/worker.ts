@@ -1,27 +1,23 @@
+import { setupWorker as setupWorkerMsw } from 'msw';
 import type { SetupWorkerApi, RestHandler } from 'msw';
-import type { SetupServerApi } from 'msw/node';
+import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
-import { isClient as defaultIsClient } from '../utils';
 import type { CreateMockFnReturnType } from './createMock.types';
 import { state } from './state';
 
 export const setupWorker = (
   mocks: Array<RestHandler | CreateMockFnReturnType>,
-  isClient: boolean = defaultIsClient
+  // enforce to pass setupServer for node environments
+  // importing setupServer results in a error in browser environments
+  setupServer?: typeof setupServerMsw
 ): SetupServerApi | SetupWorkerApi => {
   const handlers = mocks.flatMap<RestHandler>(
     (mock) => (mock as CreateMockFnReturnType)?.mocks || (mock as RestHandler)
   );
-
-  /* eslint-disable @typescript-eslint/no-var-requires */
-  const setup = isClient
-    ? require('msw').setupWorker
-    : require('msw/node').setupServer;
-  /* eslint-enable @typescript-eslint/no-var-requires */
+  const setup = setupServer || setupWorkerMsw;
 
   global.__mock_worker = setup(...handlers);
   startWorker();
-  state.initializeCreateMocksFromStorage();
   return global.__mock_worker;
 };
 
@@ -31,19 +27,21 @@ const isGlobalWorkerDefined = () => {
   }
 };
 
-export const startWorker = (isClient: boolean = defaultIsClient) => {
+export const startWorker = () => {
   isGlobalWorkerDefined();
-  if (isClient) {
-    (global.__mock_worker as SetupWorkerApi).start();
+  const startFn = (global.__mock_worker as SetupWorkerApi).start;
+  if (typeof startFn === 'function') {
+    startFn();
   } else {
     (global.__mock_worker as SetupServerApi).listen();
   }
 };
 
-export const stopWorker = (isClient: boolean = defaultIsClient) => {
+export const stopWorker = () => {
   isGlobalWorkerDefined();
-  if (isClient) {
-    (global.__mock_worker as SetupWorkerApi).stop();
+  const stopFn = (global.__mock_worker as SetupWorkerApi).start;
+  if (typeof stopFn === 'function') {
+    stopFn();
   } else {
     (global.__mock_worker as SetupServerApi).close();
   }
@@ -51,9 +49,9 @@ export const stopWorker = (isClient: boolean = defaultIsClient) => {
 
 export const resetHandlers = () => {
   isGlobalWorkerDefined();
-  const { createMocks } = state.getState();
-  Object.keys(createMocks).forEach((key) => {
-    createMocks[key].resetMock();
+  const { mocks } = state.getState();
+  mocks.forEach(({ resetMock }) => {
+    resetMock?.();
   });
   global.__mock_worker.resetHandlers();
 };

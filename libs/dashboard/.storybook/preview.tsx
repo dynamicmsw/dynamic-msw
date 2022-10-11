@@ -13,7 +13,7 @@ export const parameters = {
 };
 
 export const decorators = [
-  (Story) => (
+  (Story: React.ComponentType) => (
     <App>
       <Story />
     </App>

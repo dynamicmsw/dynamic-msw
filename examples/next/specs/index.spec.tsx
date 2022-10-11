@@ -1,12 +1,13 @@
 import { setup } from '@dynamic-msw/mock-example';
 import { render, waitFor } from '@testing-library/react';
+import { setupServer } from 'msw/node';
 import React from 'react';
 
 import Index from '../pages/index';
 
 describe('Index', () => {
   beforeAll(() => {
-    setup();
+    setup(setupServer);
   });
   it('should include mocked data', async () => {
     const { getByTestId } = render(<Index />);

@@ -14,5 +14,6 @@ export default defineConfig({
   build: {
     outDir: path.join(__dirname, '../../dist/libs/dashboard'),
     emptyOutDir: true,
+    rollupOptions: { external: ['@dynamic-msw/core'] },
   },
 });
