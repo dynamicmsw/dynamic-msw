@@ -14,12 +14,6 @@ export type Options<T extends OptionType = OptionType> = Record<
   }
 >;
 
-export interface CreateMockConfigArg<T extends Options = Options> {
-  id: string;
-  openPage?: string;
-  options?: T;
-}
-
 export type ConvertedOptions<T extends Options = Options> = {
   [Key in keyof T]: ArrayElementType<T[Key]['options']>;
 };
@@ -46,13 +40,3 @@ export interface CreateMockFnReturnType<T extends Options = Options> {
   updateMock: (updateValues: Partial<ConvertedOptions<T>>) => void;
   resetMock: () => void;
 }
-
-export interface CreateMockFnStateValue {
-  resetMock: () => void;
-  updateMock: (updateValues: Partial<ConvertedOptions>) => void;
-  pageUrl?: string;
-  config: Options;
-  convertedConfig: ConvertedOptions<Options<OptionType>>;
-}
-
-export type CreateMockFnState = Record<string, CreateMockFnStateValue>;
