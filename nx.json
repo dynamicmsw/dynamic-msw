@@ -16,6 +16,7 @@
           "build",
           "lint",
           "test",
+          "testTypes",
           "e2e",
           "build-storybook"
         ],
