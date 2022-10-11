@@ -43,7 +43,7 @@ jobs:
       # - name: Version
       #   run: yarn nx affected --base=3068a76d35c83c524db3b91d9c98d2fe4bb80747 --releaseAs=prerelease  --preid=beta3 --target=versionCI --parallel 1 --nx-bail
       - name: Add changes
-        run: echo ${{git rev-parse HEAD}} > ./temp && git add . && git commit -m fakeChange --no-verify
+        run: echo ${git rev-parse HEAD} > ./temp && git add . && git commit -m fakeChange --no-verify
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Push changes
