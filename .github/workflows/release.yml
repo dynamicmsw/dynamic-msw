@@ -33,10 +33,10 @@ jobs:
       #       ${{ runner.os }}-build-
       #       ${{ runner.os }}-
 
-      # - name: Setup Git
-      #   run: |
-      #     git config user.name "GitHub Bot"
-      #     git config user.email "bramzijpcode@gmail.com"
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Bot"
+          git config user.email "bramzijpcode@gmail.com"
 
       # - run: yarn --frozen-lockfile
 
