@@ -6,7 +6,7 @@ import type { StorageState } from './state';
 import { dynamicMswStorageKey } from './state';
 import { resetHandlers, stopWorker, setupWorker } from './worker';
 
-const config = {
+const mockOptions = {
   success: {
     options: [true, false],
     defaultValue: true,
@@ -15,9 +15,9 @@ const config = {
 
 export const exampleMock = createMock(
   {
-    id: 'example',
-    openPage: (config) => (config.success ? 'yes-page' : 'no-page'),
-    config,
+    scenarioTitle: 'example',
+    openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
+    mockOptions,
   },
   (config) => {
     return rest.get('http://localhost:1234/test', async (req, res, ctx) => {

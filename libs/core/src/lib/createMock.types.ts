@@ -3,57 +3,56 @@ import type { RestHandler } from 'msw';
 type ArrayElementType<T extends ReadonlyArray<unknown>> =
   T extends ReadonlyArray<infer ArrayElementType> ? ArrayElementType : never;
 
-type ConfigType = boolean | string | number;
+type OptionType = boolean | string | number;
 
-export type Config<T extends ConfigType = ConfigType> = Record<
+export type Options<T extends OptionType = OptionType> = Record<
   string,
   {
     options: T[];
     defaultValue: T;
+    selectedValue?: T;
   }
 >;
 
-export interface CreateMockConfigArg<C extends Config = Config> {
+export interface CreateMockConfigArg<T extends Options = Options> {
   id: string;
   openPage?: string;
-  config?: C;
+  options?: T;
 }
 
-export type ConvertedConfig<C extends Config = Config> = {
-  [Key in keyof C]: ArrayElementType<C[Key]['options']>;
+export type ConvertedOptions<T extends Options = Options> = {
+  [Key in keyof T]: ArrayElementType<T[Key]['options']>;
 };
 
-export type CreateMockMockFn<C extends Config = Config> = (
-  config: ConvertedConfig<C>
+export type CreateMockMockFn<T extends Options = Options> = (
+  config: ConvertedOptions<T>
 ) => RestHandler | RestHandler[];
 
-export type OpenPageFn<C extends Config = Config> = (
-  config: ConvertedConfig<C>
+export type OpenPageFn<T extends Options = Options> = (
+  config: ConvertedOptions<T>
 ) => string;
 
-export type ConvertConfigOptionsFn = (
-  config: Config
-) => ConvertedConfig<Config>;
+export type ConvertMockOptionsFn = (
+  options: Options
+) => ConvertedOptions<Options>;
 
 export type SetupMocksFn = (
-  options: ConvertedConfig<Config>,
+  options: ConvertedOptions<Options>,
   mockFn: CreateMockMockFn
 ) => RestHandler[];
 
-export interface CreateMockFnReturnType<C extends Config = Config> {
-  id: string;
+export interface CreateMockFnReturnType<T extends Options = Options> {
   mocks: RestHandler[];
-  pageUrl: string;
-  updateMock: (updateValues: Partial<ConvertedConfig<C>>) => void;
+  updateMock: (updateValues: Partial<ConvertedOptions<T>>) => void;
   resetMock: () => void;
 }
 
 export interface CreateMockFnStateValue {
   resetMock: () => void;
-  updateMock: (updateValues: Partial<ConvertedConfig>) => void;
+  updateMock: (updateValues: Partial<ConvertedOptions>) => void;
   pageUrl?: string;
-  config: Config;
-  convertedConfig: ConvertedConfig<Config<ConfigType>>;
+  config: Options;
+  convertedConfig: ConvertedOptions<Options<OptionType>>;
 }
 
 export type CreateMockFnState = Record<string, CreateMockFnStateValue>;

@@ -7,7 +7,8 @@ import { state } from './state';
 
 export const setupWorker = (
   mocks: Array<RestHandler | CreateMockFnReturnType>,
-  // allow to pass setupServer as importing setupServer results in a error in browser environments
+  // enforce to pass setupServer for node environments
+  // importing setupServer results in a error in browser environments
   setupServer?: typeof setupServerMsw
 ): SetupServerApi | SetupWorkerApi => {
   const handlers = mocks.flatMap<RestHandler>(
@@ -17,7 +18,6 @@ export const setupWorker = (
 
   global.__mock_worker = setup(...handlers);
   startWorker();
-  state.initializeCreateMocksFromStorage();
   return global.__mock_worker;
 };
 
@@ -49,9 +49,9 @@ export const stopWorker = () => {
 
 export const resetHandlers = () => {
   isGlobalWorkerDefined();
-  const { createMocks } = state.getState();
-  Object.keys(createMocks).forEach((key) => {
-    createMocks[key].resetMock();
+  const { mocks } = state.getState();
+  mocks.forEach(({ resetMock }) => {
+    resetMock?.();
   });
   global.__mock_worker.resetHandlers();
 };

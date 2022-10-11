@@ -10,8 +10,8 @@ export interface ExampleResponse {
 
 export const exampleMock = createMock(
   {
-    id: 'example',
-    config: {
+    scenarioTitle: 'example',
+    mockOptions: {
       success: {
         options: [true, false],
         defaultValue: true,

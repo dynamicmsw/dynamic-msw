@@ -1,18 +1,21 @@
 import type {
   SetupMocksFn,
-  ConvertConfigOptionsFn,
-  ConvertedConfig,
-  Config,
+  ConvertMockOptionsFn,
+  ConvertedOptions,
+  Options,
   OpenPageFn,
   CreateMockMockFn,
   CreateMockFnReturnType,
 } from './createMock.types';
 import { state } from './state';
 
-const convertConfigOptions: ConvertConfigOptionsFn = (config) =>
-  Object.keys(config).reduce(
-    (prev, curr) => ({ ...prev, [curr]: config[curr].defaultValue }),
-    {} as ConvertedConfig
+const convertMockOptions: ConvertMockOptionsFn = (options) =>
+  Object.keys(options).reduce(
+    (prev, curr) => ({
+      ...prev,
+      [curr]: options[curr].selectedValue || options[curr].defaultValue,
+    }),
+    {} as ConvertedOptions
   );
 
 const setupMocks: SetupMocksFn = (options, mockFn) => {
@@ -24,62 +27,58 @@ const setupMocks: SetupMocksFn = (options, mockFn) => {
   return arrayOfMocks;
 };
 
-const getPageUrl = (config: ConvertedConfig, openPage: string | OpenPageFn) =>
+const getPageUrl = (config: ConvertedOptions, openPage: string | OpenPageFn) =>
   typeof openPage === 'function' ? openPage(config) : openPage;
 
-export const createMock = <C extends Config = Config>(
+export const createMock = <T extends Options = Options>(
   {
-    config,
-    openPage,
-    id,
+    mockOptions,
+    openPageURL,
+    scenarioTitle,
   }: {
-    id: string;
-    openPage?: string | OpenPageFn<C>;
-    config?: C;
+    scenarioTitle: string;
+    openPageURL?: string | OpenPageFn<T>;
+    mockOptions?: T;
   },
-  mockFn: CreateMockMockFn<C>
-): CreateMockFnReturnType<C> => {
-  let convertedConfig = convertConfigOptions(config);
+  mockFn: CreateMockMockFn<T>
+): CreateMockFnReturnType<T> => {
+  let convertedConfig = convertMockOptions(mockOptions);
 
-  const returnValue = {
-    id,
+  // pageUrl: getPageUrl(convertedConfig, openPage),
+  const returnValue: CreateMockFnReturnType<T> = {
     mocks: setupMocks(convertedConfig, mockFn),
-    pageUrl: getPageUrl(convertedConfig, openPage),
-    updateMock: (updateValues: Partial<ConvertedConfig<C>>) => {
+    updateMock: (updateValues: Partial<ConvertedOptions<T>>) => {
       convertedConfig = { ...convertedConfig, ...updateValues };
       returnValue.mocks = setupMocks(convertedConfig, mockFn);
-      returnValue.pageUrl = getPageUrl(convertedConfig, openPage);
-
-      state.upsertCreateMock(id, {
-        convertedConfig,
+      state.updateMock({
+        scenarioTitle,
+        mockOptions,
+        pageUrl: getPageUrl(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
-        pageUrl: returnValue.pageUrl,
-        config,
       });
     },
     resetMock: () => {
-      convertedConfig = convertConfigOptions(config);
+      convertedConfig = convertMockOptions(mockOptions);
       returnValue.mocks = setupMocks(convertedConfig, mockFn);
-      returnValue.pageUrl = getPageUrl(convertedConfig, openPage);
-
-      state.upsertCreateMock(id, {
-        config,
-        convertedConfig,
-        pageUrl: returnValue.pageUrl,
+      state.updateMock({
+        scenarioTitle,
+        mockOptions,
+        pageUrl: getPageUrl(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
       });
     },
   };
 
-  state.upsertCreateMock(id, {
-    config,
-    convertedConfig,
-    pageUrl: returnValue.pageUrl,
+  state.addMock({
+    scenarioTitle,
+    mockOptions,
+    pageUrl: getPageUrl(convertedConfig, openPageURL),
     updateMock: returnValue.updateMock,
     resetMock: returnValue.resetMock,
   });
+
   return returnValue;
 };
 
