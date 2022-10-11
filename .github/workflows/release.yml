@@ -5,7 +5,7 @@ on:
 
 jobs:
   release:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: startsWith(github.ref, 'refs/heads/release')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -50,6 +50,8 @@ jobs:
         run: git push origin HEAD
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: fake change
+        run: echo "hello"
       # - name: Push tags
       #   run: git push --tags
       #   env:
