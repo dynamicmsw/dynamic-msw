@@ -56,7 +56,11 @@ jobs:
       - name: Version
         run: yarn nx affected --target=versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }} --parallel 1 --nx-bail
       - name: Push changes
-        run: git push origin HEAD --follow-tags
+        run: git push origin HEAD
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push tags
+        run: git push --tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish changes
