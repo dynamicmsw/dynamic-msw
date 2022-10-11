@@ -47,21 +47,21 @@ jobs:
 
       - name: Version
         run: yarn nx affected --base=last-release --target=versionCI --parallel 1 --nx-bail
-      - name: Publish changes
-        run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-      - name: Push changes
-        run: git push origin HEAD
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push tags
-        run: git push --tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Tag last-release
-        run: |
-          git tag -f last-release
-          git push origin last-release --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Publish changes
+      #   run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      # - name: Push changes
+      #   run: git push origin HEAD
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Push tags
+      #   run: git push --tags
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Tag last-release
+      #   run: |
+      #     git tag -f last-release
+      #     git push origin last-release --force
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
