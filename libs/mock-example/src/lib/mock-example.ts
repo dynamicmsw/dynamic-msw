@@ -1,5 +1,6 @@
 import { createMock, setupWorker } from '@dynamic-msw/core';
 import { rest } from 'msw';
+import type { setupServer as setupServerMsw } from 'msw/node';
 
 export const exampleEndpoint = 'http://localhost:1234/test';
 
@@ -27,4 +28,5 @@ export const exampleMock = createMock(
   }
 );
 
-export const setup = () => setupWorker([exampleMock]);
+export const setup = (setupServer?: typeof setupServerMsw) =>
+  setupWorker([exampleMock], setupServer);

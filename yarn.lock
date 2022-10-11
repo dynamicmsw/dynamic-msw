@@ -10158,9 +10158,9 @@ he@^1.2.0:
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
 headers-polyfill@^3.1.0:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/headers-polyfill/-/headers-polyfill-3.1.1.tgz#798e265f80edfc53fb8fd01e8963b356b12c2514"
-  integrity sha512-ifvvIC+VDeLTEkJDwxECSI7k9rJF7sJavCh/UfhGsgJ+LXMbGILRf+NXhc4znuf+JA5X2/leQdOXk6Lq6Y2/wQ==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/headers-polyfill/-/headers-polyfill-3.1.2.tgz#9a4dcb545c5b95d9569592ef7ec0708aab763fbe"
+  integrity sha512-tWCK4biJ6hcLqTviLXVR9DTRfYGQMXEIUj3gwJ2rZ5wO/at3XtkI4g8mCvFdUF9l1KMBNCfmNAdnahm1cgavQA==
 
 hmac-drbg@^1.0.1:
   version "1.0.1"

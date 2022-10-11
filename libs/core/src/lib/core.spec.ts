@@ -1,4 +1,5 @@
 import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 
 import { createMock } from './createMock';
 import type { StorageState } from './state';
@@ -31,7 +32,7 @@ export const exampleMock = createMock(
 
 describe('dynamicMsw', () => {
   beforeAll(() => {
-    setupWorker([exampleMock]);
+    setupWorker([exampleMock], setupServer);
   });
   afterEach(() => {
     resetHandlers();

@@ -31,6 +31,10 @@ module.exports = {
       })
     );
 
+    config.define = {
+      global: 'window',
+    };
+
     return config;
   },
 };

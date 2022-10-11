@@ -5,7 +5,13 @@ import Head from 'next/head';
 if (process.env.NODE_ENV === 'development') {
   //eslint-disable-next-line @typescript-eslint/no-var-requires
   const { setup } = require('@dynamic-msw/mock-example');
-  setup();
+  if (typeof window !== 'undefined') {
+    setup();
+  } else {
+    //eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { setupServer } = require('msw/node');
+    setup(setupServer);
+  }
 }
 
 function CustomApp({ Component, pageProps }: AppProps) {
