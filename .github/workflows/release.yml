@@ -53,6 +53,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish changes
-        run: yarn nx affected--target=publishCI --parallel 1
+        run: yarn nx affected --target=publishCI --parallel 1
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
