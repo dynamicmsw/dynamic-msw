@@ -17,7 +17,7 @@ const convertMockConfig = (mocks: MocksState[]) => {
           ...mockOptions[optionKey],
           title: optionKey,
           selectedValue:
-            typeof selectedValue !== 'undefined' ? selectedValue : defaultValue,
+            typeof selectedValue === 'undefined' ? defaultValue : selectedValue,
         };
       }),
     };
@@ -51,7 +51,7 @@ export function Dashboard(props: DashboardProps) {
                   saveToStorage(updatedConfig);
                 }}
               >
-                {options.map((value) => (
+                {options?.map((value) => (
                   <option
                     value={
                       value === true || value === false
