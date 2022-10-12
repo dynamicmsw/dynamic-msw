@@ -58,7 +58,7 @@
   "generators": {
     "@nrwl/react": {
       "application": {
-        "babel": true
+        "babel": false
       },
       "component": {
         "style": "none",
@@ -69,7 +69,6 @@
     },
     "@nrwl/next": {
       "application": {
-        "style": "@emotion/styled",
         "linter": "eslint"
       }
     }
