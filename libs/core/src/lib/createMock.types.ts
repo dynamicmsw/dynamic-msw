@@ -5,13 +5,20 @@ type ArrayElementType<T extends ReadonlyArray<unknown>> =
 
 type OptionType = boolean | string | number;
 
+type OptionRenderType = 'text' | 'number' | 'boolean' | 'select';
+
 export type Options<T extends OptionType = OptionType> = Record<
   string,
-  {
-    options: T[];
-    defaultValue: T;
-    selectedValue?: T;
-  }
+  | {
+      options?: T[];
+      selectedValue?: T;
+    } & (
+      | { defaultValue: T; type?: OptionRenderType }
+      | {
+          defaultValue?: T;
+          type: OptionRenderType;
+        }
+    )
 >;
 
 export type ConvertedOptions<T extends Options = Options> = {
