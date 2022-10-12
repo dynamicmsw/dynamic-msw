@@ -28,7 +28,10 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["libs/dashboard/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/dashboard/**/*.ts",
+          "libs/dashboard/**/*.tsx"
+        ]
       }
     },
     "test": {

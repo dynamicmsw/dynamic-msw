@@ -24,7 +24,7 @@ const convertMockConfig = (mocks: MocksState[]) => {
   });
 };
 
-export function Dashboard(props: DashboardProps) {
+export const Dashboard = (props: DashboardProps) => {
   const mockConfig = loadFromStorage();
   const convertedMockConfig = convertMockConfig(mockConfig);
 
@@ -53,6 +53,7 @@ export function Dashboard(props: DashboardProps) {
               >
                 {options?.map((value) => (
                   <option
+                    key={`${scenarioTitle}-${title}-${value.toString()}`}
                     value={
                       value === true || value === false
                         ? value.toString()
@@ -70,6 +71,6 @@ export function Dashboard(props: DashboardProps) {
       ))}
     </div>
   );
-}
+};
 
 export default Dashboard;
