@@ -1,4 +1,5 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStory, ComponentMeta } from '@storybook/react';
+
 import { Table } from './Table';
 
 const Story: ComponentMeta<typeof Table> = {

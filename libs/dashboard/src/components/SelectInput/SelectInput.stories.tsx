@@ -1,4 +1,5 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStory, ComponentMeta } from '@storybook/react';
+
 import { SelectInput } from './SelectInput';
 
 const Story: ComponentMeta<typeof SelectInput> = {

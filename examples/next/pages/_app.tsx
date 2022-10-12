@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
   }
 }
 
-function CustomApp({ Component, pageProps }: AppProps) {
+const CustomApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
@@ -25,6 +25,6 @@ function CustomApp({ Component, pageProps }: AppProps) {
       </main>
     </>
   );
-}
+};
 
 export default CustomApp;
