@@ -31,6 +31,7 @@ export const exampleMock = createMock(
 export const variatedExampleMock = createMock(
   {
     scenarioTitle: 'Variated mock options',
+    openPageURL: '#',
     mockOptions: {
       someTextOption: {
         defaultValue: 'text value',

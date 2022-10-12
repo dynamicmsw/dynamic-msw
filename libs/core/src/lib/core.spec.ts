@@ -79,16 +79,16 @@ describe('dynamicMsw', () => {
     });
   });
   it('returns proper page URL based on config', async () => {
-    expect(state.getState().mocks[0].pageUrl).toBe('yes-page');
+    expect(state.getState().mocks[0].openPageURL).toBe('yes-page');
   });
   it('returns proper page URL when updating mock', async () => {
     exampleMock.updateMock({ success: false });
-    expect(state.getState().mocks[0].pageUrl).toBe('no-page');
+    expect(state.getState().mocks[0].openPageURL).toBe('no-page');
   });
   it('resets createMock return value when calling resetHandlers()', async () => {
     exampleMock.updateMock({ success: false });
     resetHandlers();
-    expect(state.getState().mocks[0].pageUrl).toBe('yes-page');
+    expect(state.getState().mocks[0].openPageURL).toBe('yes-page');
   });
 
   it('saves state to sessionStorage', () => {
@@ -96,7 +96,7 @@ describe('dynamicMsw', () => {
       {
         scenarioTitle: 'example',
         mockOptions,
-        pageUrl: 'yes-page',
+        openPageURL: 'yes-page',
       },
     ];
     expect(JSON.parse(sessionStorage.getItem(dynamicMswStorageKey))).toEqual(
@@ -111,7 +111,7 @@ describe('dynamicMsw', () => {
         mockOptions: {
           success: { ...mockOptions.success, selectedValue: false },
         },
-        pageUrl: 'no-page',
+        openPageURL: 'no-page',
       },
     ];
     expect(JSON.parse(sessionStorage.getItem(dynamicMswStorageKey))).toEqual(

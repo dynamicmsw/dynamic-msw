@@ -2868,10 +2868,15 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@stela-ui/css@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@stela-ui/css/-/css-1.0.0.tgz#d281aed030b2c22c4b00db521082fdcf75225820"
-  integrity sha512-7PAjTFiMhac8zDPyliNaJzkn2JTpLduyG3SLoDjH9yxabsJ1yoKOi8Ib4u6okwrN2VR7gq3LX08YgeQlu0cXWg==
+"@stela-ui/css@0.0.1-alpha.1":
+  version "0.0.1-alpha.1"
+  resolved "https://registry.yarnpkg.com/@stela-ui/css/-/css-0.0.1-alpha.1.tgz#5ceb4920ebf2a9fbd69998eb39773043ff8a3513"
+  integrity sha512-pkq4xyGpWEgrlVcae5u3nf1DlktXxqXlmDXcVaGyrqzzuVwKP+UgS8j+ylmpSOowZtVlZfPw3RHDsZrNEn7nTw==
+
+"@stela-ui/react@0.0.1-alpha.1":
+  version "0.0.1-alpha.1"
+  resolved "https://registry.yarnpkg.com/@stela-ui/react/-/react-0.0.1-alpha.1.tgz#4bd252a6794aba0686b732ce3b84377c244357de"
+  integrity sha512-Nvulm3fzbzvLrQqDWGWhSm7/GnvXdebO7VOOus91M3t3jmelHVL2UXQq6arpg9mrhQJEttJzyGUqSdZp8cDcYg==
 
 "@stela-ui/ui@^1.0.0":
   version "1.0.0"

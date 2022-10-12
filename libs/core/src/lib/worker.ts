@@ -31,9 +31,14 @@ export const startWorker = () => {
   isGlobalWorkerDefined();
   const startFn = (global.__mock_worker as SetupWorkerApi).start;
   if (typeof startFn === 'function') {
-    startFn();
+    // TODO: make configurable
+    startFn({
+      onUnhandledRequest: 'bypass',
+    });
   } else {
-    (global.__mock_worker as SetupServerApi).listen();
+    (global.__mock_worker as SetupServerApi).listen({
+      onUnhandledRequest: 'bypass',
+    });
   }
 };
 

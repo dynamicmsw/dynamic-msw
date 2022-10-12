@@ -3,7 +3,7 @@ import type { RestHandler } from 'msw';
 type ArrayElementType<T extends ReadonlyArray<unknown>> =
   T extends ReadonlyArray<infer ArrayElementType> ? ArrayElementType : never;
 
-type OptionType = boolean | string | number;
+export type OptionType = boolean | string | number;
 
 type OptionRenderType = 'text' | 'number' | 'boolean' | 'select';
 
