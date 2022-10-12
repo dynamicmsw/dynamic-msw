@@ -50,6 +50,7 @@ const updateConfig = (
     ...updatedConfig[index],
     mockOptions: {
       ...updatedConfig[index].mockOptions,
+      [title]: { ...updatedConfig[index].mockOptions[title] },
     },
   };
   updatedConfig[index].mockOptions[title].selectedValue =
@@ -108,44 +109,57 @@ export const Dashboard = (props: DashboardProps) => {
                         const onChangeHandler = (
                           value: string | number | boolean
                         ) => {
-                          updateConfig(mockConfig, index, title, value);
+                          updateConfig(
+                            mockConfig,
+                            index,
+                            title,
+                            inputType === 'number' ? Number(value) : value
+                          );
                         };
                         const defaultValue = convertOptionValue(selectedValue);
                         switch (inputType) {
                           case 'select':
                             return (
-                              <SelectInput
-                                key={optionId}
-                                // name={optionId}
-                                label={optionId}
-                                defaultValue={defaultValue}
-                                onChange={onChangeHandler}
-                                options={
-                                  options?.map((value) => ({
-                                    value:
-                                      convertOptionValue(value) ||
-                                      'value not specified',
-                                  })) || []
-                                }
-                              />
+                              <div>
+                                <SelectInput
+                                  key={optionId}
+                                  // name={optionId}
+                                  label={optionId}
+                                  defaultValue={defaultValue}
+                                  onChange={onChangeHandler}
+                                  options={
+                                    options?.map((value) => ({
+                                      value:
+                                        convertOptionValue(value) ||
+                                        'value not specified',
+                                    })) || []
+                                  }
+                                />
+                              </div>
                             );
                           case 'text':
                           case 'number':
                             return (
-                              <TextInput
-                                // label={optionId}
-                                type={type as 'text' | 'number'}
-                                defaultValue={defaultValue}
-                                onChange={onChangeHandler}
-                              />
+                              <div>
+                                <TextInput
+                                  key={optionId}
+                                  // label={optionId}
+                                  type={inputType}
+                                  defaultValue={defaultValue}
+                                  onChange={onChangeHandler}
+                                />
+                              </div>
                             );
                           case 'boolean':
                             return (
-                              <ToggleInput
-                                label={optionId}
-                                defaultChecked={defaultValue === 'true'}
-                                onChange={onChangeHandler}
-                              />
+                              <div>
+                                <ToggleInput
+                                  key={optionId}
+                                  label={optionId}
+                                  defaultChecked={defaultValue === 'true'}
+                                  onChange={onChangeHandler}
+                                />
+                              </div>
                             );
                           default:
                             return null;
@@ -167,7 +181,9 @@ export const Dashboard = (props: DashboardProps) => {
                   </a>
                 </TableCell>
               ) : (
-                <div />
+                <TableCell>
+                  <div />
+                </TableCell>
               )}
             </TableRow>
           )

@@ -13,3 +13,4 @@ TODO: choose 2 viable options
    Add a bootstrap scenario button which will make identical mocks in different scenarios inactive.
 1. Allow to disable mocks by default. Allow to disable/enable mocks in the dashboard.
    In a scenario mocks should be enabled unless specified otherwise.
+1. Add reset button to dashboard
