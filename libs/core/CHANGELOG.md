@@ -2,6 +2,14 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.0](https://github.com/dynamicmsw/dynamic-msw/compare/core-1.0.0...core-1.1.0) (2022-10-12)
+
+### Features
+
+- allow to set option type ([200d368](https://github.com/dynamicmsw/dynamic-msw/commit/200d368c4fc3b5b3690cb26cd3fad9ec6d2d815d))
+- setup dashboard config with stela components ([ff0d4df](https://github.com/dynamicmsw/dynamic-msw/commit/ff0d4df01b719758de823c0bb598087eb71d3c0d))
+- setup mvp dashboard ([06ee10b](https://github.com/dynamicmsw/dynamic-msw/commit/06ee10b1e75dde29da3587c03bfca44cf7c04167))
+
 ## 1.0.0 (2022-10-11)
 
 ### Features

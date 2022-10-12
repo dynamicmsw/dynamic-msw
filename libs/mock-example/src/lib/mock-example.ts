@@ -28,5 +28,32 @@ export const exampleMock = createMock(
   }
 );
 
+export const variatedExampleMock = createMock(
+  {
+    scenarioTitle: 'Variated mock options',
+    openPageURL: '#',
+    mockOptions: {
+      someTextOption: {
+        defaultValue: 'text value',
+      },
+      someNumberOption: {
+        defaultValue: 123,
+      },
+      someUndefinedOption: {
+        type: 'text',
+      },
+    },
+  },
+  (config) => {
+    const response = {
+      iAmText: config.someTextOption,
+      iAmNumber: config.someNumberOption,
+    };
+    return rest.get('/i-am-relative', async (_req, res, ctx) => {
+      return res(ctx.json(response));
+    });
+  }
+);
+
 export const setup = (setupServer?: typeof setupServerMsw) =>
-  setupWorker([exampleMock], setupServer);
+  setupWorker([exampleMock, variatedExampleMock], setupServer);

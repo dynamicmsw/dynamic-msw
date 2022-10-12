@@ -3,7 +3,7 @@ import type { Options, ConvertedOptions } from './createMock.types';
 export interface MocksState {
   scenarioTitle: string;
   mockOptions: Options;
-  pageUrl?: string;
+  openPageURL?: string;
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
@@ -37,6 +37,7 @@ class CreateState {
         ...this.state.mocks[existingMockIndex],
         updateMock: data.updateMock,
         resetMock: data.resetMock,
+        openPageURL: data.openPageURL,
       };
     } else {
       this.state.mocks.push(data);

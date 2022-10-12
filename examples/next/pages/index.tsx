@@ -1,7 +1,7 @@
 import type { ExampleResponse } from '@dynamic-msw/mock-example';
 import { useEffect, useState } from 'react';
 
-export function Index() {
+export const Index = () => {
   const [data, setData] = useState<ExampleResponse>();
   useEffect(() => {
     if (
@@ -29,6 +29,6 @@ export function Index() {
   }, []);
 
   return <div data-testid="test-mocked-data">{data?.success}</div>;
-}
+};
 
 export default Index;

@@ -36,6 +36,21 @@
       }
     },
     {
+      "files": ["*.tsx"],
+      "extends": [
+        "plugin:@nrwl/nx/react-typescript",
+        "plugin:react/recommended"
+      ],
+      "rules": {
+        "react/function-component-definition": [
+          "error",
+          { "namedComponents": "arrow-function" }
+        ],
+        "react/no-unknown-property": ["error", { "ignore": ["css"] }],
+        "react/react-in-jsx-scope": 0
+      }
+    },
+    {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
