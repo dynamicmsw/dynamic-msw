@@ -2878,11 +2878,6 @@
   resolved "https://registry.yarnpkg.com/@stela-ui/react/-/react-0.0.1-alpha.3.tgz#228bdc4744c22ddba3d24bc3770cd818a0aaeab9"
   integrity sha512-PseJG5JXtZlZ6UA5V5TkKMz2gDjo/5AZ/8QeISkwIC2H0jcwAwOfnxk/gB+vXGaUe7usvqAgJqLpMqxZD18lhQ==
 
-"@stela-ui/ui@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@stela-ui/ui/-/ui-1.0.0.tgz#0bbf7ed2d9ff8274b7676014629f8292477d4443"
-  integrity sha512-NhhPeFNZ8zx/T7lhmI7yhkdJKz7tiKYgd4CzEf+jStpzUONH+3/3z5o7C4KspKmB8ZLndOxRqMqlyxj12JTt1A==
-
 "@storybook/addon-actions@6.5.12":
   version "6.5.12"
   resolved "https://registry.yarnpkg.com/@storybook/addon-actions/-/addon-actions-6.5.12.tgz#9d2bf3bffa41cf4f92c7220c8f6e3a3f5da55019"
