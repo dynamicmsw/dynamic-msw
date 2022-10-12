@@ -13,7 +13,9 @@ import {
   SelectInput,
   TextInput,
   ToggleInput,
-  // ExpansionPanelContext
+  ExpansionPanelContextProvider,
+  Spacing,
+  Stack,
 } from '@stela-ui/react';
 
 /* eslint-disable-next-line */
@@ -86,108 +88,131 @@ export const Dashboard = (props: DashboardProps) => {
 
   return (
     <div>
-      <h1>Welcome to Dashboard!</h1>
+      <h1>Dynamic MSW Dashboard</h1>
       <Table columns={3}>
-        {convertedMockConfig.map(
-          ({ scenarioTitle, mockOptions, openPageURL }, index) => (
-            <TableRow key={scenarioTitle}>
-              <TableCell>
-                <h4>{scenarioTitle}</h4>
-              </TableCell>
-
-              {mockOptions.length >= 0 ? (
-                <ExpansionPanel title="Configure">
-                  <TableCell row={index + 2} columnStart={1} columnEnd={4}>
-                    {mockOptions.map(
-                      ({ selectedValue, options, type, title }) => {
-                        const optionId = `${scenarioTitle}-${title}`;
-                        const inputType = getInputType(
-                          selectedValue,
-                          options,
-                          type
-                        );
-                        const onChangeHandler = (
-                          value: string | number | boolean
-                        ) => {
-                          updateConfig(
-                            mockConfig,
-                            index,
-                            title,
-                            inputType === 'number' ? Number(value) : value
-                          );
-                        };
-                        const defaultValue = convertOptionValue(selectedValue);
-                        switch (inputType) {
-                          case 'select':
-                            return (
-                              <div>
-                                <SelectInput
-                                  key={optionId}
-                                  // name={optionId}
-                                  label={optionId}
-                                  defaultValue={defaultValue}
-                                  onChange={onChangeHandler}
-                                  options={
-                                    options?.map((value) => ({
-                                      value:
-                                        convertOptionValue(value) ||
-                                        'value not specified',
-                                    })) || []
-                                  }
-                                />
-                              </div>
-                            );
-                          case 'text':
-                          case 'number':
-                            return (
-                              <div>
-                                <TextInput
-                                  key={optionId}
-                                  // label={optionId}
-                                  type={inputType}
-                                  defaultValue={defaultValue}
-                                  onChange={onChangeHandler}
-                                />
-                              </div>
-                            );
-                          case 'boolean':
-                            return (
-                              <div>
-                                <ToggleInput
-                                  key={optionId}
-                                  label={optionId}
-                                  defaultChecked={defaultValue === 'true'}
-                                  onChange={onChangeHandler}
-                                />
-                              </div>
-                            );
-                          default:
-                            return null;
-                        }
-                      }
-                    )}
+        <ExpansionPanelContextProvider>
+          {convertedMockConfig.map(
+            ({ scenarioTitle, mockOptions, openPageURL }, index) => (
+              <div
+                key={scenarioTitle}
+                css={{
+                  display: 'contents',
+                  '> * > *, summary': { display: 'flex', alignItems: 'center' },
+                  '&:nth-child(odd) div, &:nth-child(odd) summary, &:nth-child(odd) details':
+                    {
+                      background: '#f9f9f9',
+                    },
+                  '&:nth-child(even) div, &:nth-child(even) summary,  &:nth-child(even) details':
+                    {
+                      background: '#ededed',
+                    },
+                }}
+              >
+                <TableRow>
+                  <TableCell>
+                    <Spacing pl={2}>
+                      <h4>{scenarioTitle}</h4>
+                    </Spacing>
                   </TableCell>
-                </ExpansionPanel>
-              ) : (
-                <TableCell>
-                  <h5>no options</h5>
-                </TableCell>
-              )}
 
-              {openPageURL ? (
-                <TableCell>
-                  <a href={openPageURL} target="_blank" rel="noreferrer">
-                    <Button>Open page</Button>
-                  </a>
-                </TableCell>
-              ) : (
-                <TableCell>
-                  <div />
-                </TableCell>
-              )}
-            </TableRow>
-          )
-        )}
+                  {mockOptions.length >= 0 ? (
+                    <ExpansionPanel title="Configure" contextId={scenarioTitle}>
+                      <TableCell row={index + 2} columnStart={1} columnEnd={4}>
+                        <Spacing px={2} pb={3}>
+                          <Stack gap={3}>
+                            {mockOptions.map(
+                              ({ selectedValue, options, type, title }) => {
+                                const optionId = `${scenarioTitle}-${title}`;
+                                const inputType = getInputType(
+                                  selectedValue,
+                                  options,
+                                  type
+                                );
+                                const onChangeHandler = (
+                                  value: string | number | boolean
+                                ) => {
+                                  updateConfig(
+                                    mockConfig,
+                                    index,
+                                    title,
+                                    inputType === 'number'
+                                      ? Number(value)
+                                      : value
+                                  );
+                                };
+                                const defaultValue =
+                                  convertOptionValue(selectedValue);
+                                switch (inputType) {
+                                  case 'select':
+                                    return (
+                                      <SelectInput
+                                        key={optionId}
+                                        name={optionId}
+                                        label={title}
+                                        defaultValue={defaultValue}
+                                        onChange={onChangeHandler}
+                                        options={
+                                          options?.map((value) => ({
+                                            value:
+                                              convertOptionValue(value) ||
+                                              'value not specified',
+                                          })) || []
+                                        }
+                                      />
+                                    );
+                                  case 'text':
+                                  case 'number':
+                                    return (
+                                      <TextInput
+                                        key={optionId}
+                                        label={title}
+                                        type={inputType}
+                                        defaultValue={defaultValue}
+                                        onChange={onChangeHandler}
+                                      />
+                                    );
+                                  case 'boolean':
+                                    return (
+                                      <ToggleInput
+                                        key={optionId}
+                                        label={title}
+                                        defaultChecked={defaultValue === 'true'}
+                                        onChange={onChangeHandler}
+                                      />
+                                    );
+                                  default:
+                                    return null;
+                                }
+                              }
+                            )}
+                          </Stack>
+                        </Spacing>
+                      </TableCell>
+                    </ExpansionPanel>
+                  ) : (
+                    <TableCell>
+                      <h5>no options</h5>
+                    </TableCell>
+                  )}
+
+                  {openPageURL ? (
+                    <TableCell>
+                      <Spacing pr={2} css={{ textAlign: 'right' }}>
+                        <a href={openPageURL} target="_blank" rel="noreferrer">
+                          <Button>Open page</Button>
+                        </a>
+                      </Spacing>
+                    </TableCell>
+                  ) : (
+                    <TableCell>
+                      <div />
+                    </TableCell>
+                  )}
+                </TableRow>
+              </div>
+            )
+          )}
+        </ExpansionPanelContextProvider>
       </Table>
     </div>
   );

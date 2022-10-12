@@ -5,7 +5,7 @@ type ArrayElementType<T extends ReadonlyArray<unknown>> =
 
 export type OptionType = boolean | string | number;
 
-type OptionRenderType = 'text' | 'number' | 'boolean' | 'select';
+export type OptionRenderType = 'text' | 'number' | 'boolean' | 'select';
 
 export type Options<T extends OptionType = OptionType> = Record<
   string,
