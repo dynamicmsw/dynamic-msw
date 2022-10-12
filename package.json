@@ -20,7 +20,6 @@
     "@emotion/react": "11.10.4",
     "@stela-ui/css": "0.0.1-alpha.3",
     "@stela-ui/react": "0.0.1-alpha.3",
-    "@stela-ui/ui": "^1.0.0",
     "@theme-ui/preset-base": "^0.15.1",
     "msw": "^0.47.4",
     "next": "12.3.1",

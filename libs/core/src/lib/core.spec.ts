@@ -11,6 +11,9 @@ const mockOptions = {
     options: [true, false],
     defaultValue: true,
   },
+  optionTwo: {
+    defaultValue: 'hello',
+  },
 };
 
 export const exampleMock = createMock(
@@ -110,6 +113,9 @@ describe('dynamicMsw', () => {
         scenarioTitle: 'example',
         mockOptions: {
           success: { ...mockOptions.success, selectedValue: false },
+          optionTwo: {
+            defaultValue: 'hello',
+          },
         },
         openPageURL: 'no-page',
       },
