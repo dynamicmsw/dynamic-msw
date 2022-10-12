@@ -5,12 +5,12 @@ import Head from 'next/head';
 if (process.env.NODE_ENV === 'development') {
   //eslint-disable-next-line @typescript-eslint/no-var-requires
   const { setup } = require('@dynamic-msw/mock-example');
-  if (typeof window !== 'undefined') {
-    setup();
-  } else {
+  if (typeof window === 'undefined') {
     //eslint-disable-next-line @typescript-eslint/no-var-requires
     const { setupServer } = require('msw/node');
     setup(setupServer);
+  } else {
+    setup();
   }
 }
 
