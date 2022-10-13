@@ -15,4 +15,5 @@ TODO: choose a viable option
 1. Allow to disable mocks by default. Allow to disable/enable mocks in the dashboard.
    In a scenario mocks should be enabled unless specified otherwise.
 1. Add reset button to dashboard
-1. ensure next build job is cached properly
+1. ensure next build job is cached properly (seems to work fine but double check)
+1. seems like affected synced publish bumps 2 versions at a time (double check)
