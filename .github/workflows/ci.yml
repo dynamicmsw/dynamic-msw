@@ -1,0 +1,7 @@
+name: CI
+on:
+  pull_request:
+
+jobs:
+  quality-assurance:
+    uses: ./.github/workflows/quality-assurance.yml

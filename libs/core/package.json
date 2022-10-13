@@ -1,0 +1,5 @@
+{
+  "name": "@dynamic-msw/core",
+  "sideEffects": false,
+  "version": "0.0.2"
+}

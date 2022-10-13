@@ -1,0 +1,88 @@
+{
+  "name": "dashboard",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/dashboard/src",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "vite build",
+          "cpy ./package.json ../../dist/libs/dashboard",
+          "cpy ./copyHtmlFile.js ../../dist/libs/dashboard",
+          "cpy ../../dist/libs/dashboard/index.html ../../examples/next/public/mock-server --flat"
+        ],
+        "parallel": false,
+        "cwd": "libs/dashboard"
+      }
+    },
+    "testHelp": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["node ./copyHtmlFile.js 1 2 3 4"],
+        "parallel": false,
+        "cwd": "libs/dashboard"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/dashboard/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/dashboard"],
+      "options": {
+        "jestConfig": "libs/dashboard/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "storybook": {
+      "executor": "@nrwl/storybook:storybook",
+      "options": {
+        "uiFramework": "@storybook/react",
+        "port": 4400,
+        "config": {
+          "configFolder": "libs/dashboard/.storybook"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@nrwl/storybook:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "uiFramework": "@storybook/react",
+        "outputPath": "dist/storybook/dashboard",
+        "config": {
+          "configFolder": "libs/dashboard/.storybook"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "versionCI": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional",
+        "syncVersions": true
+      }
+    },
+    "publishCI": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn nx build dashboard && npm publish ./dist/libs/dashboard --access=public --registry=https://registry.npmjs.org"
+      }
+    }
+  },
+  "tags": []
+}
