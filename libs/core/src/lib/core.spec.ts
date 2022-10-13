@@ -3,7 +3,7 @@ import { setupServer } from 'msw/node';
 
 import { createMock } from './createMock';
 import type { MocksState } from './state';
-import { dynamicMswStorageKey, state } from './state';
+import { dynamicMswStorageKey, state, saveToStorage } from './state';
 import { resetHandlers, stopWorker, setupWorker } from './worker';
 
 const mockOptions = {
@@ -94,7 +94,7 @@ describe('dynamicMsw', () => {
     expect(state.getState().mocks[0].openPageURL).toBe('yes-page');
   });
 
-  it('saves state to sessionStorage', () => {
+  it('saves state to localStorage', () => {
     const expectedState: MocksState[] = [
       {
         scenarioTitle: 'example',
@@ -102,11 +102,11 @@ describe('dynamicMsw', () => {
         openPageURL: 'yes-page',
       },
     ];
-    expect(JSON.parse(sessionStorage.getItem(dynamicMswStorageKey))).toEqual(
+    expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
       expectedState
     );
   });
-  it('updates state in sessionStorage', () => {
+  it('updates state in localStorage', () => {
     exampleMock.updateMock({ success: false });
     const expectedState: MocksState[] = [
       {
@@ -120,13 +120,36 @@ describe('dynamicMsw', () => {
         openPageURL: 'no-page',
       },
     ];
-    expect(JSON.parse(sessionStorage.getItem(dynamicMswStorageKey))).toEqual(
+    expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
       expectedState
     );
   });
   it('initializes with storage state', async () => {
     exampleMock.updateMock({ success: false });
     stopWorker();
+    setupWorker([exampleMock], setupServer);
+    const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
+      (res) => res.json()
+    );
+    expect(updatedExampleFetch).toEqual({
+      success: 'no',
+    });
+  });
+
+  it('initializes with storage state', async () => {
+    saveToStorage([
+      {
+        scenarioTitle: 'example',
+        mockOptions: {
+          success: {
+            options: [true, false],
+            defaultValue: true,
+            selectedValue: false,
+          },
+        },
+      },
+    ]);
+
     setupWorker([exampleMock], setupServer);
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()

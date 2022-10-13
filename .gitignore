@@ -43,3 +43,6 @@ Thumbs.db
 
 # dashboard
 **/mock-server/index.html
+
+# env
+nx-cloud.env

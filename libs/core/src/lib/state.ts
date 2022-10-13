@@ -12,13 +12,13 @@ export const dynamicMswStorageKey = 'dynamic-msw-state';
 
 export const saveToStorage = (state: MocksState[]) => {
   if (typeof sessionStorage !== 'undefined') {
-    sessionStorage.setItem(dynamicMswStorageKey, JSON.stringify(state));
+    localStorage.setItem(dynamicMswStorageKey, JSON.stringify(state));
   }
 };
 
 export const loadFromStorage = (): MocksState[] => {
-  if (typeof sessionStorage !== 'undefined') {
-    return JSON.parse(sessionStorage.getItem(dynamicMswStorageKey) || '[]');
+  if (typeof localStorage !== 'undefined') {
+    return JSON.parse(localStorage.getItem(dynamicMswStorageKey) || '[]');
   }
   return [];
 };

@@ -55,14 +55,21 @@ jobs:
 
       - run: yarn --frozen-lockfile
 
+      - run: yarn nx affected:build --parallel=3
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+
       - name: Version
         run: yarn nx affected --target=versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }} --parallel 1 --nx-bail
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
       - name: Check for created tags to see if a new version has been made
         run: git tag -l --contains $(git rev-parse HEAD) | cat | grep . && echo "Found newly created tag" || { echo "No changes found"; exit 1; };
       - name: Publish changes
         run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
       - name: Push changes
         run: git push origin HEAD
       - name: Push tags
