@@ -13,7 +13,10 @@ const convertMockOptions: ConvertMockOptionsFn = (options) =>
   Object.keys(options).reduce(
     (prev, curr) => ({
       ...prev,
-      [curr]: options[curr].selectedValue || options[curr].defaultValue,
+      [curr]:
+        typeof options[curr].selectedValue !== 'undefined'
+          ? options[curr].selectedValue
+          : options[curr].defaultValue,
     }),
     {} as ConvertedOptions
   );
@@ -56,7 +59,13 @@ export const createMock = <T extends Options = Options>(
   },
   mockFn: CreateMockMockFn<T>
 ): CreateMockFnReturnType<T> => {
-  let convertedConfig = convertMockOptions(mockOptions);
+  const initialState = state
+    .getState()
+    .mocks.find((stateData) => stateData.scenarioTitle === scenarioTitle);
+
+  let convertedConfig = convertMockOptions(
+    initialState?.mockOptions || mockOptions
+  );
 
   const returnValue: CreateMockFnReturnType<T> = {
     mocks: setupMocks(convertedConfig, mockFn),

@@ -1,7 +1,7 @@
 {
   "name": "dashboard",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "application",
+  "projectType": "library",
   "sourceRoot": "libs/dashboard/src",
   "targets": {
     "build": {
@@ -73,7 +73,8 @@
     "versionCI": {
       "executor": "@jscutlery/semver:version",
       "options": {
-        "preset": "conventional"
+        "preset": "conventional",
+        "syncVersions": true
       }
     },
     "publishCI": {

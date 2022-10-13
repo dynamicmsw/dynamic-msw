@@ -5,6 +5,17 @@
     {
       "files": ["*.ts", "*.tsx"],
       "rules": {}
+    },
+    {
+      "files": ["*.stories.ts", "*.stories.tsx"],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          0,
+          {
+            "enforceBuildableLibDependency": false
+          }
+        ]
+      }
     }
   ]
 }
