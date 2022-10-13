@@ -11,77 +11,57 @@ on:
           - alpha
           - beta
           - rc
-  workflow_run:
-    workflows: ['CI', 'ci']
-    branches: [release/**]
-    types:
-      - completed
 
 jobs:
-  # quality-assurance:
-  #   if: startsWith(github.ref, 'refs/heads/release')
-  #   uses: ./.github/workflows/quality-assurance.yml
+  quality-assurance:
+    if: startsWith(github.ref, 'refs/heads/release')
+    uses: ./.github/workflows/quality-assurance.yml
   pre-release:
-    if: |
-      startsWith(github.ref, 'refs/heads/release') &&
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.inputs.preid == 'alpha'
+    if: startsWith(github.ref, 'refs/heads/release')
     environment: release
     runs-on: ubuntu-latest
-    # needs: quality-assurance
+    needs: quality-assurance
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PUSH_TOKEN }}
       - uses: nrwl/nx-set-shas@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Setup Git
         run: |
           git config user.name "GitHub Bot"
           git config user.email "bramzijpcode@gmail.com"
-      - name: test
-        run: echo workflow_dispatch
-      # - name: test
-      #   run: echo $(git rev-parse HEAD) > test && git add . && git commit -m testPush --no-verify && git push
-      # - name: Set up Node.js
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '16'
-      #     cache: 'yarn'
-      #     registry-url: 'https://registry.npmjs.org'
-      #     always-auth: true
-      # - name: Cache node modules
-      #   id: cache-nodemodules
-      #   uses: actions/cache@v2
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: |
-      #       node_modules
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
 
-      # - name: Setup Git
-      #   run: |
-      #     git config user.name "GitHub Bot"
-      #     git config user.email "bramzijpcode@gmail.com"
+      - run: yarn --frozen-lockfile
 
-      # - run: yarn --frozen-lockfile
-
-      # - name: Version
-      #   run: yarn nx affected --target=versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }} --parallel 1 --nx-bail
-      # - name: Publish changes
-      #   run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-      # - name: Push changes
-      #   run: git push origin HEAD
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Push tags
-      #   run: git push --tags
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Version
+        run: yarn nx affected --target=versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }} --parallel 1 --nx-bail
+      - name: Publish changes
+        run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      - name: Push changes
+        run: git push origin HEAD
+      - name: Push tags
+        run: git push --tags
