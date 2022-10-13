@@ -13,4 +13,5 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// hello
+// hello, I don't seem to be "affected", satisfaction, affection
+// I can't get no satisfaction, affection, satisfaction

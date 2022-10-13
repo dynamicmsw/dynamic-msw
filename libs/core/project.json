@@ -69,8 +69,7 @@
     "versionCI": {
       "executor": "@jscutlery/semver:version",
       "options": {
-        "preset": "conventional",
-        "syncVersions": true
+        "preset": "conventional"
       }
     },
     "publishCI": {
