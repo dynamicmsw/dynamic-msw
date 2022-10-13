@@ -1,9 +1,6 @@
 name: CI
 on:
-  workflow_run:
-    workflows: ['pre-release', 'Pre-release', 'pre-release.yml']
-    types:
-      - completed
+  pull_request:
 
 jobs:
   quality-assurance:
