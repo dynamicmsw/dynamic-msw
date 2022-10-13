@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  quality-assurance:
+  pre-quality-assurance:
     if: startsWith(github.ref, 'refs/heads/release')
     uses: ./.github/workflows/quality-assurance.yml
   release:
@@ -65,3 +65,7 @@ jobs:
           git push origin last-release --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  quality-assurance:
+    if: startsWith(github.ref, 'refs/heads/release')
+    needs: release
+    uses: ./.github/workflows/quality-assurance.yml
