@@ -18,6 +18,8 @@
           "test",
           "testTypes",
           "e2e",
+          "publishCI",
+          "versionCI",
           "build-storybook"
         ],
         "accessToken": "NjZhZGZmNzEtMTQzZi00ZTcyLTk5MjEtNzZhYzZhNjI4ZDM0fHJlYWQtd3JpdGU="
