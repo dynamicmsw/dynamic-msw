@@ -16,3 +16,4 @@ TODO: choose a viable option
    In a scenario mocks should be enabled unless specified otherwise.
 1. Add reset button to dashboard
 1. ensure next build job is cached properly
+1. Using GitHub it's to easy to forget release commits. Perhaps enforce max 3 commit messages to merge into main and skip squashing/creating merge commits
