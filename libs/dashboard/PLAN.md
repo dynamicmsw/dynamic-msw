@@ -6,3 +6,15 @@
 1. Allow to disable mocks by default. Allow to disable/enable mocks in the dashboard.
    In a scenario mocks should be enabled unless specified otherwise.
 1. Add reset button to dashboard
+1. add query param to dashboard to reset local storage (this can be useful if you wanna clear the storage on server start)
+   Package.json example:
+
+   ```
+   "serve": "npm-run-all serve:*",
+   "serve:next": "next dev",
+   "serve:open-browser": "wait-on http://localhost:3000/mock-server/index.html && open http://localhost:3000/mock-server/index.html?resetStorage=true",
+   ```
+
+   Perhaps it's also nice to add a helper module for this to do this in server startup code like webpack config or nextjs config etc.:
+   https://www.npmjs.com/package/wait-on
+   https://www.npmjs.com/package/open
