@@ -1,3 +1,5 @@
+const path = require('path');
+
 const react = require('@vitejs/plugin-react').default;
 
 const rootMain = require('../../../.storybook/main');
@@ -29,6 +31,10 @@ module.exports = {
         exclude: [/\.stories\.(t|j)sx?$/, /node_modules/],
         jsxImportSource: '@emotion/react',
       })
+    );
+    config.cacheDir = path.join(
+      __dirname,
+      '../../../node_modules/.cache/.dashboard-vite-storybook'
     );
     return config;
   },
