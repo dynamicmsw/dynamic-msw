@@ -47,7 +47,7 @@ jobs:
             ./node_modules/.cache
           key: ${{ runner.os }}-${{ env.cache-name }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}
+            ${{ runner.os }}-${{ env.cache-name }}-store
 
       - run: yarn --frozen-lockfile
 
