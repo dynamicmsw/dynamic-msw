@@ -24,11 +24,13 @@ jobs:
         with:
           path: |
             node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          key:
+            ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles(
+            'node_modules/.cache/.dashboard-vite-storybook/deps/_metadata.json'
+            ) }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-      - name: test node_modules
-        run: (cd node_modules/.cache && ls -la)
+            ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+            ${{ runner.os }}-${{ env.cache-name }}-
       - name: Cache cypress
         id: cache-cypress
         uses: actions/cache@v2
@@ -37,9 +39,9 @@ jobs:
         with:
           path: |
             ~/.cache/Cypress
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-${{ env.cache-name }}-
 
       - run: yarn --frozen-lockfile
 
@@ -57,10 +59,10 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx run dashboard-e2e:e2e:ci --skip-nx-cache
+      - run: yarn nx run dashboard-e2e:e2e
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:e2e --parallel=1
+      - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload e2e result artifact
@@ -71,5 +73,3 @@ jobs:
           path: dist/cypress/
           retention-days: 2
           if-no-files-found: error
-      - name: test node_modules
-        run: (cd node_modules/.cache && ls -la)
