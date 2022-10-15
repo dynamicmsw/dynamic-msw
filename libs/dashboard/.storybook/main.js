@@ -6,7 +6,7 @@ module.exports = {
   ...rootMain,
   core: { ...rootMain.core, builder: '@storybook/builder-vite' },
   features: {
-    storyStoreV7: true,
+    // storyStoreV7: true,
   },
   stories: [
     ...rootMain.stories,
@@ -30,11 +30,6 @@ module.exports = {
         jsxImportSource: '@emotion/react',
       })
     );
-
-    config.define = {
-      global: 'window',
-    };
-
     return config;
   },
 };
