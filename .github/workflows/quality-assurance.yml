@@ -38,15 +38,16 @@ jobs:
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Cache node_modules cache
-        id: cache-node_modules-cache
+      - name: Fetch build cache
         uses: actions/cache@v2
         env:
-          cache-name: cache-node_modules-cache
+          cache-name: build-cache
         with:
           path: |
             ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.nodeModulesCacheHashStep.outputs.hash }}
+          key: ${{ runner.os }}-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}
 
       - run: yarn --frozen-lockfile
 
@@ -64,10 +65,10 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
-        id: e2eTests
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      # - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
+      #   id: e2eTests
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload e2e result artifact
         if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
         uses: actions/upload-artifact@v3
@@ -81,5 +82,13 @@ jobs:
         id: nodeModulesCacheHashStep
         with:
           path: node_modules/.cache
+      - name: Store build cache
+        uses: actions/cache@v2
+        env:
+          cache-name: build-cache-store
+        with:
+          path: |
+            ./node_modules/.cache
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.nodeModulesCacheHashStep.outputs.hash }}
       - name: log hash
         run: echo "${{ steps.nodeModulesCacheHashStep.outputs.hash }}"
