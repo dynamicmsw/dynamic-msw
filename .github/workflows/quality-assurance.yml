@@ -13,19 +13,19 @@ jobs:
           cache-name: test-restore
         with:
           path: |
-            ./temp
+            ./dont-use-temp
           key: ${{ runner.os }}-${{ env.cache-name }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
-      - run: (cat ./temp/test.txt || true)
-      - run: echo $(git rev-parse HEAD) > ./temp/test.txt
+      - run: (cat ./dont-use-temp/test.txt || true)
+      - run: echo $(git rev-parse HEAD) > ./dont-use-temp/test.txt
       - name: Test store cache
         uses: actions/cache@v2
         env:
           cache-name: test-restore
         with:
           path: |
-            ./temp
+            ./dont-use-temp
           key: ${{ runner.os }}-${{ env.cache-name }}-store
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-store
