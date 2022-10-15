@@ -7,88 +7,110 @@ jobs:
     name: quality-assurance
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v3
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-      - name: Cache node modules
-        id: cache-nodemodules
+      - name: Test restore cache
         uses: actions/cache@v2
         env:
-          cache-name: cache-node-modules
+          cache-name: test-restore
         with:
           path: |
-            node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Cache cypress
-        id: cache-cypress
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-cypress
-        with:
-          path: |
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Fetch build cache
-        uses: actions/cache@v2
-        env:
-          cache-name: build-cache
-        with:
-          path: |
-            ./node_modules/.cache
+            ./temp
           key: ${{ runner.os }}-${{ env.cache-name }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-store-
-
-      - run: yarn --frozen-lockfile
-
-      - run: yarn nx workspace-lint
-      - run: yarn nx format:check
-      - run: yarn nx affected:lint --parallel=3
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:test --parallel=3 --ci --code-coverage
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected --parallel=3 --target=testTypes
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:build --parallel=3
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-        # - run: yarn nx affected:e2e --parallel=1
-        #   id: e2eTests
-        #   env:
-        #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - name: Upload e2e result artifact
-        if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: e2e-test-reports
-          path: dist/cypress/
-          retention-days: 2
-          if-no-files-found: error
-      # TODO: Perhaps fork this
-      - name: Get build cache hash
-        uses: theowenyoung/folder-hash@v2.0.1
-        id: buildCacheHash
-        with:
-          path: |
-            node_modules/.cache
-      - name: Store build cache
+            ${{ runner.os }}-${{ env.cache-name }}-
+      - run: cat ./temp
+      - run: echo $(git rev-parse HEAD) > ./temp
+      - name: Test store cache
         uses: actions/cache@v2
         env:
-          cache-name: build-cache-store
+          cache-name: test-restore
         with:
           path: |
-            ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.buildCacheHash.outputs.hash }}
+            ./temp
+          key: ${{ runner.os }}-${{ env.cache-name }}-store
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
+      # - uses: actions/checkout@v2
+      #   with:
+      #     fetch-depth: 0
+      # - uses: nrwl/nx-set-shas@v3
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '16'
+      #     cache: 'yarn'
+      # - name: Cache node modules
+      #   id: cache-nodemodules
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-node-modules
+      #   with:
+      #     path: |
+      #       node_modules
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ env.cache-name }}-
+      # - name: Cache cypress
+      #   id: cache-cypress
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-cypress
+      #   with:
+      #     path: |
+      #       ~/.cache/Cypress
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ env.cache-name }}-
+      # - name: Fetch build cache
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: build-cache
+      #   with:
+      #     path: |
+      #       ./node_modules/.cache
+      #     key: ${{ runner.os }}-${{ env.cache-name }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ env.cache-name }}-store-
+
+      # - run: yarn --frozen-lockfile
+
+      # - run: yarn nx workspace-lint
+      # - run: yarn nx format:check
+      # - run: yarn nx affected:lint --parallel=3
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      # - run: yarn nx affected:test --parallel=3 --ci --code-coverage
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      # - run: yarn nx affected --parallel=3 --target=testTypes
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      # - run: yarn nx affected:build --parallel=3
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      #   # - run: yarn nx affected:e2e --parallel=1
+      #   #   id: e2eTests
+      #   #   env:
+      #   #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      # - name: Upload e2e result artifact
+      #   if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: e2e-test-reports
+      #     path: dist/cypress/
+      #     retention-days: 2
+      #     if-no-files-found: error
+      # # TODO: Perhaps fork this
+      # - name: Get build cache hash
+      #   uses: theowenyoung/folder-hash@v2.0.1
+      #   id: buildCacheHash
+      #   with:
+      #     path: |
+      #       node_modules/.cache
+      # - name: Store build cache
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: build-cache-store
+      #   with:
+      #     path: |
+      #       ./node_modules/.cache
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.buildCacheHash.outputs.hash }}
