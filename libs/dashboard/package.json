@@ -2,6 +2,7 @@
   "name": "@dynamic-msw/dashboard",
   "sideEffects": false,
   "version": "0.0.2",
+  "types": "index.d.ts",
   "files": [
     "./copyHtmlFile.js",
     "./index.html"

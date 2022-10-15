@@ -1,12 +1,3 @@
-# options to load mocked data:
-
-TODO: choose a viable option
-
-1. let a user load his app first which should save mock config in the storage, this can then be read out in the mock dashboard and altered based on user input. After a user navigates back to his app, it should read the mutated storage to bootstrap the mocks with
-1. identical to the first option but using local storage to persist state
-1. allow to load in a javascript file into the dashboard. This javascript file should populate the desired mock config into storage.
-1. load specified page into iframe on the dashboard and add an onload listener
-
 # TODOS
 
 1. Add combineMocks helper so a user can re-use mocks in different scenarios.
@@ -15,4 +6,15 @@ TODO: choose a viable option
 1. Allow to disable mocks by default. Allow to disable/enable mocks in the dashboard.
    In a scenario mocks should be enabled unless specified otherwise.
 1. Add reset button to dashboard
-1. ensure next build job is cached properly
+1. add query param to dashboard to reset local storage (this can be useful if you wanna clear the storage on server start)
+   Package.json example:
+
+   ```
+   "serve": "npm-run-all serve:*",
+   "serve:next": "next dev",
+   "serve:open-browser": "wait-on http://localhost:3000/mock-server/index.html && open http://localhost:3000/mock-server/index.html?resetStorage=true",
+   ```
+
+   Perhaps it's also nice to add a helper module for this to do this in server startup code like webpack config or nextjs config etc.:
+   https://www.npmjs.com/package/wait-on
+   https://www.npmjs.com/package/open

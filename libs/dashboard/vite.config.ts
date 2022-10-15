@@ -15,6 +15,7 @@ export default defineConfig({
     }),
     viteSingleFile(),
   ],
+  publicDir: false,
   build: {
     outDir: path.join(__dirname, '../../dist/libs/dashboard'),
     emptyOutDir: true,

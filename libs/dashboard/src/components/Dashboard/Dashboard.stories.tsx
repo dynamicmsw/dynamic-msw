@@ -1,7 +1,4 @@
-import { setup } from '@dynamic-msw/mock-example';
 import type { ComponentStory, ComponentMeta } from '@storybook/react';
-
-setup();
 
 import { Dashboard } from './Dashboard';
 
