@@ -2,11 +2,16 @@ name: Quality-assurance
 on:
   workflow_call:
 
+# get some rest and find a better way to test this.
+
 jobs:
   quality-assurance:
     name: quality-assurance
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Test restore cache
         uses: actions/cache@v2
         env:
@@ -14,21 +19,23 @@ jobs:
         with:
           path: |
             ./dont-use-temp
-          key: ${{ runner.os }}-${{ env.cache-name }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
+            ${{ runner.os }}-${{ env.cache-name }}-x-store-
+      - run: echo $(git rev-parse HEAD)
       - run: (cat ./dont-use-temp/test.txt || true)
       - run: echo $(git rev-parse HEAD) > ./dont-use-temp/test.txt
+      - run: echo "git-hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: Test store cache
         uses: actions/cache@v2
         env:
-          cache-name: test-restore
+          cache-name: test-restore-store
+          GIT_HASH: $(git rev-parse HEAD)
         with:
           path: |
             ./dont-use-temp
-          key: ${{ runner.os }}-${{ env.cache-name }}-store
+          key: ${{ runner.os }}-${{ env.cache-name }}-x-store-${{ env.git-hash }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-store
+            ${{ runner.os }}-${{ env.cache-name }}-x-store-
       # - uses: actions/checkout@v2
       #   with:
       #     fetch-depth: 0
