@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ComponentType } from 'react';
 
 import { App } from '../src/App';
 
@@ -13,7 +13,7 @@ export const parameters = {
 };
 
 export const decorators = [
-  (Story: React.ComponentType) => (
+  (Story: ComponentType) => (
     <App>
       <Story />
     </App>
