@@ -47,8 +47,6 @@ jobs:
           path: |
             ./node_modules/.cache
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.nodeModulesCacheHashStep.outputs.hash }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
 
       - run: yarn --frozen-lockfile
 
