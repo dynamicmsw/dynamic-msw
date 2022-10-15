@@ -66,14 +66,12 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx run dashboard-e2e:e2e
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
+        id: e2eTests
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload e2e result artifact
-        if: ${{ failure() }}
+        if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
         uses: actions/upload-artifact@v3
         with:
           name: e2e-test-reports
