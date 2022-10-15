@@ -2,11 +2,7 @@ const openConfig = () => {
   cy.containsByTestId('scenario-title', 'example');
   cy.getByTestId('configure-panel').first().children('summary').click();
 };
-// Cachebusters!
-// If there's something strange
-// In your neighborhood
-// Who you gonna call?
-// Cachebusters!
+
 describe('Dynamic MSW Dashboard', () => {
   beforeEach(() => cy.visit('/iframe.html?id=dashboard--primary'));
 
