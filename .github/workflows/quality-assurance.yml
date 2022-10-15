@@ -46,7 +46,7 @@ jobs:
         with:
           path: |
             ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{steps.quality-assurance.outputs.hash}}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.nodeModulesCacheHashStep.outputs.hash }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
@@ -80,5 +80,8 @@ jobs:
           if-no-files-found: error
       - name: Get node_modules cache hash
         uses: theowenyoung/folder-hash@v2.0.1
+        id: nodeModulesCacheHashStep
         with:
           path: node_modules/.cache
+      - name: log hash
+        run: echo "${{ steps.nodeModulesCacheHashStep.outputs.hash }}"
