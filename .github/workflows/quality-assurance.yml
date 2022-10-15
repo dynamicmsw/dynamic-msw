@@ -65,10 +65,10 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      # - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
-      #   id: e2eTests
-      #   env:
-      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
+        id: e2eTests
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload e2e result artifact
         if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
         uses: actions/upload-artifact@v3
@@ -77,11 +77,12 @@ jobs:
           path: dist/cypress/
           retention-days: 2
           if-no-files-found: error
-      - name: Get node_modules cache hash
+      - name: Get build cache hash
         uses: theowenyoung/folder-hash@v2.0.1
-        id: nodeModulesCacheHashStep
+        id: buildCacheHash
         with:
-          path: node_modules/.cache
+          path: |
+            node_modules/.cache
       - name: Store build cache
         uses: actions/cache@v2
         env:
@@ -89,6 +90,4 @@ jobs:
         with:
           path: |
             ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.nodeModulesCacheHashStep.outputs.hash }}
-      - name: log hash
-        run: echo "${{ steps.nodeModulesCacheHashStep.outputs.hash }}"
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.buildCacheHash.outputs.hash }}
