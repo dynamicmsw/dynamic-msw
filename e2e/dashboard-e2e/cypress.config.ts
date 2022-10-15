@@ -3,5 +3,5 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
   e2e: { ...nxE2EStorybookPreset(__dirname), retries: 1 },
-  videoUploadOnPasses: Boolean(process.env.CI),
+  videoUploadOnPasses: process.env.CI === 'true',
 });

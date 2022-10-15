@@ -44,7 +44,6 @@ jobs:
             node_modules
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
             ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: Setup Git
