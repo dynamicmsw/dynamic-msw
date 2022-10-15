@@ -1,4 +1,6 @@
 /** @type { import("@dynamic-msw/types").MockServerConfig } */
 export const settings = {
-  initializePageURLs: ['/?path=/story/development-initializemocks--primary'],
+  initializePageURLs: [
+    '/iframe.html?id=development-initializemocks--primary&viewMode=story',
+  ],
 };

@@ -5,9 +5,7 @@ import { useEffect } from 'react';
 
 const Template: FC = () => {
   useEffect(() => {
-    setTimeout(() => {
-      setup();
-    }, 100);
+    setup();
   }, []);
   return <div>example page to initialize mocks from</div>;
 };

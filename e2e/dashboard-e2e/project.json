@@ -1,19 +1,19 @@
 {
-  "name": "next-e2e",
+  "name": "dashboard-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "examples/next-e2e/src",
+  "sourceRoot": "e2e/dashboard-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "examples/next-e2e/cypress.config.ts",
-        "devServerTarget": "next:serve:development",
+        "cypressConfig": "e2e/dashboard-e2e/cypress.config.ts",
+        "devServerTarget": "dashboard:storybook",
         "testingType": "e2e"
       },
       "configurations": {
-        "production": {
-          "devServerTarget": "next:serve:production"
+        "ci": {
+          "devServerTarget": "dashboard:storybook:ci"
         }
       }
     },
@@ -21,10 +21,10 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["examples/next-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["e2e/dashboard-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["next"]
+  "implicitDependencies": ["dashboard"]
 }

@@ -31,8 +31,10 @@ export const Dashboard: FC<DashboardProps> = () => {
   return (
     <div>
       <h1>Dynamic MSW Dashboard</h1>
-      {isLoading && <h4>Loading mock config...</h4>}
-      {iFrameError && <h4>{iFrameError}</h4>}
+      {isLoading && (
+        <h4 data-testid="dashboard-state">Loading mock config...</h4>
+      )}
+      {iFrameError && <h4 data-testid="dashboard-state">{iFrameError}</h4>}
 
       <Table columns={3}>
         <ExpansionPanelContextProvider>
@@ -56,12 +58,16 @@ export const Dashboard: FC<DashboardProps> = () => {
                 <TableRow>
                   <TableCell>
                     <Spacing pl={2}>
-                      <h4>{scenarioTitle}</h4>
+                      <h4 data-testid="scenario-title">{scenarioTitle}</h4>
                     </Spacing>
                   </TableCell>
 
                   {mockOptions.length >= 0 ? (
-                    <ExpansionPanel title="Configure" contextId={scenarioTitle}>
+                    <ExpansionPanel
+                      title="Configure"
+                      contextId={scenarioTitle}
+                      data-testid="configure-panel"
+                    >
                       <TableCell row={index + 2} columnStart={1} columnEnd={4}>
                         <Spacing px={2} pb={3}>
                           <Stack gap={3}>
@@ -92,6 +98,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                   case 'select':
                                     return (
                                       <SelectInput
+                                        data-testid="scenario-config-input"
                                         key={optionId}
                                         name={optionId}
                                         label={title}
@@ -110,6 +117,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                   case 'number':
                                     return (
                                       <TextInput
+                                        data-testid="scenario-config-input"
                                         key={optionId}
                                         label={title}
                                         type={inputType}
@@ -120,6 +128,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                   case 'boolean':
                                     return (
                                       <ToggleInput
+                                        data-testid="scenario-config-input"
                                         key={optionId}
                                         label={title}
                                         defaultChecked={defaultValue === 'true'}
