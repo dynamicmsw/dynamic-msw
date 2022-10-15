@@ -46,9 +46,9 @@ jobs:
         with:
           path: |
             ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}
-          # restore-keys: |
-          #   ${{ runner.os }}-${{ env.cache-name }}-
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{steps.quality-assurance.outputs.hash}}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
 
       - run: yarn --frozen-lockfile
 
@@ -78,3 +78,7 @@ jobs:
           path: dist/cypress/
           retention-days: 2
           if-no-files-found: error
+      - name: Get node_modules cache hash
+        uses: theowenyoung/folder-hash@v2.0.1
+        with:
+          path: node_modules/.cache
