@@ -28,6 +28,22 @@ jobs:
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
+      - name: Create build cache key files glob env variable
+        run: |
+          echo "build-cache-files=\
+            'examples/**/*.[jt]s', \
+            'examples/**/*.[jt]sx', \
+            'examples/**/*.[jt]s', \
+            'examples/**/*.[jt]sx', \
+            'libs/**/*.[jt]s', \
+            'libs/**/*.[jt]sx', \
+            'libs/**/*.[jt]s', \
+            'libs/**/*.[jt]sx', \
+            'e2e/**/*.[jt]s', \
+            'e2e/**/*.[jt]sx', \
+            'e2e/**/*.[jt]s', \
+            'e2e/**/*.[jt]sx' \
+          " >> $GITHUB_ENV
       - name: Cache build
         uses: actions/cache@v2
         env:
@@ -36,7 +52,7 @@ jobs:
           path: |
             ./node_modules/.cache
             ./examples/next/.next/cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles( 'examples/**/*.[jt]s', 'examples/**/*.[jt]sx', 'examples/**/*.[jt]s', 'examples/**/*.[jt]sx', 'libs/**/*.[jt]s', 'libs/**/*.[jt]sx', 'libs/**/*.[jt]s', 'libs/**/*.[jt]sx', 'e2e/**/*.[jt]s', 'e2e/**/*.[jt]sx', 'e2e/**/*.[jt]s', 'e2e/**/*.[jt]sx' ) }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles(env.build-cache-files) }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
