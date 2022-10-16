@@ -1,0 +1,35 @@
+{
+  "name": "open-app-page",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/open-app-page/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/open-app-page/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/open-app-page"],
+      "options": {
+        "jestConfig": "libs/open-app-page/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/open-app-page",
+        "tsConfig": "libs/open-app-page/tsconfig.lib.json",
+        "packageJson": "libs/open-app-page/package.json",
+        "main": "libs/open-app-page/src/index.ts",
+        "assets": ["libs/open-app-page/*.md"]
+      }
+    }
+  },
+  "tags": []
+}
