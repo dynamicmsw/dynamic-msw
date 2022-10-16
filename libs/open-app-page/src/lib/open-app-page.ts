@@ -6,6 +6,8 @@ import type { WaitOnOptions } from 'wait-on';
 interface OpenAppPageArg {
   waitForAppPageURL: string;
   openAppURL: string;
+  logOnly?: boolean;
+  logMessage?: string;
   waitForOptions: WaitOnOptions;
   openAppOptions: Options;
 }
@@ -15,12 +17,20 @@ export const openAppPage = async ({
   openAppURL,
   waitForOptions,
   openAppOptions,
+  logOnly,
+  logMessage,
 }: OpenAppPageArg) =>
   waitOnPageResolve({
     ...waitForOptions,
     resources: [waitForAppPageURL, ...(waitForOptions.resources || [])],
   })
-    .then(() => openPage(openAppURL, openAppOptions))
+    .then(() => {
+      if (logOnly) {
+        console.info(`${logMessage || 'Page ready at'}: ${waitForAppPageURL}`);
+      } else {
+        return openPage(openAppURL, openAppOptions);
+      }
+    })
     .catch((err: Error) => {
       console.error('waitForAppPageURL error:');
       throw err;
