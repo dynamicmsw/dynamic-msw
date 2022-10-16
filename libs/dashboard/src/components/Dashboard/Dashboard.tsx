@@ -171,6 +171,7 @@ export const Dashboard: FC<DashboardProps> = () => {
         </ExpansionPanelContextProvider>
       </Table>
       <Button
+        data-testid="reset-all-mocks-button"
         onClick={() => {
           saveToStorage([]);
           location.reload();
