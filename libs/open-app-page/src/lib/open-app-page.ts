@@ -8,8 +8,8 @@ interface OpenAppPageArg {
   openAppURL: string;
   logOnly?: boolean;
   logMessage?: string;
-  waitForOptions: WaitOnOptions;
-  openAppOptions: Options;
+  waitForOptions?: WaitOnOptions;
+  openAppOptions?: Options;
 }
 
 export const openAppPage = async ({
@@ -22,7 +22,7 @@ export const openAppPage = async ({
 }: OpenAppPageArg) =>
   waitOnPageResolve({
     ...waitForOptions,
-    resources: [waitForAppPageURL, ...(waitForOptions.resources || [])],
+    resources: [waitForAppPageURL, ...(waitForOptions?.resources || [])],
   })
     .then(() => {
       if (logOnly) {
