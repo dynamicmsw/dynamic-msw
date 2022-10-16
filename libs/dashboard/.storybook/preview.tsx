@@ -19,5 +19,3 @@ export const decorators = [
     </App>
   ),
 ];
-
-// OOPS: forgot to release
