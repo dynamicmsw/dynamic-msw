@@ -45,7 +45,8 @@ jobs:
         with:
           path: |
             ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.run_id }}
+            ./examples/next/.next/cache
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles( 'examples/**/*.[jt]s', 'examples/**/*.[jt]sx', 'examples/**/*.[jt]s', 'examples/**/*.[jt]sx', 'libs/**/*.[jt]s', 'libs/**/*.[jt]sx', 'libs/**/*.[jt]s', 'libs/**/*.[jt]sx', 'e2e/**/*.[jt]s', 'e2e/**/*.[jt]sx', 'e2e/**/*.[jt]s', 'e2e/**/*.[jt]sx' ) }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
