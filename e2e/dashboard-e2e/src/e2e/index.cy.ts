@@ -4,7 +4,9 @@ const openConfig = () => {
 };
 
 describe('Dynamic MSW Dashboard', () => {
-  beforeEach(() => cy.visit('/iframe.html?id=dashboard--primary'));
+  beforeEach(() =>
+    cy.visit('/iframe.html?id=dashboard--primary', { timeout: 30000 })
+  );
 
   it('should load in config from iframe and save mock config when adjusted', () => {
     cy.getByTestId('dashboard-state').contains('Loading mock config...');

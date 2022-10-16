@@ -11,24 +11,29 @@ jobs:
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-      - name: Cache node modules
-        id: cache-nodemodules
+      - name: Cache modules
+        id: cache-modules
         uses: actions/cache@v2
         env:
-          cache-name: cache-node-modules
+          cache-name: cache-modules
         with:
           path: |
             node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+            ~/.cache/Cypress
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-${{ env.cache-name }}-
+      - name: Cache build
+        uses: actions/cache@v2
+        env:
+          cache-name: build-cache
+        with:
+          path: |
+            ./node_modules/.cache
+            ./examples/next/.next/cache
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}-${{ hashFiles('./libs/**/*.[jt]s', './libs/**/*.[jt]sx','./examples/**/*.[jt]s', './examples/**/*.[jt]sx','./e2e/**/*.[jt]s', './e2e/**/*.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
 
       - run: yarn --frozen-lockfile
 
@@ -46,3 +51,15 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      - run: yarn nx affected:e2e --parallel=2
+        id: e2eTests
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      - name: Upload e2e result artifact
+        if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e-test-reports
+          path: dist/cypress/
+          retention-days: 2
+          if-no-files-found: error

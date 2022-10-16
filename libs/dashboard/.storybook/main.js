@@ -1,3 +1,5 @@
+const path = require('path');
+
 const react = require('@vitejs/plugin-react').default;
 
 const rootMain = require('../../../.storybook/main');
@@ -6,7 +8,7 @@ module.exports = {
   ...rootMain,
   core: { ...rootMain.core, builder: '@storybook/builder-vite' },
   features: {
-    storyStoreV7: true,
+    // storyStoreV7: true,
   },
   stories: [
     ...rootMain.stories,
@@ -30,11 +32,10 @@ module.exports = {
         jsxImportSource: '@emotion/react',
       })
     );
-
-    config.define = {
-      global: 'window',
-    };
-
+    config.cacheDir = path.join(
+      __dirname,
+      '../../../node_modules/.cache/.dashboard-vite-storybook'
+    );
     return config;
   },
 };
