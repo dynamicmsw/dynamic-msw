@@ -1,7 +1,9 @@
 # Dynamic MSW
 
-<!-- This project is ready for use. The API is gonna be stable. There's an [Next.js example](./examples/next) on how to use it.
-There's also an example on how to add dynamic mocks: [createMock example](./libs/mock-example/src/lib/mock-example.ts) -->
+This project is ready for proof of concepts. The API is gonna be stable. There's an [example](./examples/next) on how to use it with Next.js.
+There's also an example on how to add dynamic mocks: [createMock example](./libs/mock-example/src/lib/mock-example.ts)
+Docs are still to be made but you could use the examples to get an idea of the API.
+It might still contain some bugs so use at your own risk.
 
 ## Setup
 
@@ -13,3 +15,5 @@ There's also an example on how to add dynamic mocks: [createMock example](./libs
 Docs: TODO
 
 # Looking for collaborators
+
+## Inspired by [server-mockr](https://github.com/boschni/server-mockr)

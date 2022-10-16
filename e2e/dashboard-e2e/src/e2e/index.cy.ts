@@ -26,4 +26,24 @@ describe('Dynamic MSW Dashboard', () => {
       .findByTestId('scenario-config-input')
       .should('not.be.checked');
   });
+  it('should reset mocks when the reset mock button is pressed', () => {
+    openConfig();
+    cy.getByTestId('configure-panel')
+      .first()
+      .findByTestId('scenario-config-input')
+      .should('be.checked');
+    cy.getByTestId('configure-panel')
+      .first()
+      .findByTestId('scenario-config-input')
+      .click();
+    cy.getByTestId('configure-panel')
+      .first()
+      .findByTestId('scenario-config-input')
+      .should('not.be.checked');
+    cy.getByTestId('reset-all-mocks-button').click();
+    cy.getByTestId('configure-panel')
+      .first()
+      .findByTestId('scenario-config-input')
+      .should('be.checked');
+  });
 });

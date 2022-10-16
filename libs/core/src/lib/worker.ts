@@ -53,10 +53,6 @@ export const stopWorker = () => {
 };
 
 export const resetHandlers = () => {
-  isGlobalWorkerDefined();
-  const { mocks } = state.getState();
-  mocks.forEach(({ resetMock }) => {
-    resetMock?.();
-  });
+  state.resetMocks();
   global.__mock_worker.resetHandlers();
 };
