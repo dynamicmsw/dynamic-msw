@@ -11,10 +11,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "types": [
-      "jest",
-      "node"
-    ]
+    "noImplicitAny": false,
+    "types": ["jest", "node"]
   },
   "references": [
     {
@@ -24,9 +22,5 @@
       "path": "./tsconfig.spec.json"
     }
   ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
