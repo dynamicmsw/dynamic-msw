@@ -1,3 +1,4 @@
+import { saveToStorage } from '@dynamic-msw/core';
 import {
   Table,
   TableRow,
@@ -29,7 +30,7 @@ export const Dashboard: FC<DashboardProps> = () => {
   const convertedMockConfig = mockConfig ? convertMockConfig(mockConfig) : [];
 
   return (
-    <div>
+    <Stack gap={4}>
       <h1>Dynamic MSW Dashboard</h1>
       {isLoading && (
         <h4 data-testid="dashboard-state">Loading mock config...</h4>
@@ -169,7 +170,15 @@ export const Dashboard: FC<DashboardProps> = () => {
           )}
         </ExpansionPanelContextProvider>
       </Table>
-    </div>
+      <Button
+        onClick={() => {
+          saveToStorage([]);
+          location.reload();
+        }}
+      >
+        Reset all mocks
+      </Button>
+    </Stack>
   );
 };
 

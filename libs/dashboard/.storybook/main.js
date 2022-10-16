@@ -8,7 +8,7 @@ module.exports = {
   ...rootMain,
   core: { ...rootMain.core, builder: '@storybook/builder-vite' },
   features: {
-    // storyStoreV7: true,
+    storyStoreV7: process.env.CI !== 'true',
   },
   stories: [
     ...rootMain.stories,

@@ -53,6 +53,12 @@ class CreateState {
     saveToStorage(this.state.mocks);
   };
 
+  resetMocks = () => {
+    this.state.mocks.forEach(({ resetMock }) => {
+      resetMock?.();
+    });
+  };
+
   getState = () => {
     return this.state;
   };
