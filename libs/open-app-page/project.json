@@ -31,6 +31,19 @@
         "main": "libs/open-app-page/src/index.ts",
         "assets": ["libs/open-app-page/*.md"]
       }
+    },
+    "versionCI": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional",
+        "syncVersions": true
+      }
+    },
+    "publishCI": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn nx build open-app-page && npm publish ./dist/libs/open-app-page --access=public --registry=https://registry.npmjs.org"
+      }
     }
   },
   "tags": []
