@@ -7,17 +7,11 @@ jobs:
     name: quality-assurance
     runs-on: ubuntu-latest
     steps:
-      - name: Delete workflow runs
-        uses: Mattraks/delete-workflow-runs@v2
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 0
-          keep_minimum_runs: 0
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
+      - run: node -v
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -79,7 +73,7 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
+      - run: yarn nx affected:e2e --parallel=2 --skip-nx-cache
         id: e2eTests
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
