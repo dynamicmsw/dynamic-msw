@@ -38,16 +38,16 @@ jobs:
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Fetch build cache
+      - name: Cache build
         uses: actions/cache@v2
         env:
           cache-name: build-cache
         with:
           path: |
             ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-store-
+            ${{ runner.os }}-${{ env.cache-name }}-
 
       - run: yarn --frozen-lockfile
 
@@ -65,10 +65,10 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-        # - run: yarn nx affected:e2e --parallel=1
-        #   id: e2eTests
-        #   env:
-        #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      - run: yarn nx affected:e2e --parallel=1 --skip-nx-cache
+        id: e2eTests
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload e2e result artifact
         if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
         uses: actions/upload-artifact@v3
@@ -77,18 +77,3 @@ jobs:
           path: dist/cypress/
           retention-days: 2
           if-no-files-found: error
-      # TODO: Perhaps fork this
-      - name: Get build cache hash
-        uses: theowenyoung/folder-hash@v2.0.1
-        id: buildCacheHash
-        with:
-          path: |
-            node_modules/.cache
-      - name: Store build cache
-        uses: actions/cache@v2
-        env:
-          cache-name: build-cache-store
-        with:
-          path: |
-            ./node_modules/.cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ steps.buildCacheHash.outputs.hash }}
