@@ -1,4 +1,8 @@
 name: Quality-assurance
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 on:
   workflow_call:
 
