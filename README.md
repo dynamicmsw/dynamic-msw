@@ -15,5 +15,3 @@ It might still contain some bugs so use at your own risk.
 Docs: TODO
 
 # Looking for collaborators
-
-## Inspired by [server-mockr](https://github.com/boschni/server-mockr)
