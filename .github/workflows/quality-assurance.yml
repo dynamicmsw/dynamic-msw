@@ -20,25 +20,9 @@ jobs:
           path: |
             node_modules
             ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Create build cache key files glob env variable
-        run: |
-          echo "build-cache-files=\
-            'examples/**/*.[jt]s', \
-            'examples/**/*.[jt]sx', \
-            'examples/**/*.[jt]s', \
-            'examples/**/*.[jt]sx', \
-            'libs/**/*.[jt]s', \
-            'libs/**/*.[jt]sx', \
-            'libs/**/*.[jt]s', \
-            'libs/**/*.[jt]sx', \
-            'e2e/**/*.[jt]s', \
-            'e2e/**/*.[jt]sx', \
-            'e2e/**/*.[jt]s', \
-            'e2e/**/*.[jt]sx' \
-          " >> $GITHUB_ENV
       - name: Cache build
         uses: actions/cache@v2
         env:
@@ -47,7 +31,7 @@ jobs:
           path: |
             ./node_modules/.cache
             ./examples/next/.next/cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles(env.build-cache-files) }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}-${{ hashFiles('./libs/**/*.[jt]s', './libs/**/*.[jt]sx','./examples/**/*.[jt]s', './examples/**/*.[jt]sx','./e2e/**/*.[jt]s', './e2e/**/*.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
@@ -67,7 +51,7 @@ jobs:
       - run: yarn nx affected:build --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:e2e --parallel=2 --skip-nx-cache
+      - run: yarn nx affected:e2e --parallel=2
         id: e2eTests
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
