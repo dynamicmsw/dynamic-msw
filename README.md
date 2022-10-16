@@ -12,6 +12,4 @@ It might still contain some bugs so use at your own risk.
 2. `yarn setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-server`
    `npx setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-server`
 
-Docs: TODO
-
 # Looking for collaborators
