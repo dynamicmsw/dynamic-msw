@@ -34,15 +34,16 @@ jobs:
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
-      - name: Cache node modules
-        id: cache-nodemodules
+      - name: Cache modules
+        id: cache-modules
         uses: actions/cache@v2
         env:
-          cache-name: cache-node-modules
+          cache-name: cache-modules
         with:
           path: |
             node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+            ~/.cache/Cypress
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
