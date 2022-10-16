@@ -11,14 +11,6 @@
         "lintFilePatterns": ["libs/open-app-page/**/*.ts"]
       }
     },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/open-app-page"],
-      "options": {
-        "jestConfig": "libs/open-app-page/jest.config.ts",
-        "passWithNoTests": true
-      }
-    },
     "build": {
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
