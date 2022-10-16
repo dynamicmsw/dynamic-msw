@@ -2,6 +2,12 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+### 0.0.1-beta.0 (2022-10-16)
+
+### Features
+
+- add open-app-page module ([5a62a39](https://github.com/dynamicmsw/dynamic-msw/commit/5a62a39f1c0d3bb63b302d471989f0df3bfd5005))
+
 ### [0.0.2](https://github.com/dynamicmsw/dynamic-msw/compare/v0.0.1...v0.0.2) (2022-10-13)
 
 ### 0.0.1 (2022-10-13)
