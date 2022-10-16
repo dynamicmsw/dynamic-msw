@@ -4,6 +4,16 @@
   "sourceRoot": "libs/open-app-page/src",
   "projectType": "library",
   "targets": {
+    "testLocal": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run next:serve",
+          "nx run open-app-page:build --skip-nx-cache && node ./dist/libs/open-app-page/src/lib/test-open-app-page.js --this-is-a-test"
+        ],
+        "parallel": true
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
@@ -16,7 +26,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/open-app-page",
-        "tsConfig": "libs/open-app-page/tsconfig.lib.json",
+        "tsConfig": "libs/open-app-page/tsconfig.json",
         "packageJson": "libs/open-app-page/package.json",
         "main": "libs/open-app-page/src/index.ts",
         "assets": ["libs/open-app-page/*.md"]

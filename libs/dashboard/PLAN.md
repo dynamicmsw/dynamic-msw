@@ -5,9 +5,9 @@
    Add a bootstrap scenario button which will make identical mocks in different scenarios inactive.
 1. Allow to disable mocks by default. Allow to disable/enable mocks in the dashboard.
    In a scenario mocks should be enabled unless specified otherwise.
-1. Add reset button to dashboard
 1. add query param to dashboard to reset local storage (this can be useful if you wanna clear the storage on server start)
    Package.json example:
+1. skip nx cache on main branch qa check workflow ${GITHUB_REF##\*/} to catch errors hidden by cache. consider using this on releases only to consume less ci minutes or make it a periodically manual workflow run.
 
    ```
    "serve": "npm-run-all serve:*",
