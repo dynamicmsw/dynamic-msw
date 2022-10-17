@@ -10,7 +10,10 @@ export const convertMockConfig = (mocks: MocksState[]) => {
   if (mocks.length < 0) {
     throw Error('No mocks found');
   }
-  return mocks.map(({ mockOptions, ...rest }) => {
+  const filteredMocks = mocks.filter(
+    ({ dashboardScenarioOnly }) => !dashboardScenarioOnly
+  );
+  return filteredMocks.map(({ mockOptions, ...rest }) => {
     return {
       ...rest,
       mockOptions: Object.keys(mockOptions).map((optionKey) => {
