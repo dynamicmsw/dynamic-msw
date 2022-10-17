@@ -1,4 +1,18 @@
 {
   "name": "open-app-page",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "description": "Function to wait on a web application to be running an then open a specific URL.",
+  "keywords": [
+    "open",
+    "wait-on"
+  ],
+  "homepage": "https://github.com/dynamicmsw/dynamic-msw/libs/open-app-page",
+  "bugs": {
+    "url": "https://github.com/dynamicmsw/dynamic-msw/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dynamicmsw/dynamic-msw.git",
+    "directory": "libs/open-app-page"
+  }
 }
