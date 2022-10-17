@@ -1,6 +1,6 @@
 # @dynamic-msw/dashboard
 
-Docs: TODO
+This project is ready for proof of concepts. The API's might undergo some refactoring.
 
 ## Running locally
 
