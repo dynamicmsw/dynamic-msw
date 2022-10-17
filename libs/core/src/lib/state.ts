@@ -4,7 +4,7 @@ export interface MocksState {
   mockTitle: string;
   mockOptions: Options;
   openPageURL?: string;
-  onlyRenderInDashboardScenario?: boolean;
+  dashboardScenarioOnly?: boolean;
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
