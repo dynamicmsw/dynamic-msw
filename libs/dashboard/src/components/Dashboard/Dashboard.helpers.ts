@@ -1,4 +1,5 @@
 import type {
+  State,
   MocksState,
   OptionType,
   OptionRenderType,
@@ -26,12 +27,13 @@ export const convertMockConfig = (mocks: MocksState[]) => {
 };
 
 export const updateConfig = (
-  mockConfig: MocksState[],
+  state: State,
   index: number,
   title: string,
   value: string | number | boolean
 ) => {
-  const updatedConfig = [...mockConfig];
+  const { mocks, scenarios } = state;
+  const updatedConfig = [...mocks];
   updatedConfig[index] = {
     ...updatedConfig[index],
     mockOptions: {
@@ -42,7 +44,7 @@ export const updateConfig = (
   updatedConfig[index].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;
 
-  saveToStorage(updatedConfig);
+  saveToStorage({ mocks: updatedConfig, scenarios });
 };
 
 export const convertOptionValue = (value?: string | number | boolean) =>

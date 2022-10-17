@@ -51,9 +51,9 @@ export const createMock = <T extends Options = Options>(
   {
     mockOptions,
     openPageURL,
-    scenarioTitle,
+    mockTitle,
   }: {
-    scenarioTitle: string;
+    mockTitle: string;
     openPageURL?: string | OpenPageFn<T>;
     mockOptions?: T;
   },
@@ -61,7 +61,7 @@ export const createMock = <T extends Options = Options>(
 ): CreateMockFnReturnType<T> => {
   const initialState = state
     .getState()
-    .mocks.find((stateData) => stateData.scenarioTitle === scenarioTitle);
+    .mocks.find((stateData) => stateData.mockTitle === mockTitle);
 
   let convertedConfig = convertMockOptions(
     initialState?.mockOptions || mockOptions
@@ -69,11 +69,12 @@ export const createMock = <T extends Options = Options>(
 
   const returnValue: CreateMockFnReturnType<T> = {
     mocks: setupMocks(convertedConfig, mockFn),
+    mockTitle,
     updateMock: (updateValues: Partial<ConvertedOptions<T>>) => {
       convertedConfig = { ...convertedConfig, ...updateValues };
       returnValue.mocks = setupMocks(convertedConfig, mockFn);
       state.updateMock({
-        scenarioTitle,
+        mockTitle,
         mockOptions: updateMockOptions(mockOptions, updateValues),
         openPageURL: getPageURL(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
@@ -84,7 +85,7 @@ export const createMock = <T extends Options = Options>(
       convertedConfig = convertMockOptions(mockOptions);
       returnValue.mocks = setupMocks(convertedConfig, mockFn);
       state.updateMock({
-        scenarioTitle,
+        mockTitle,
         mockOptions,
         openPageURL: getPageURL(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
@@ -94,7 +95,7 @@ export const createMock = <T extends Options = Options>(
   };
 
   state.addMock({
-    scenarioTitle,
+    mockTitle,
     mockOptions,
     openPageURL: getPageURL(convertedConfig, openPageURL),
     updateMock: returnValue.updateMock,

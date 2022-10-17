@@ -1,36 +1,62 @@
 import type { Options, ConvertedOptions } from './createMock.types';
 
 export interface MocksState {
-  scenarioTitle: string;
+  mockTitle: string;
   mockOptions: Options;
   openPageURL?: string;
+  onlyRenderInDashboardScenario?: boolean;
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
 
+export interface ScenariosState {
+  scenarioTitle: string;
+  mocks: string[];
+}
+
+export interface State {
+  mocks: MocksState[];
+  scenarios: ScenariosState[];
+}
+
 export const dynamicMswStorageKey = 'dynamic-msw-state';
 
-export const saveToStorage = (state: MocksState[]) => {
+export const saveToStorage = (state: State) => {
   if (typeof sessionStorage !== 'undefined') {
     localStorage.setItem(dynamicMswStorageKey, JSON.stringify(state));
   }
 };
 
-export const loadFromStorage = (): MocksState[] => {
+export const defaultState = { mocks: [], scenarios: [] };
+
+export const loadFromStorage = (): State => {
   if (typeof localStorage !== 'undefined') {
-    return JSON.parse(localStorage.getItem(dynamicMswStorageKey) || '[]');
+    const storageItem = localStorage.getItem(dynamicMswStorageKey);
+    return storageItem
+      ? JSON.parse(localStorage.getItem(dynamicMswStorageKey))
+      : defaultState;
   }
-  return [];
+  return defaultState;
 };
 
 class CreateState {
-  state: {
-    mocks: MocksState[];
-  } = { mocks: loadFromStorage() };
+  state: State = loadFromStorage();
+
+  addScenario = (data: ScenariosState) => {
+    const existingScenarioIndex = this.state.scenarios.findIndex(
+      ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
+    );
+    if (existingScenarioIndex >= 0) {
+      this.state.scenarios[existingScenarioIndex] = data;
+    } else {
+      this.state.scenarios.push(data);
+    }
+    saveToStorage(this.state);
+  };
 
   addMock = (data: MocksState) => {
     const existingMockIndex = this.state.mocks.findIndex(
-      ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
+      ({ mockTitle }) => mockTitle === data.mockTitle
     );
     if (existingMockIndex >= 0) {
       this.state.mocks[existingMockIndex] = {
@@ -42,15 +68,15 @@ class CreateState {
     } else {
       this.state.mocks.push(data);
     }
-    saveToStorage(this.state.mocks);
+    saveToStorage(this.state);
   };
 
   updateMock = (data: MocksState) => {
     const existingMockIndex = this.state.mocks.findIndex(
-      ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
+      ({ mockTitle }) => mockTitle === data.mockTitle
     );
     this.state.mocks[existingMockIndex] = data;
-    saveToStorage(this.state.mocks);
+    saveToStorage(this.state);
   };
 
   resetMocks = () => {

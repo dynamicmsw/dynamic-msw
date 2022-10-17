@@ -18,7 +18,7 @@ const mockOptions = {
 
 export const exampleMock = createMock(
   {
-    scenarioTitle: 'example',
+    mockTitle: 'example',
     openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
     mockOptions,
   },
@@ -97,7 +97,7 @@ describe('dynamicMsw', () => {
   it('saves state to localStorage', () => {
     const expectedState: MocksState[] = [
       {
-        scenarioTitle: 'example',
+        mockTitle: 'example',
         mockOptions,
         openPageURL: 'yes-page',
       },
@@ -110,7 +110,7 @@ describe('dynamicMsw', () => {
     exampleMock.updateMock({ success: false });
     const expectedState: MocksState[] = [
       {
-        scenarioTitle: 'example',
+        mockTitle: 'example',
         mockOptions: {
           success: { ...mockOptions.success, selectedValue: false },
           optionTwo: {
@@ -137,18 +137,21 @@ describe('dynamicMsw', () => {
   });
 
   it('initializes with storage state', async () => {
-    saveToStorage([
-      {
-        scenarioTitle: 'example',
-        mockOptions: {
-          success: {
-            options: [true, false],
-            defaultValue: true,
-            selectedValue: false,
+    saveToStorage({
+      mocks: [
+        {
+          mockTitle: 'example',
+          mockOptions: {
+            success: {
+              options: [true, false],
+              defaultValue: true,
+              selectedValue: false,
+            },
           },
         },
-      },
-    ]);
+      ],
+      scenarios: [],
+    });
 
     setupWorker([exampleMock], setupServer);
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
