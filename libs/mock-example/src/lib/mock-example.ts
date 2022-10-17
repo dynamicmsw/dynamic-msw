@@ -10,7 +10,7 @@ export interface ExampleResponse {
 
 export const exampleMock = createMock(
   {
-    scenarioTitle: 'example',
+    mockTitle: 'example',
     mockOptions: {
       success: {
         options: [true, false],
@@ -30,7 +30,7 @@ export const exampleMock = createMock(
 
 export const variatedExampleMock = createMock(
   {
-    scenarioTitle: 'Variated mock options',
+    mockTitle: 'Variated mock options',
     openPageURL: '#',
     mockOptions: {
       someTextOption: {
