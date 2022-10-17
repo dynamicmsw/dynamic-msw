@@ -2,7 +2,24 @@
   "name": "@dynamic-msw/dashboard",
   "sideEffects": false,
   "version": "0.0.2",
-  "types": "index.d.ts",
+  "description": "User interface for adjusting mocks created with dynamic-msw (@dynamic-msw/core)",
+  "keywords": [
+    "dynamic-msw",
+    "msw",
+    "mock",
+    "mocking",
+    "dashboard"
+  ],
+  "homepage": "https://github.com/dynamicmsw/dynamic-msw/libs/dashboard",
+  "bugs": {
+    "url": "https://github.com/dynamicmsw/dynamic-msw/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dynamicmsw/dynamic-msw.git",
+    "directory": "libs/dashboard"
+  },
+  "types": "types.d.ts",
   "files": [
     "./copyHtmlFile.js",
     "./index.html"
