@@ -3,10 +3,24 @@ import type {
   MocksState,
   OptionType,
   OptionRenderType,
+  ScenariosState,
 } from '@dynamic-msw/core';
 import { saveToStorage } from '@dynamic-msw/core';
 
-export const convertMockConfig = (mocks: MocksState[]) => {
+export interface ConvertedMockOptions {
+  type?: OptionRenderType;
+  options?: OptionType[];
+  title: string;
+  selectedValue?: OptionType;
+}
+export interface ConvertMockConfigReturnType
+  extends Omit<MocksState, 'mockOptions'> {
+  mockOptions: ConvertedMockOptions[];
+}
+
+export const convertMockConfig = (
+  mocks: MocksState[]
+): ConvertMockConfigReturnType[] => {
   if (mocks.length < 0) {
     throw Error('No mocks found');
   }
@@ -27,6 +41,25 @@ export const convertMockConfig = (mocks: MocksState[]) => {
       }),
     };
   });
+};
+
+const getScenarioMocks = (scenarios: ScenariosState[], mocks: MocksState[]) =>
+  scenarios.map(({ mocks: mockIds, ...rest }) => ({
+    ...rest,
+    mocks: mockIds
+      .map((mockId) => mocks.find(({ mockTitle }) => mockId === mockTitle))
+      .filter(Boolean) as MocksState[],
+  }));
+
+export const convertScenarios = (
+  scenarios: ScenariosState[],
+  mocks: MocksState[]
+) => {
+  const scenariosWithMocks = getScenarioMocks(scenarios, mocks);
+  return scenariosWithMocks.map(({ mocks, ...rest }) => ({
+    ...rest,
+    mocks: convertMockConfig(mocks),
+  }));
 };
 
 export const updateConfig = (

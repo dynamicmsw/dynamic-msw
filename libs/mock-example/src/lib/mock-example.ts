@@ -1,4 +1,4 @@
-import { createMock, setupWorker } from '@dynamic-msw/core';
+import { createMock, setupWorker, createScenario } from '@dynamic-msw/core';
 import { rest } from 'msw';
 import type { setupServer as setupServerMsw } from 'msw/node';
 
@@ -54,6 +54,11 @@ export const variatedExampleMock = createMock(
     });
   }
 );
+
+export const exampleScenario = createScenario('example scenario', [
+  exampleMock,
+  variatedExampleMock,
+]);
 
 export const setup = (setupServer?: typeof setupServerMsw) =>
   setupWorker([exampleMock, variatedExampleMock], setupServer);

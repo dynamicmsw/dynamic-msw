@@ -8,3 +8,4 @@
 1. add query param to dashboard to reset local storage (this can be useful if you wanna clear the storage on server start)
    Package.json example:
 1. skip nx cache on main branch qa check workflow ${GITHUB_REF##\*/} to catch errors hidden by cache. consider using this on releases only to consume less ci minutes or make it a periodically manual workflow run.
+1. ensure mock titles are uniques or show a warning
