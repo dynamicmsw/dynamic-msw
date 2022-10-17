@@ -7,7 +7,7 @@ describe('createMock type definitions', () => {
   it('passes down converted config types', () => {
     createMock(
       {
-        scenarioTitle: 'example',
+        mockTitle: 'example',
         mockOptions: {
           success: {
             options: [true, false],

@@ -1,4 +1,4 @@
-import { saveToStorage } from '@dynamic-msw/core';
+import { saveToStorage, defaultState } from '@dynamic-msw/core';
 import {
   Table,
   TableRow,
@@ -27,7 +27,9 @@ export interface DashboardProps {}
 
 export const Dashboard: FC<DashboardProps> = () => {
   const { mockConfig, isLoading, iFrameError } = useGetMockConfig();
-  const convertedMockConfig = mockConfig ? convertMockConfig(mockConfig) : [];
+  const convertedMockConfig = mockConfig
+    ? convertMockConfig(mockConfig.mocks)
+    : [];
 
   return (
     <Stack gap={4}>
@@ -40,9 +42,9 @@ export const Dashboard: FC<DashboardProps> = () => {
       <Table columns={3}>
         <ExpansionPanelContextProvider>
           {convertedMockConfig.map(
-            ({ scenarioTitle, mockOptions, openPageURL }, index) => (
+            ({ mockTitle, mockOptions, openPageURL }, index) => (
               <div
-                key={scenarioTitle}
+                key={mockTitle}
                 css={{
                   display: 'contents',
                   '> * > *, summary': { display: 'flex', alignItems: 'center' },
@@ -59,14 +61,14 @@ export const Dashboard: FC<DashboardProps> = () => {
                 <TableRow>
                   <TableCell>
                     <Spacing pl={2}>
-                      <h4 data-testid="scenario-title">{scenarioTitle}</h4>
+                      <h4 data-testid="scenario-title">{mockTitle}</h4>
                     </Spacing>
                   </TableCell>
 
                   {mockOptions.length >= 0 ? (
                     <ExpansionPanel
                       title="Configure"
-                      contextId={scenarioTitle}
+                      contextId={mockTitle}
                       data-testid="configure-panel"
                     >
                       <TableCell row={index + 2} columnStart={1} columnEnd={4}>
@@ -74,7 +76,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                           <Stack gap={3}>
                             {mockOptions.map(
                               ({ selectedValue, options, type, title }) => {
-                                const optionId = `${scenarioTitle}-${title}`;
+                                const optionId = `${mockTitle}-${title}`;
                                 const inputType = getInputType(
                                   selectedValue,
                                   options,
@@ -173,7 +175,7 @@ export const Dashboard: FC<DashboardProps> = () => {
       <Button
         data-testid="reset-all-mocks-button"
         onClick={() => {
-          saveToStorage([]);
+          saveToStorage(defaultState);
           location.reload();
         }}
       >
