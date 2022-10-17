@@ -12,6 +12,7 @@ export interface MocksState {
 export interface ScenariosState {
   scenarioTitle: string;
   mocks: string[];
+  openPageURL?: string;
 }
 
 export interface State {
