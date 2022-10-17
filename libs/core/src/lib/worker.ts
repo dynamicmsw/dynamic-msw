@@ -5,6 +5,10 @@ import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 import type { CreateMockFnReturnType } from './createMock.types';
 import { state } from './state';
 
+// TODO: pass scenarios as seperate argument so that they will always initiliaze after mocks
+// TODO: this will also remove the need to use the spread operator by a developer
+// TODO: consider if one should not initialize a createMock and enforce it to be
+// TODO: initiliazed when when used in a scenario
 export const setupWorker = (
   mocks: Array<RestHandler | CreateMockFnReturnType>,
   // enforce to pass setupServer for node environments

@@ -1,4 +1,8 @@
-import type { Options, ConvertedOptions } from './createMock.types';
+import type {
+  Options,
+  ConvertedOptions,
+  CreateMockFnReturnType,
+} from './createMock.types';
 
 export interface MocksState {
   mockTitle: string;
@@ -11,7 +15,7 @@ export interface MocksState {
 
 export interface ScenariosState {
   scenarioTitle: string;
-  mocks: string[];
+  mocks: MocksState[];
   openPageURL?: string;
 }
 
@@ -53,6 +57,7 @@ class CreateState {
       this.state.scenarios.push(data);
     }
     saveToStorage(this.state);
+    return data;
   };
 
   addMock = (data: MocksState) => {

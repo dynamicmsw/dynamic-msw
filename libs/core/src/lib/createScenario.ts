@@ -1,11 +1,20 @@
+import { convertMockOptions } from './createMock';
 import type { CreateMockFnReturnType } from './createMock.types';
 import { state } from './state';
 
 export const createScenario = (
   scenarioTitle: string,
   mocks: CreateMockFnReturnType[]
-) =>
-  state.addScenario({
+) => {
+  const currentState = state.getState();
+  const foundMocks = mocks.map(({ mockTitle }) =>
+    currentState.mocks.find((data) => mockTitle === data.mockTitle)
+  );
+
+  return state.addScenario({
     scenarioTitle,
-    mocks: mocks.map(({ mockTitle }) => mockTitle),
+    mocks: mocks.map(({ mockTitle }) =>
+      currentState.mocks.find((data) => mockTitle === data.mockTitle)
+    ),
   });
+};

@@ -44,19 +44,13 @@ export const convertMockConfig = (
 };
 
 const getScenarioMocks = (scenarios: ScenariosState[], mocks: MocksState[]) =>
-  scenarios.map(({ mocks: mockIds, ...rest }) => ({
+  scenarios.map(({ mocks, ...rest }) => ({
     ...rest,
-    mocks: mockIds
-      .map((mockId) => mocks.find(({ mockTitle }) => mockId === mockTitle))
-      .filter(Boolean) as MocksState[],
+    mocks,
   }));
 
-export const convertScenarios = (
-  scenarios: ScenariosState[],
-  mocks: MocksState[]
-) => {
-  const scenariosWithMocks = getScenarioMocks(scenarios, mocks);
-  return scenariosWithMocks.map(({ mocks, ...rest }) => ({
+export const convertScenarios = (scenarios: ScenariosState[]) => {
+  return scenarios.map(({ mocks, ...rest }) => ({
     ...rest,
     mocks: convertMockConfig(mocks),
   }));

@@ -21,7 +21,7 @@ export const Dashboard: FC<DashboardProps> = () => {
     ? convertMockConfig(mockConfig.mocks)
     : [];
   const convertedScenarios = mockConfig
-    ? convertScenarios(mockConfig.scenarios, mockConfig.mocks)
+    ? convertScenarios(mockConfig.scenarios)
     : [];
 
   return (
@@ -36,6 +36,8 @@ export const Dashboard: FC<DashboardProps> = () => {
         <ExpansionPanelContextProvider>
           <div
             css={{
+              // TODO: fix this way of styling the table rows.
+              // TODO: This should be possible from the stela-ui lib for starters
               display: 'contents',
               '> * > *, summary': { display: 'flex', alignItems: 'center' },
               '&:nth-child(odd) div, &:nth-child(odd) summary, &:nth-child(odd) details':
@@ -87,25 +89,28 @@ export const Dashboard: FC<DashboardProps> = () => {
                     )}
                     openPageURL={openPageURL}
                   >
-                    {mocks.map(({ mockTitle, mockOptions }) =>
-                      mockOptions.map(
-                        ({ selectedValue, options, type, title }) => (
-                          <MockOptionsInput
-                            key={`${scenarioTitle}-${mockTitle}-${title}`}
-                            id={`${scenarioTitle}-${mockTitle}-${title}`}
-                            mockConfigIndex={convertedMockConfig.findIndex(
-                              (data) => mockTitle === data.mockTitle
-                            )}
-                            title={title}
-                            options={options}
-                            selectedValue={selectedValue}
-                            type={type}
-                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                            mockConfig={mockConfig!}
-                          />
-                        )
-                      )
-                    )}
+                    {mocks.map(({ mockTitle, mockOptions }) => (
+                      <>
+                        <h4 css={{ margin: 0 }}>{mockTitle}</h4>
+                        {mockOptions.map(
+                          ({ selectedValue, options, type, title }) => (
+                            <MockOptionsInput
+                              key={`${scenarioTitle}-${mockTitle}-${title}`}
+                              id={`${scenarioTitle}-${mockTitle}-${title}`}
+                              mockConfigIndex={convertedMockConfig.findIndex(
+                                (data) => mockTitle === data.mockTitle
+                              )}
+                              title={title}
+                              options={options}
+                              selectedValue={selectedValue}
+                              type={type}
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                              mockConfig={mockConfig!}
+                            />
+                          )
+                        )}
+                      </>
+                    ))}
                   </OptionsTableRow>
                 </>
               )
@@ -116,6 +121,9 @@ export const Dashboard: FC<DashboardProps> = () => {
       <Button
         data-testid="reset-all-mocks-button"
         onClick={() => {
+          // TODO: this will require the iframe method of loading in createMock it's storage.
+          // TODO: consider to alter this so that it will work with or without that.
+          // TODO: perhaps it should be a hard requirement to use the iframe method.
           saveToStorage(defaultState);
           location.reload();
         }}

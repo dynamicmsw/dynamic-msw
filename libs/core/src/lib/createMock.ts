@@ -9,7 +9,7 @@ import type {
 } from './createMock.types';
 import { state } from './state';
 
-const convertMockOptions: ConvertMockOptionsFn = (options) =>
+export const convertMockOptions: ConvertMockOptionsFn = (options) =>
   Object.keys(options).reduce(
     (prev, curr) => ({
       ...prev,
@@ -21,7 +21,7 @@ const convertMockOptions: ConvertMockOptionsFn = (options) =>
     {} as ConvertedOptions
   );
 
-const setupMocks: SetupMocksFn = (options, mockFn) => {
+export const setupMocks: SetupMocksFn = (options, mockFn) => {
   const mockFnReturnValue = mockFn(options);
   const arrayOfMocks = Array.isArray(mockFnReturnValue)
     ? mockFnReturnValue
