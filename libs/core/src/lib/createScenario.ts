@@ -1,4 +1,3 @@
-import { convertMockOptions } from './createMock';
 import type { CreateMockFnReturnType } from './createMock.types';
 import { state } from './state';
 
@@ -13,8 +12,6 @@ export const createScenario = (
 
   return state.addScenario({
     scenarioTitle,
-    mocks: mocks.map(({ mockTitle }) =>
-      currentState.mocks.find((data) => mockTitle === data.mockTitle)
-    ),
+    mocks: foundMocks,
   });
 };
