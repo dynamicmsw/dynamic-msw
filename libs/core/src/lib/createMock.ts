@@ -71,16 +71,25 @@ export const createMock = <T extends Options = Options>(
     mocks: setupMocks(convertedConfig, mockFn),
     mockTitle,
     mockOptions: initialState?.mockOptions || mockOptions,
-    updateMock: (updateValues: Partial<ConvertedOptions<T>>) => {
-      convertedConfig = { ...convertedConfig, ...updateValues };
-      returnValue.mocks = setupMocks(convertedConfig, mockFn);
-      state.updateMock({
-        mockTitle,
-        mockOptions: updateMockOptions(mockOptions, updateValues),
-        openPageURL: getPageURL(convertedConfig, openPageURL),
-        updateMock: returnValue.updateMock,
-        resetMock: returnValue.resetMock,
-      });
+    updateMock: (updateValues, skipSaveToState) => {
+      if (skipSaveToState) {
+        return {
+          ...returnValue,
+          mockOptions: updateMockOptions(mockOptions, updateValues),
+          mocks: setupMocks({ ...convertedConfig, ...updateValues }, mockFn),
+        };
+      } else {
+        convertedConfig = { ...convertedConfig, ...updateValues };
+        returnValue.mocks = setupMocks(convertedConfig, mockFn);
+        state.updateMock({
+          mockTitle,
+          mockOptions: updateMockOptions(mockOptions, updateValues),
+          openPageURL: getPageURL(convertedConfig, openPageURL),
+          updateMock: returnValue.updateMock,
+          resetMock: returnValue.resetMock,
+        });
+      }
+      return returnValue;
     },
     resetMock: () => {
       convertedConfig = convertMockOptions(mockOptions);
@@ -93,6 +102,7 @@ export const createMock = <T extends Options = Options>(
         resetMock: returnValue.resetMock,
       });
     },
+    // scenario: () => {}
   };
 
   state.addMock({
