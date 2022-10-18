@@ -15,7 +15,8 @@ export interface MocksState {
 
 export interface ScenariosState {
   scenarioTitle: string;
-  mocks: MocksState[];
+  mocks: CreateMockFnReturnType[];
+  isActive?: boolean;
   openPageURL?: string;
 }
 
@@ -51,12 +52,11 @@ class CreateState {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
-    if (existingScenarioIndex >= 0) {
-      this.state.scenarios[existingScenarioIndex] = data;
-    } else {
+    if (existingScenarioIndex < 0) {
       this.state.scenarios.push(data);
+      saveToStorage(this.state);
     }
-    saveToStorage(this.state);
+
     return data;
   };
 

@@ -70,6 +70,7 @@ export const createMock = <T extends Options = Options>(
   const returnValue: CreateMockFnReturnType<T> = {
     mocks: setupMocks(convertedConfig, mockFn),
     mockTitle,
+    mockOptions: initialState?.mockOptions || mockOptions,
     updateMock: (updateValues: Partial<ConvertedOptions<T>>) => {
       convertedConfig = { ...convertedConfig, ...updateValues };
       returnValue.mocks = setupMocks(convertedConfig, mockFn);

@@ -7,7 +7,12 @@ import {
 } from '@stela-ui/react';
 import type { FC } from 'react';
 
-import { convertMockConfig, convertScenarios } from './Dashboard.helpers';
+import {
+  convertMockConfig,
+  convertScenarios,
+  updateMockOptions,
+  getInputType,
+} from './Dashboard.helpers';
 import { MockOptionsInput } from './MockOptionsInput';
 import { OptionsTableRow } from './OptionsTableRow';
 import { useGetMockConfig } from './useGetMockConfig';
@@ -60,19 +65,32 @@ export const Dashboard: FC<DashboardProps> = () => {
                   openPageURL={openPageURL}
                 >
                   {mockOptions.map(
-                    ({ selectedValue, options, type, title }) => (
-                      <MockOptionsInput
-                        key={`${mockTitle}-${title}`}
-                        id={`${mockTitle}-${title}`}
-                        mockConfigIndex={index}
-                        title={title}
-                        options={options}
-                        selectedValue={selectedValue}
-                        type={type}
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        mockConfig={mockConfig!}
-                      />
-                    )
+                    ({ selectedValue, options, type, title }) => {
+                      const inputType = getInputType(
+                        selectedValue,
+                        options,
+                        type
+                      );
+                      return (
+                        <MockOptionsInput
+                          key={`${mockTitle}-${title}`}
+                          id={`${mockTitle}-${title}`}
+                          title={title}
+                          options={options}
+                          selectedValue={selectedValue}
+                          inputType={inputType}
+                          onChange={(value) => {
+                            updateMockOptions(
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                              mockConfig!,
+                              index,
+                              title,
+                              inputType === 'number' ? Number(value) : value
+                            );
+                          }}
+                        />
+                      );
+                    }
                   )}
                 </OptionsTableRow>
               )
@@ -93,21 +111,26 @@ export const Dashboard: FC<DashboardProps> = () => {
                       <>
                         <h4 css={{ margin: 0 }}>{mockTitle}</h4>
                         {mockOptions.map(
-                          ({ selectedValue, options, type, title }) => (
-                            <MockOptionsInput
-                              key={`${scenarioTitle}-${mockTitle}-${title}`}
-                              id={`${scenarioTitle}-${mockTitle}-${title}`}
-                              mockConfigIndex={convertedMockConfig.findIndex(
-                                (data) => mockTitle === data.mockTitle
-                              )}
-                              title={title}
-                              options={options}
-                              selectedValue={selectedValue}
-                              type={type}
-                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                              mockConfig={mockConfig!}
-                            />
-                          )
+                          ({ selectedValue, options, type, title }) => {
+                            const inputType = getInputType(
+                              selectedValue,
+                              options,
+                              type
+                            );
+                            return (
+                              <MockOptionsInput
+                                key={`${scenarioTitle}-${mockTitle}-${title}`}
+                                id={`${scenarioTitle}-${mockTitle}-${title}`}
+                                title={title}
+                                options={options}
+                                selectedValue={selectedValue}
+                                onChange={(value) => {
+                                  //
+                                }}
+                                inputType={inputType}
+                              />
+                            );
+                          }
                         )}
                       </>
                     ))}

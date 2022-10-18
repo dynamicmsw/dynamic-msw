@@ -35,7 +35,7 @@ export const exampleMock = createMock(
 
 describe('dynamicMsw', () => {
   beforeAll(() => {
-    setupWorker([exampleMock], setupServer);
+    setupWorker({ mocks: [exampleMock], setupServer });
   });
   afterEach(() => {
     resetHandlers();
@@ -133,7 +133,7 @@ describe('dynamicMsw', () => {
   it('initializes with storage state', async () => {
     exampleMock.updateMock({ success: false });
     stopWorker();
-    setupWorker([exampleMock], setupServer);
+    setupWorker({ mocks: [exampleMock], setupServer });
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
     );
@@ -159,7 +159,7 @@ describe('dynamicMsw', () => {
       scenarios: [],
     });
 
-    setupWorker([exampleMock], setupServer);
+    setupWorker({ mocks: [exampleMock], setupServer });
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
     );

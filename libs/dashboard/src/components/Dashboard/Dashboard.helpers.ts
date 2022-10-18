@@ -43,12 +43,6 @@ export const convertMockConfig = (
   });
 };
 
-const getScenarioMocks = (scenarios: ScenariosState[], mocks: MocksState[]) =>
-  scenarios.map(({ mocks, ...rest }) => ({
-    ...rest,
-    mocks,
-  }));
-
 export const convertScenarios = (scenarios: ScenariosState[]) => {
   return scenarios.map(({ mocks, ...rest }) => ({
     ...rest,
@@ -56,7 +50,7 @@ export const convertScenarios = (scenarios: ScenariosState[]) => {
   }));
 };
 
-export const updateConfig = (
+export const updateMockOptions = (
   state: State,
   index: number,
   title: string,

@@ -28,43 +28,37 @@ export const exampleMock = createMock(
   }
 );
 
-export const variatedExampleMock = ({
-  someNumberOption = 123,
-}: { someNumberOption?: number } | undefined = {}) =>
-  createMock(
-    {
-      mockTitle: 'Variated mock options',
-      openPageURL: '#',
-      mockOptions: {
-        someTextOption: {
-          defaultValue: 'text value',
-        },
-        someNumberOption: {
-          defaultValue: someNumberOption,
-        },
-        someUndefinedOption: {
-          type: 'text',
-        },
+export const variatedExampleMock = createMock(
+  {
+    mockTitle: 'Variated mock options',
+    openPageURL: '#',
+    mockOptions: {
+      someTextOption: {
+        defaultValue: 'text value',
+      },
+      someNumberOption: {
+        defaultValue: 123,
+      },
+      someUndefinedOption: {
+        type: 'text',
       },
     },
-    (config) => {
-      const response = {
-        iAmText: config.someTextOption,
-        iAmNumber: config.someNumberOption,
-      };
-      return rest.get('/i-am-relative', async (_req, res, ctx) => {
-        return res(ctx.json(response));
-      });
-    }
-  );
+  },
+  (config) => {
+    const response = {
+      iAmText: config.someTextOption,
+      iAmNumber: config.someNumberOption,
+    };
+    return rest.get('/i-am-relative', async (_req, res, ctx) => {
+      return res(ctx.json(response));
+    });
+  }
+);
 
 export const exampleScenario = createScenario('example scenario', [
   exampleMock,
-  variatedExampleMock({ someNumberOption: 456 }),
+  variatedExampleMock,
 ]);
 
 export const setup = (setupServer?: typeof setupServerMsw) =>
-  setupWorker(
-    [exampleMock, variatedExampleMock(), ...exampleScenario.mocks],
-    setupServer
-  );
+  setupWorker({ mocks: [exampleMock, variatedExampleMock], setupServer });
