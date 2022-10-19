@@ -134,6 +134,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                       clonedState.scenarios[index].isActive = true;
                       saveToStorage(clonedState);
                       setMockState(clonedState);
+
                       if (openPageURL) {
                         window.open(openPageURL, '_blank')?.focus();
                       }

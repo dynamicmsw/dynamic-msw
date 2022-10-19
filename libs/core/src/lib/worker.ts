@@ -26,11 +26,11 @@ export const setupWorker = ({
     (mock) => (mock as CreateMockFnReturnType)?.mocks || (mock as RestHandler)
   );
   const setup = setupServer || setupWorkerMsw;
-  const activeScenario = scenarios?.find(({ isActive }) => isActive);
+  const activeScenarioIndex = scenarios?.findIndex(({ isActive }) => isActive);
   const activeScenarioMocks =
-    activeScenario?.mocks.flatMap(({ mocks }) => mocks) || [];
-
-  global.__mock_worker = setup(...handlers, ...activeScenarioMocks);
+    scenarios[activeScenarioIndex]?.mocks.flatMap(({ mocks }) => mocks) || [];
+  global.__mock_worker = setup(...handlers);
+  global.__mock_worker.use(...activeScenarioMocks);
   startWorker();
   return global.__mock_worker;
 };

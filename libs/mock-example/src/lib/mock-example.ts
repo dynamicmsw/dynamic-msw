@@ -65,4 +65,8 @@ export const exampleScenario = createScenario(
 );
 
 export const setup = (setupServer?: typeof setupServerMsw) =>
-  setupWorker({ mocks: [exampleMock, variatedExampleMock], setupServer });
+  setupWorker({
+    mocks: [exampleMock, variatedExampleMock],
+    scenarios: [exampleScenario],
+    setupServer,
+  });

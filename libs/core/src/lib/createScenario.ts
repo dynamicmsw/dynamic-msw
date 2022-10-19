@@ -1,4 +1,6 @@
+import { convertMockOptions } from './createMock';
 import type { CreateMockFnReturnType, OptionType } from './createMock.types';
+import type { State } from './state';
 import { state } from './state';
 
 // TODO: figure out if something like this is possible
@@ -19,8 +21,8 @@ export const createScenario = (
   } = {}
 ) => {
   // TODO: temp solution to use until proper type checking is implemented
-  mocks.forEach(({ mock, options }) => {
-    const optionsKeys = Object.keys(options);
+  mocks.forEach(({ mock, options: mockOptions }) => {
+    const optionsKeys = Object.keys(mockOptions);
     const mockOptionsKeys = Object.keys(mock.mockOptions);
     optionsKeys.forEach((key) => {
       if (!mockOptionsKeys.includes(key)) {
@@ -28,21 +30,46 @@ export const createScenario = (
       }
     });
   });
-  const updateMocks = () =>
-    mocks.map(({ mock, options }) => {
+  const initialState = state.getState();
+  const initialScenarioIndex = initialState.scenarios.findIndex(
+    (scenario) => scenario.scenarioTitle === scenarioTitle
+  );
+
+  const updateMocks = (initialScenarioIndex?: number) =>
+    mocks.map(({ mock, options: mockOptions }, index) => {
+      const initialMockOptions =
+        initialScenarioIndex >= 0
+          ? convertMockOptions(
+              initialState.scenarios[initialScenarioIndex].mocks[index]
+                .mockOptions
+            )
+          : mockOptions;
       return {
-        mock: mock.updateMock(options, true),
-        options,
+        mock: mock.updateMock(initialMockOptions, true),
+        options: initialMockOptions,
       };
     });
   const scenarioData = {
     ...options,
+    isActive: initialState.scenarios[initialScenarioIndex]?.isActive,
     scenarioTitle,
-    mocks: updateMocks().map(({ mock }) => mock),
+    mocks: updateMocks(initialScenarioIndex).map(({ mock }) => mock),
     resetMock: () => {
       scenarioData.mocks = updateMocks().map(({ mock }) => mock);
       state.updateScenario(scenarioData);
+      if (initialState.scenarios[initialScenarioIndex]?.isActive) {
+        global.__mock_worker?.use(
+          ...scenarioData.mocks.flatMap(({ mocks }) => mocks)
+        );
+      }
     },
   };
-  return state.addScenario(scenarioData);
+
+  if (initialState.scenarios[initialScenarioIndex]?.isActive) {
+    global.__mock_worker?.use(
+      ...scenarioData.mocks.flatMap(({ mocks }) => mocks)
+    );
+  }
+  state.addScenario(scenarioData);
+  return scenarioData;
 };
