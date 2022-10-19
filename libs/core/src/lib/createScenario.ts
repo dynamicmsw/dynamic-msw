@@ -19,12 +19,12 @@ import { state } from './state';
 
 type CreateMockOptions = {
   mockOptions: Record<string, OptionType>;
+  mockTitle: string;
 };
 
 type ScenarioMock = {
   mock: CreateMockFnReturnType;
-  mockTitle: string;
-  mockOptions: CreateMockOptions;
+  mockOptions: CreateMockOptions['mockOptions'];
 };
 
 type SetupMocksFn = (
@@ -105,12 +105,11 @@ export const createScenario = (
 
   const defaultMockOptions = getMockOptionsArray(mocks, mocksFromState);
 
-  const createMockOptions =
-    // initialScenario?.mocks.map(({ mockOptions, mockTitle }) => ({
-    //   mockOptions: convertMockOptions(mockOptions),
-    //   mockTitle,
-    // })) ||
-    defaultMockOptions;
+  const createMockOptions: CreateMockOptions[] =
+    initialScenario?.mocks.map(({ mockOptions, mockTitle }) => ({
+      mockOptions: convertMockOptions(mockOptions),
+      mockTitle,
+    })) || defaultMockOptions;
 
   const initializedMocks = initializeManyMocks({
     mocksFromState,

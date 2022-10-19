@@ -75,7 +75,7 @@ export const updateScenarioOptions = (
   const clonedConfig: State['scenarios'] = JSON.parse(
     JSON.stringify(scenarios)
   );
-  clonedConfig[index].mocks[mocksIndex][title].selectedValue =
+  clonedConfig[index].mocks[mocksIndex].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;
 
   saveToStorage({ mocks, scenarios: clonedConfig });
@@ -90,7 +90,8 @@ const resetScenarioOptions = (state: State) => {
   clonedConfig.forEach(({ mocks }, index) => {
     mocks.forEach(({ mockOptions }, mockIndex) => {
       Object.keys(mockOptions).forEach((key) => {
-        delete clonedConfig[index].mocks[mockIndex][key].selectedValue;
+        delete clonedConfig[index].mocks[mockIndex].mockOptions[key]
+          .selectedValue;
       });
     });
   });
