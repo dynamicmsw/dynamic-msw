@@ -18,6 +18,7 @@ export interface ScenariosState {
   mocks: CreateMockFnReturnType[];
   isActive?: boolean;
   openPageURL?: string;
+  resetMock?: () => void;
 }
 
 export interface State {
@@ -46,7 +47,7 @@ export const loadFromStorage = (): State => {
 };
 
 class CreateState {
-  state: State = loadFromStorage();
+  state: State = loadFromStorage() || defaultState;
 
   addScenario = (data: ScenariosState) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
@@ -54,6 +55,20 @@ class CreateState {
     );
     if (existingScenarioIndex < 0) {
       this.state.scenarios.push(data);
+      saveToStorage(this.state);
+    } else {
+      this.state.scenarios[existingScenarioIndex].resetMock = data.resetMock;
+    }
+
+    return data;
+  };
+  updateScenario = (data: ScenariosState) => {
+    const existingScenarioIndex = this.state.scenarios.findIndex(
+      ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
+    );
+
+    if (existingScenarioIndex >= 0) {
+      this.state.scenarios[existingScenarioIndex] = data;
       saveToStorage(this.state);
     }
 
@@ -87,6 +102,9 @@ class CreateState {
 
   resetMocks = () => {
     this.state.mocks.forEach(({ resetMock }) => {
+      resetMock?.();
+    });
+    this.state.scenarios.forEach(({ resetMock }) => {
       resetMock?.();
     });
   };

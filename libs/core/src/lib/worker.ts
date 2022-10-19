@@ -68,5 +68,5 @@ export const stopWorker = () => {
 
 export const resetHandlers = () => {
   state.resetMocks();
-  global.__mock_worker.resetHandlers();
+  global.__mock_worker?.resetHandlers();
 };

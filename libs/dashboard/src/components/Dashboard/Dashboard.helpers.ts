@@ -57,18 +57,28 @@ export const updateMockOptions = (
   value: string | number | boolean
 ) => {
   const { mocks, scenarios } = state;
-  const updatedConfig = [...mocks];
-  updatedConfig[index] = {
-    ...updatedConfig[index],
-    mockOptions: {
-      ...updatedConfig[index].mockOptions,
-      [title]: { ...updatedConfig[index].mockOptions[title] },
-    },
-  };
-  updatedConfig[index].mockOptions[title].selectedValue =
+  const clonedConfig: State['mocks'] = JSON.parse(JSON.stringify(mocks));
+  clonedConfig[index].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;
 
-  saveToStorage({ mocks: updatedConfig, scenarios });
+  saveToStorage({ mocks: clonedConfig, scenarios });
+};
+
+export const updateScenarioOptions = (
+  state: State,
+  index: number,
+  mocksIndex: number,
+  title: string,
+  value: string | number | boolean
+) => {
+  const { mocks, scenarios } = state;
+  const clonedConfig: State['scenarios'] = JSON.parse(
+    JSON.stringify(scenarios)
+  );
+  clonedConfig[index].mocks[mocksIndex].mockOptions[title].selectedValue =
+    value === 'true' ? true : value === 'false' ? false : value;
+
+  saveToStorage({ mocks, scenarios: clonedConfig });
 };
 
 export const convertOptionValue = (value?: string | number | boolean) =>

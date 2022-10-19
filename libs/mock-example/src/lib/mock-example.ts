@@ -31,7 +31,7 @@ export const exampleMock = createMock(
 export const variatedExampleMock = createMock(
   {
     mockTitle: 'Variated mock options',
-    openPageURL: '#',
+    openPageURL: 'http://localhost:4200',
     mockOptions: {
       someTextOption: {
         defaultValue: 'text value',
@@ -55,10 +55,14 @@ export const variatedExampleMock = createMock(
   }
 );
 
-export const exampleScenario = createScenario('example scenario', [
-  { mock: exampleMock, options: { success: false } },
-  { mock: variatedExampleMock, options: { someNumberOption: 456 } },
-]);
+export const exampleScenario = createScenario(
+  'example scenario',
+  [
+    { mock: exampleMock, options: { success: false } },
+    { mock: variatedExampleMock, options: { someNumberOption: 456 } },
+  ],
+  { openPageURL: 'http://localhost:4200' }
+);
 
 export const setup = (setupServer?: typeof setupServerMsw) =>
   setupWorker({ mocks: [exampleMock, variatedExampleMock], setupServer });

@@ -12,7 +12,11 @@ export const createScenario = (
   mocks: {
     mock: CreateMockFnReturnType;
     options: Record<string, OptionType>;
-  }[]
+  }[],
+  options: {
+    //TODO: add function
+    openPageURL?: string;
+  } = {}
 ) => {
   // TODO: temp solution to use until proper type checking is implemented
   mocks.forEach(({ mock, options }) => {
@@ -24,14 +28,21 @@ export const createScenario = (
       }
     });
   });
-  const updatedMocks = mocks.map(({ mock, options }) => {
-    return {
-      mock: mock.updateMock(options, true),
-      options,
-    };
-  });
-  return state.addScenario({
+  const updateMocks = () =>
+    mocks.map(({ mock, options }) => {
+      return {
+        mock: mock.updateMock(options, true),
+        options,
+      };
+    });
+  const scenarioData = {
+    ...options,
     scenarioTitle,
-    mocks: updatedMocks.map(({ mock }) => mock),
-  });
+    mocks: updateMocks().map(({ mock }) => mock),
+    resetMock: () => {
+      scenarioData.mocks = updateMocks().map(({ mock }) => mock);
+      state.updateScenario(scenarioData);
+    },
+  };
+  return state.addScenario(scenarioData);
 };

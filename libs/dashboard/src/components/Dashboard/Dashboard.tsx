@@ -1,16 +1,23 @@
-import { saveToStorage, defaultState } from '@dynamic-msw/core';
+import type { State } from '@dynamic-msw/core';
+import {
+  saveToStorage,
+  loadFromStorage,
+  resetHandlers,
+} from '@dynamic-msw/core';
 import {
   Table,
   Button,
   ExpansionPanelContextProvider,
   Stack,
 } from '@stela-ui/react';
+import { useState, useEffect } from 'react';
 import type { FC } from 'react';
 
 import {
   convertMockConfig,
   convertScenarios,
   updateMockOptions,
+  updateScenarioOptions,
   getInputType,
 } from './Dashboard.helpers';
 import { MockOptionsInput } from './MockOptionsInput';
@@ -22,11 +29,19 @@ export interface DashboardProps {}
 
 export const Dashboard: FC<DashboardProps> = () => {
   const { mockConfig, isLoading, iFrameError } = useGetMockConfig();
-  const convertedMockConfig = mockConfig
-    ? convertMockConfig(mockConfig.mocks)
+  const [mockState, setMockState] = useState<State>();
+
+  useEffect(() => {
+    if (!mockState && !isLoading && mockConfig) {
+      setMockState(mockConfig);
+    }
+  }, [mockConfig, isLoading, mockState]);
+
+  const convertedMockConfig = mockState
+    ? convertMockConfig(mockState.mocks)
     : [];
-  const convertedScenarios = mockConfig
-    ? convertScenarios(mockConfig.scenarios)
+  const convertedScenarios = mockState
+    ? convertScenarios(mockState.scenarios)
     : [];
 
   return (
@@ -82,11 +97,12 @@ export const Dashboard: FC<DashboardProps> = () => {
                           onChange={(value) => {
                             updateMockOptions(
                               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                              mockConfig!,
+                              mockState!,
                               index,
                               title,
                               inputType === 'number' ? Number(value) : value
                             );
+                            setMockState(loadFromStorage());
                           }}
                         />
                       );
@@ -106,8 +122,24 @@ export const Dashboard: FC<DashboardProps> = () => {
                       mocks.find(({ mockOptions }) => mockOptions.length >= 0)
                     )}
                     openPageURL={openPageURL}
+                    bootstrapScenario={(e) => {
+                      e.preventDefault();
+                      const clonedState: State = JSON.parse(
+                        JSON.stringify(mockState)
+                      );
+                      clonedState.scenarios.map((data) => ({
+                        ...data,
+                        isActive: false,
+                      }));
+                      clonedState.scenarios[index].isActive = true;
+                      saveToStorage(clonedState);
+                      setMockState(clonedState);
+                      if (openPageURL) {
+                        window.open(openPageURL, '_blank')?.focus();
+                      }
+                    }}
                   >
-                    {mocks.map(({ mockTitle, mockOptions }) => (
+                    {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => (
                       <>
                         <h4 css={{ margin: 0 }}>{mockTitle}</h4>
                         {mockOptions.map(
@@ -125,7 +157,17 @@ export const Dashboard: FC<DashboardProps> = () => {
                                 options={options}
                                 selectedValue={selectedValue}
                                 onChange={(value) => {
-                                  //
+                                  updateScenarioOptions(
+                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                    mockState!,
+                                    index,
+                                    mocksIndex,
+                                    title,
+                                    inputType === 'number'
+                                      ? Number(value)
+                                      : value
+                                  );
+                                  setMockState(loadFromStorage());
                                 }}
                                 inputType={inputType}
                               />
@@ -144,10 +186,7 @@ export const Dashboard: FC<DashboardProps> = () => {
       <Button
         data-testid="reset-all-mocks-button"
         onClick={() => {
-          // TODO: this will require the iframe method of loading in createMock it's storage.
-          // TODO: consider to alter this so that it will work with or without that.
-          // TODO: perhaps it should be a hard requirement to use the iframe method.
-          saveToStorage(defaultState);
+          resetHandlers();
           location.reload();
         }}
       >

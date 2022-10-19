@@ -102,7 +102,6 @@ export const createMock = <T extends Options = Options>(
         resetMock: returnValue.resetMock,
       });
     },
-    // scenario: () => {}
   };
 
   state.addMock({
