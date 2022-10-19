@@ -32,12 +32,17 @@ export const setupMocks: SetupMocksFn = (options, mockFn) => {
 
 const updateMockOptions = (
   options: Options,
-  updatedOptions: Partial<ConvertedOptions>
+  updatedOptions: Partial<ConvertedOptions>,
+  updateScenarioMock?: boolean
 ) =>
   Object.keys(updatedOptions).reduce(
     (prev, curr) => ({
       ...prev,
-      [curr]: { ...options[curr], selectedValue: updatedOptions[curr] },
+      [curr]: {
+        ...options[curr],
+        [updateScenarioMock ? 'defaultValue' : 'selectedValue']:
+          updatedOptions[curr],
+      },
     }),
     options
   );
@@ -71,11 +76,11 @@ export const createMock = <T extends Options = Options>(
     mocks: setupMocks(convertedConfig, mockFn),
     mockTitle,
     mockOptions: initialState?.mockOptions || mockOptions,
-    updateMock: (updateValues, skipSaveToState) => {
-      if (skipSaveToState) {
+    updateMock: (updateValues, updateScenarioMock) => {
+      if (updateScenarioMock) {
         return {
           ...returnValue,
-          mockOptions: updateMockOptions(mockOptions, updateValues),
+          mockOptions: updateMockOptions(mockOptions, updateValues, true),
           mocks: setupMocks({ ...convertedConfig, ...updateValues }, mockFn),
         };
       } else {

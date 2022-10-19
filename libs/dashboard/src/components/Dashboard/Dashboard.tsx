@@ -1,16 +1,12 @@
 import type { State } from '@dynamic-msw/core';
-import {
-  saveToStorage,
-  loadFromStorage,
-  resetHandlers,
-} from '@dynamic-msw/core';
+import { saveToStorage, loadFromStorage } from '@dynamic-msw/core';
 import {
   Table,
   Button,
   ExpansionPanelContextProvider,
   Stack,
 } from '@stela-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { FC } from 'react';
 
 import {
@@ -18,6 +14,7 @@ import {
   convertScenarios,
   updateMockOptions,
   updateScenarioOptions,
+  resetAll,
   getInputType,
 } from './Dashboard.helpers';
 import { MockOptionsInput } from './MockOptionsInput';
@@ -30,6 +27,7 @@ export interface DashboardProps {}
 export const Dashboard: FC<DashboardProps> = () => {
   const { mockConfig, isLoading, iFrameError } = useGetMockConfig();
   const [mockState, setMockState] = useState<State>();
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (!mockState && !isLoading && mockConfig) {
@@ -54,7 +52,8 @@ export const Dashboard: FC<DashboardProps> = () => {
 
       <Table columns={3} css={{ width: '100%' }}>
         <ExpansionPanelContextProvider>
-          <div
+          <form
+            ref={formRef}
             css={{
               // TODO: fix this way of styling the table rows.
               // TODO: This should be possible from the stela-ui lib for starters
@@ -181,18 +180,22 @@ export const Dashboard: FC<DashboardProps> = () => {
                 </>
               )
             )}
-          </div>
+          </form>
         </ExpansionPanelContextProvider>
       </Table>
-      <Button
-        data-testid="reset-all-mocks-button"
-        onClick={() => {
-          resetHandlers();
-          location.reload();
-        }}
-      >
-        Reset all mocks
-      </Button>
+      {mockConfig && (
+        <Button
+          data-testid="reset-all-mocks-button"
+          type="reset"
+          onClick={(e) => {
+            e.preventDefault();
+            setMockState(resetAll(mockConfig));
+            formRef.current?.reset();
+          }}
+        >
+          Reset all mocks
+        </Button>
+      )}
     </Stack>
   );
 };

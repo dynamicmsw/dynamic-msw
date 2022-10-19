@@ -1,5 +1,9 @@
 import { convertMockOptions } from './createMock';
-import type { CreateMockFnReturnType, OptionType } from './createMock.types';
+import type {
+  CreateMockFnReturnType,
+  OptionType,
+  Options,
+} from './createMock.types';
 import type { State } from './state';
 import { state } from './state';
 
@@ -9,11 +13,11 @@ import { state } from './state';
 //   T extends { mock: B; options: B['mockOptions'] }[]
 // >
 
-export const createScenario = (
+export const createScenario = <T extends Options = Options>(
   scenarioTitle: string,
   mocks: {
     mock: CreateMockFnReturnType;
-    options: Record<string, OptionType>;
+    options: T;
   }[],
   options: {
     //TODO: add function
@@ -37,13 +41,12 @@ export const createScenario = (
 
   const updateMocks = (initialScenarioIndex?: number) =>
     mocks.map(({ mock, options: mockOptions }, index) => {
-      const initialMockOptions =
+      const initialMockOptions = convertMockOptions(
         initialScenarioIndex >= 0
-          ? convertMockOptions(
-              initialState.scenarios[initialScenarioIndex].mocks[index]
-                .mockOptions
-            )
-          : mockOptions;
+          ? initialState.scenarios[initialScenarioIndex].mocks[index]
+              .mockOptions
+          : mockOptions
+      );
       return {
         mock: mock.updateMock(initialMockOptions, true),
         options: initialMockOptions,

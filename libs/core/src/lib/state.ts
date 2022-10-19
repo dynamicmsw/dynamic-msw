@@ -57,6 +57,9 @@ class CreateState {
       this.state.scenarios.push(data);
       saveToStorage(this.state);
     } else {
+      this.state.scenarios[existingScenarioIndex] = {
+        ...this.state.scenarios[existingScenarioIndex],
+      };
       this.state.scenarios[existingScenarioIndex].resetMock = data.resetMock;
     }
 

@@ -121,7 +121,7 @@ describe('createMock type definitions', () => {
       {
         mock: exampleMock,
         options: {
-          success: true,
+          success: { defaultValue: true },
         },
       },
       { mock: variatedExampleMock, options: {} },

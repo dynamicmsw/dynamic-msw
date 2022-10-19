@@ -81,6 +81,45 @@ export const updateScenarioOptions = (
   saveToStorage({ mocks, scenarios: clonedConfig });
 };
 
+const resetScenarioOptions = (state: State) => {
+  const { mocks, scenarios } = state;
+  const clonedConfig: State['scenarios'] = JSON.parse(
+    JSON.stringify(scenarios)
+  );
+
+  clonedConfig.forEach(({ mocks }, index) => {
+    mocks.forEach(({ mockOptions }, mockIndex) => {
+      Object.keys(mockOptions).forEach((key) => {
+        delete clonedConfig[index].mocks[mockIndex].mockOptions[key]
+          .selectedValue;
+      });
+    });
+  });
+
+  saveToStorage({ mocks, scenarios: clonedConfig });
+  return clonedConfig;
+};
+const resetMockOptions = (state: State) => {
+  const { mocks, scenarios } = state;
+  const clonedConfig: State['mocks'] = JSON.parse(JSON.stringify(mocks));
+
+  clonedConfig.forEach(({ mockOptions }, index) => {
+    Object.keys(mockOptions).forEach((key) => {
+      delete clonedConfig[index].mockOptions[key].selectedValue;
+    });
+  });
+
+  saveToStorage({ mocks: clonedConfig, scenarios });
+  return clonedConfig;
+};
+
+export const resetAll = (state: State) => {
+  return {
+    scenarios: resetScenarioOptions(state),
+    mocks: resetMockOptions(state),
+  };
+};
+
 export const convertOptionValue = (value?: string | number | boolean) =>
   value === true || value === false ? value.toString() : value;
 
