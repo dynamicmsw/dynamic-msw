@@ -8,7 +8,7 @@ module.exports = {
   ...rootMain,
   core: { ...rootMain.core, builder: '@storybook/builder-vite' },
   features: {
-    storyStoreV7: process.env.CI !== 'true',
+    storyStoreV7: !process.env.NX_TASK_TARGET_PROJECT?.endsWith('-e2e'),
   },
   stories: [
     ...rootMain.stories,
