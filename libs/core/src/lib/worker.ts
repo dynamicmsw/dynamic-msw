@@ -28,7 +28,7 @@ export const setupWorker = ({
   const setup = setupServer || setupWorkerMsw;
   const activeScenarioIndex = scenarios?.findIndex(({ isActive }) => isActive);
   const activeScenarioMocks =
-    scenarios[activeScenarioIndex]?.mocks.flatMap(({ mocks }) => mocks) || [];
+    scenarios?.[activeScenarioIndex]?.mocks.flatMap(({ mocks }) => mocks) || [];
   global.__mock_worker = setup(...handlers);
   global.__mock_worker.use(...activeScenarioMocks);
   startWorker();
