@@ -3,16 +3,14 @@ import type { SetupWorkerApi, RestHandler } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
 import type { CreateMockFnReturnType } from './createMock.types';
-import type { ScenariosState } from './state';
 import { state } from './state';
 
-// TODO: pass scenarios as seperate argument so that they will always initiliaze after mocks
-// TODO: this will also remove the need to use the spread operator by a developer
-// TODO: consider if one should not initialize a createMock and enforce it to be
-// TODO: initiliazed when when used in a scenario
 interface SetupWorkerArg {
   mocks: Array<RestHandler | CreateMockFnReturnType>;
-  scenarios?: ScenariosState[];
+  scenarios?: {
+    mocks: Array<RestHandler | CreateMockFnReturnType>;
+    isActive?: boolean;
+  }[];
   // enforce to pass setupServer for node environments
   // importing setupServer results in a error in browser environments
   setupServer?: typeof setupServerMsw;
@@ -27,8 +25,7 @@ export const setupWorker = ({
   );
   const setup = setupServer || setupWorkerMsw;
   const activeScenarioIndex = scenarios?.findIndex(({ isActive }) => isActive);
-  const activeScenarioMocks =
-    scenarios?.[activeScenarioIndex]?.mocks.flatMap(({ mocks }) => mocks) || [];
+  const activeScenarioMocks = scenarios?.[activeScenarioIndex]?.mocks || [];
   global.__mock_worker = setup(...handlers);
   global.__mock_worker.use(...activeScenarioMocks);
   startWorker();

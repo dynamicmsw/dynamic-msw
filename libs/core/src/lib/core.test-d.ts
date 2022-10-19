@@ -120,11 +120,11 @@ describe('createMock type definitions', () => {
     createScenario('title', [
       {
         mock: exampleMock,
-        options: {
-          success: { defaultValue: true },
+        mockOptions: {
+          success: true,
         },
       },
-      { mock: variatedExampleMock, options: {} },
+      { mock: variatedExampleMock, mockOptions: {} },
     ]);
   });
 });

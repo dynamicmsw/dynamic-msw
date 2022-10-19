@@ -38,9 +38,7 @@ export const Dashboard: FC<DashboardProps> = () => {
   const convertedMockConfig = mockState
     ? convertMockConfig(mockState.mocks)
     : [];
-  const convertedScenarios = mockState
-    ? convertScenarios(mockState.scenarios)
-    : [];
+  const convertedScenarios = mockState?.scenarios || [];
 
   return (
     <Stack gap={4}>
@@ -117,9 +115,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                     key={`${scenarioTitle}`}
                     rowTitle={scenarioTitle}
                     index={index + convertedMockConfig.length}
-                    hasMockOptions={Boolean(
-                      mocks.find(({ mockOptions }) => mockOptions.length >= 0)
-                    )}
+                    hasMockOptions={Boolean(mocks.length >= 0)}
                     openPageURL={openPageURL}
                     bootstrapScenario={(e) => {
                       e.preventDefault();

@@ -58,10 +58,10 @@ export const variatedExampleMock = createMock(
 export const exampleScenario = createScenario(
   'example scenario',
   [
-    { mock: exampleMock, options: { success: { defaultValue: false } } },
+    { mock: exampleMock, mockOptions: { success: false } },
     {
       mock: variatedExampleMock,
-      options: { someNumberOption: { defaultValue: 123 } },
+      mockOptions: { someNumberOption: 123 },
     },
   ],
   { openPageURL: 'http://localhost:4200' }

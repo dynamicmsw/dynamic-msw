@@ -32,16 +32,14 @@ export const setupMocks: SetupMocksFn = (options, mockFn) => {
 
 const updateMockOptions = (
   options: Options,
-  updatedOptions: Partial<ConvertedOptions>,
-  updateScenarioMock?: boolean
+  updatedOptions: Partial<ConvertedOptions>
 ) =>
   Object.keys(updatedOptions).reduce(
     (prev, curr) => ({
       ...prev,
       [curr]: {
         ...options[curr],
-        [updateScenarioMock ? 'defaultValue' : 'selectedValue']:
-          updatedOptions[curr],
+        selectedValue: updatedOptions[curr],
       },
     }),
     options
@@ -68,32 +66,28 @@ export const createMock = <T extends Options = Options>(
     .getState()
     .mocks.find((stateData) => stateData.mockTitle === mockTitle);
 
+  const createMockBaseArgs = {
+    mockFn,
+    openPageURL,
+  };
+
   let convertedConfig = convertMockOptions(
     initialState?.mockOptions || mockOptions
   );
 
   const returnValue: CreateMockFnReturnType<T> = {
     mocks: setupMocks(convertedConfig, mockFn),
-    mockTitle,
-    mockOptions: initialState?.mockOptions || mockOptions,
-    updateMock: (updateValues, updateScenarioMock) => {
-      if (updateScenarioMock) {
-        return {
-          ...returnValue,
-          mockOptions: updateMockOptions(mockOptions, updateValues, true),
-          mocks: setupMocks({ ...convertedConfig, ...updateValues }, mockFn),
-        };
-      } else {
-        convertedConfig = { ...convertedConfig, ...updateValues };
-        returnValue.mocks = setupMocks(convertedConfig, mockFn);
-        state.updateMock({
-          mockTitle,
-          mockOptions: updateMockOptions(mockOptions, updateValues),
-          openPageURL: getPageURL(convertedConfig, openPageURL),
-          updateMock: returnValue.updateMock,
-          resetMock: returnValue.resetMock,
-        });
-      }
+    updateMock: (updateValues) => {
+      convertedConfig = { ...convertedConfig, ...updateValues };
+      returnValue.mocks = setupMocks(convertedConfig, mockFn);
+      state.updateMock({
+        mockTitle,
+        mockOptions: updateMockOptions(mockOptions, updateValues),
+        openPageURL: getPageURL(convertedConfig, openPageURL),
+        updateMock: returnValue.updateMock,
+        resetMock: returnValue.resetMock,
+        createMockBaseArgs,
+      });
       return returnValue;
     },
     resetMock: () => {
@@ -105,6 +99,7 @@ export const createMock = <T extends Options = Options>(
         openPageURL: getPageURL(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
+        createMockBaseArgs,
       });
     },
   };
@@ -115,6 +110,7 @@ export const createMock = <T extends Options = Options>(
     openPageURL: getPageURL(convertedConfig, openPageURL),
     updateMock: returnValue.updateMock,
     resetMock: returnValue.resetMock,
+    createMockBaseArgs,
   });
 
   return returnValue;

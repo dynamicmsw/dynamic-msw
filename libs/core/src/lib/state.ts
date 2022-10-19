@@ -2,6 +2,9 @@ import type {
   Options,
   ConvertedOptions,
   CreateMockFnReturnType,
+  CreateMockMockFn,
+  OpenPageFn,
+  OptionType,
 } from './createMock.types';
 
 export interface MocksState {
@@ -9,13 +12,25 @@ export interface MocksState {
   mockOptions: Options;
   openPageURL?: string;
   dashboardScenarioOnly?: boolean;
+  createMockBaseArgs: {
+    mockFn: CreateMockMockFn;
+    openPageURL: string | OpenPageFn;
+  };
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
 
+export type MockOptionsState = {
+  mockTitle: string;
+  mockOptions: Record<
+    string,
+    { defaultValue: OptionType; selectedValue?: OptionType }
+  >;
+};
+
 export interface ScenariosState {
   scenarioTitle: string;
-  mocks: CreateMockFnReturnType[];
+  mocks: MockOptionsState[];
   isActive?: boolean;
   openPageURL?: string;
   resetMock?: () => void;
@@ -53,14 +68,11 @@ class CreateState {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
-    if (existingScenarioIndex < 0) {
+    if (existingScenarioIndex >= 0) {
+      this.state.scenarios[existingScenarioIndex].resetMock = data.resetMock;
+    } else {
       this.state.scenarios.push(data);
       saveToStorage(this.state);
-    } else {
-      this.state.scenarios[existingScenarioIndex] = {
-        ...this.state.scenarios[existingScenarioIndex],
-      };
-      this.state.scenarios[existingScenarioIndex].resetMock = data.resetMock;
     }
 
     return data;
