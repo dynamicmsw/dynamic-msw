@@ -26,7 +26,7 @@ export const setupWorker = ({
     (mock) => (mock as CreateMockFnReturnType)?.mocks || (mock as RestHandler)
   );
   const setup = setupServer || setupWorkerMsw;
-  const activeScenario = scenarios.find(({ isActive }) => isActive);
+  const activeScenario = scenarios?.find(({ isActive }) => isActive);
   const activeScenarioMocks =
     activeScenario?.mocks.flatMap(({ mocks }) => mocks) || [];
 
