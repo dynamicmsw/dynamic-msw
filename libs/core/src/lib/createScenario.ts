@@ -4,8 +4,6 @@ import { convertMockOptions } from './createMock';
 import type {
   CreateMockFnReturnType,
   OptionType,
-  Options,
-  ConvertedOptions,
   CreateMockMockFn,
 } from './createMock.types';
 import type { MocksState, MockOptionsState } from './state';
