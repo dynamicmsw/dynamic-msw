@@ -39,7 +39,7 @@ export const Dashboard: FC<DashboardProps> = () => {
     ? convertMockConfig(mockState.mocks)
     : [];
   const convertedScenarios = mockState
-    ? convertScenarios(mockState.scenarios)
+    ? convertScenarios(mockState?.scenarios)
     : [];
 
   return (
@@ -117,9 +117,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                     key={`${scenarioTitle}`}
                     rowTitle={scenarioTitle}
                     index={index + convertedMockConfig.length}
-                    hasMockOptions={Boolean(
-                      mocks.find(({ mockOptions }) => mockOptions.length >= 0)
-                    )}
+                    hasMockOptions={Boolean(mocks.length >= 0)}
                     openPageURL={openPageURL}
                     bootstrapScenario={(e) => {
                       e.preventDefault();
@@ -142,38 +140,29 @@ export const Dashboard: FC<DashboardProps> = () => {
                     {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => (
                       <>
                         <h4 css={{ margin: 0 }}>{mockTitle}</h4>
-                        {mockOptions.map(
-                          ({ selectedValue, options, type, title }) => {
-                            const inputType = getInputType(
-                              selectedValue,
-                              options,
-                              type
-                            );
-                            return (
-                              <MockOptionsInput
-                                key={`${scenarioTitle}-${mockTitle}-${title}`}
-                                id={`${scenarioTitle}-${mockTitle}-${title}`}
-                                title={title}
-                                options={options}
-                                selectedValue={selectedValue}
-                                onChange={(value) => {
-                                  updateScenarioOptions(
-                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                    mockState!,
-                                    index,
-                                    mocksIndex,
-                                    title,
-                                    inputType === 'number'
-                                      ? Number(value)
-                                      : value
-                                  );
-                                  setMockState(loadFromStorage());
-                                }}
-                                inputType={inputType}
-                              />
-                            );
-                          }
-                        )}
+                        {mockOptions.map(({ selectedValue, title }) => {
+                          const inputType = getInputType(selectedValue);
+                          return (
+                            <MockOptionsInput
+                              key={`${scenarioTitle}-${mockTitle}-${title}`}
+                              id={`${scenarioTitle}-${mockTitle}-${title}`}
+                              title={title}
+                              selectedValue={selectedValue}
+                              onChange={(value) => {
+                                updateScenarioOptions(
+                                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                  mockState!,
+                                  index,
+                                  mocksIndex,
+                                  title,
+                                  inputType === 'number' ? Number(value) : value
+                                );
+                                setMockState(loadFromStorage());
+                              }}
+                              inputType={inputType}
+                            />
+                          );
+                        })}
                       </>
                     ))}
                   </OptionsTableRow>

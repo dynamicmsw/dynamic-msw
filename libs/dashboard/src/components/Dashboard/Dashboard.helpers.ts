@@ -4,6 +4,7 @@ import type {
   OptionType,
   OptionRenderType,
   ScenariosState,
+  MockOptionsState,
 } from '@dynamic-msw/core';
 import { saveToStorage } from '@dynamic-msw/core';
 
@@ -43,10 +44,30 @@ export const convertMockConfig = (
   });
 };
 
+export const convertScenarioMockConfig = (mocks: MockOptionsState[]) => {
+  if (mocks.length < 0) {
+    throw Error('No mocks found');
+  }
+  return mocks.map(({ mockOptions, mockTitle }) => {
+    return {
+      mockTitle,
+      mockOptions: Object.keys(mockOptions).map((optionKey) => {
+        const { selectedValue, defaultValue } = mockOptions[optionKey];
+        return {
+          ...mockOptions[optionKey],
+          title: optionKey,
+          selectedValue:
+            typeof selectedValue === 'undefined' ? defaultValue : selectedValue,
+        };
+      }),
+    };
+  });
+};
+
 export const convertScenarios = (scenarios: ScenariosState[]) => {
   return scenarios.map(({ mocks, ...rest }) => ({
     ...rest,
-    mocks: convertMockConfig(mocks),
+    mocks: convertScenarioMockConfig(mocks),
   }));
 };
 

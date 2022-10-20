@@ -8,7 +8,8 @@ module.exports = {
   ...rootMain,
   core: { ...rootMain.core, builder: '@storybook/builder-vite' },
   features: {
-    storyStoreV7: process.env.CI !== 'true',
+    // Disable when running e2e tests to prebuild stories and prevent flaky tests
+    storyStoreV7: !process.env.NX_TASK_TARGET_PROJECT?.endsWith('-e2e'),
   },
   stories: [
     ...rootMain.stories,
