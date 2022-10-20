@@ -15,9 +15,10 @@ if (
 |  The following:
 |    \`setupMockServer ./path-to-public-folder/mock-server\`
 |
-|  Will result in an 'index.html' file being generated at the following path
+|  Will result in the following files being generated
 |
 |    \`\${CWD}/path-to-public-folder/mock-server/index.html\`
+|    \`\${CWD}/path-to-public-folder/mock-server/mock-server-settings.js\`
 |
 |  Note: \${CWD} is the current working directory from which the command is executed:
 |
@@ -35,4 +36,8 @@ if (!fs.existsSync(destDir)) {
 fs.copyFileSync(
   path.resolve(__dirname, 'index.html'),
   path.join(destDir, 'index.html')
+);
+fs.copyFileSync(
+  path.resolve(__dirname, 'mock-server-settings.js'),
+  path.join(destDir, 'mock-server-settings.js')
 );
