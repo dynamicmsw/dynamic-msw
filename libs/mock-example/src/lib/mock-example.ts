@@ -56,15 +56,14 @@ export const variatedExampleMock = createMock(
 );
 
 export const exampleScenario = createScenario(
-  'example scenario',
+  { scenarioTitle: 'example scenario', openPageURL: 'http://localhost:4200' },
   [
     { mock: exampleMock, mockOptions: { success: false } },
     {
       mock: variatedExampleMock,
       mockOptions: { someNumberOption: 123 },
     },
-  ],
-  { openPageURL: 'http://localhost:4200' }
+  ]
 );
 
 export const setup = (setupServer?: typeof setupServerMsw) =>

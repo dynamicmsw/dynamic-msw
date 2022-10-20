@@ -81,16 +81,20 @@ const convertToStateMockOptions = (
   }));
 
 export const createScenario = (
-  scenarioTitle: string,
-  mocks: ScenarioMock[],
-  //TODO: merge scenarioTitle andd make it an first param
-  {
-    openPageURL,
-  }: {
-    // TODO: think of function openPageURL
-    openPageURL?: string;
-  } = {}
+  optionsArg:
+    | {
+        scenarioTitle: string;
+        // TODO: think of function openPageURL
+        openPageURL?: string | null;
+      }
+    | string,
+  mocks: ScenarioMock[]
 ) => {
+  const { openPageURL, scenarioTitle } =
+    typeof optionsArg === 'string'
+      ? { scenarioTitle: optionsArg, openPageURL: null }
+      : optionsArg;
+
   const initialState = state.getState();
   const initialScenarioIndex = initialState.scenarios.findIndex(
     (scenario) => scenario.scenarioTitle === scenarioTitle

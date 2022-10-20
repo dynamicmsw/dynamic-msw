@@ -117,7 +117,7 @@ describe('createMock type definitions', () => {
 // TODO: add proper type testing for createScenario
 describe('createMock type definitions', () => {
   it('passes down converted config types', () => {
-    createScenario('title', [
+    createScenario({ scenarioTitle: 'title' }, [
       {
         mock: exampleMock,
         mockOptions: {
