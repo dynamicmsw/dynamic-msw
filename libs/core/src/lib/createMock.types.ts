@@ -31,6 +31,8 @@ export type ConvertedOptions<T extends Options = Options> = {
       : T[Key]['defaultValue']
     : OptionRenderTypeMap[T[Key]['type']] extends never
     ? ArrayElementType<T[Key]['options']>
+    : T[Key]['options'] extends Array<OptionType>
+    ? ArrayElementType<T[Key]['options']>
     : OptionRenderTypeMap[T[Key]['type']];
 };
 

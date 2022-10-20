@@ -22,6 +22,8 @@ type ScenarioMock<T extends CreateMockFnReturnType[]> = {
   };
 };
 
+type Mocks = Record<string, CreateMockFnReturnType>;
+
 type SetupMocksFn = (
   options: CreateMockOptions,
   mockFn: CreateMockMockFn
@@ -77,7 +79,7 @@ const convertToStateMockOptions = (
     ),
   }));
 
-export const createScenario = <T extends CreateMockFnReturnType[]>(
+export const createScenario = <T extends Mocks>(
   optionsArg:
     | {
         scenarioTitle: string;
@@ -85,7 +87,8 @@ export const createScenario = <T extends CreateMockFnReturnType[]>(
         openPageURL?: string | null;
       }
     | string,
-  mocks: ScenarioMock<T>
+  mocks: T,
+  mockOptions: { [K in keyof T]: Parameters<T[K]['updateMock']>[0] }
 ) => {
   const { openPageURL, scenarioTitle } =
     typeof optionsArg === 'string'
@@ -98,11 +101,19 @@ export const createScenario = <T extends CreateMockFnReturnType[]>(
   );
   const initialScenario = initialState.scenarios[initialScenarioIndex];
 
-  const mocksFromState = mocks.map(({ mock }) =>
+  const mappedOptionsToMocks = Object.keys(mocks).map((key) => ({
+    mock: mocks[key],
+    mockOptions: mockOptions[key],
+  }));
+
+  const mocksFromState = mappedOptionsToMocks.map(({ mock }) =>
     initialState.mocks.find(({ mockTitle }) => mockTitle === mock.mockTitle)
   );
 
-  const defaultMockOptions = getMockOptionsArray(mocks, mocksFromState);
+  const defaultMockOptions = getMockOptionsArray(
+    mappedOptionsToMocks,
+    mocksFromState
+  );
 
   const createMockOptions: CreateMockOptions[] =
     initialScenario?.mocks.map(({ mockOptions, mockTitle }) => ({

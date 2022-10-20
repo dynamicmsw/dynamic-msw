@@ -28,7 +28,6 @@ export const variatedExampleMock = createMock(
     mockOptions: {
       success: {
         options: ['true', 'false'],
-        defaultValue: 'true',
       },
       someTextOption: {
         defaultValue: 'text value',
@@ -163,45 +162,53 @@ describe('createMock type definitions', () => {
   });
 });
 
-// TODO: add proper type testing for createScenario
-describe('createMock type definitions', () => {
+describe('createScenario type definitions', () => {
   it('passes down converted config types', () => {
-    createScenario({ scenarioTitle: 'title' }, [
+    // ✅
+    createScenario('test', { exampleMock }, { exampleMock: { success: true } });
+    // ✅
+    createScenario(
+      'variatedExampleMock',
+      { variatedExampleMock },
       {
-        mock: exampleMock,
-        mockOptions: {
-          someUndefinedOption: 'sd',
+        variatedExampleMock: {
+          success: 'true',
+          someTextOption: 'someTextOption',
+          someNumberOption: 123,
+          someUndefinedOption: 'sf',
         },
-      },
+      }
+    );
+    // ✅
+    createScenario(
+      'variatedExampleMock',
+      { variatedExampleMock },
       {
-        mock: exampleMock,
-        mockOptions: {
-          // TODO: fix type defs
-          // TODO: ❌
-          // TODO: @ts-expect-error is not part of exampleMock its options
-          someTextOption: 'sd',
+        variatedExampleMock: {
+          someTextOption: 'someTextOption',
         },
-      },
+      }
+    );
+    // ❌ invalid values
+    createScenario(
+      'variatedExampleMock',
+      { variatedExampleMock },
       {
-        mock: variatedExampleMock,
-        mockOptions: {
-          someTextOption: '123',
-          someUndefinedOption: '123',
-          // ❌
-          // @ts-expect-error is not a number
-          someNumberOption: 'bla',
+        variatedExampleMock: {
+          // ❌ invalid value
+          // @ts-expect-error invalid value as type is string
+          success: false,
+          // ❌ invalid value
+          // @ts-expect-error invalid value as type is string
+          someTextOption: 1,
+          // ❌ invalid value
+          // @ts-expect-error invalid value as type is number
+          someNumberOption: 'asdf',
+          // ❌ invalid value
+          // @ts-expect-error invalid value as type is string
+          someUndefinedOption: 1,
         },
-      },
-      {
-        mock: variatedExampleMock,
-        mockOptions: {
-          someTextOption: '123',
-          someUndefinedOption: '123',
-          // ❌
-          // @ts-expect-error does not exists
-          iDoNotExist: '123',
-        },
-      },
-    ]);
+      }
+    );
   });
 });
