@@ -1,4 +1,5 @@
 <h1 align="center">Dynamic Mock Service Worker</h1>
+
 Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worker (MSW). It conveniently makes mocked endpoint responses dynamic and updatable.
 
 ## Features
@@ -76,4 +77,5 @@ setupWorker({
 - [Next.JS](./examples/next)
 
 <h1 align="center">Looking for collaboratos</h1>
-Wanna help improve Dynamic Mock Service Worker? Great! You can get in touch via [bramzijpcode@gmail.com](mailto:bramzijpcode@gmail.com).
+
+Wanna help improve Dynamic Mock Service Worker? Great! You can get in touch via [bramzijpcode@gmail.com](mailto:bramzijpcode@gmail.com?subject=[Dynamic-MSW]Collaboration).

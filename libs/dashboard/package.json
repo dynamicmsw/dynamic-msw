@@ -22,6 +22,7 @@
   "types": "types.d.ts",
   "files": [
     "./copyHtmlFile.js",
+    "./mock-server-settings.js",
     "./index.html"
   ],
   "bin": {
