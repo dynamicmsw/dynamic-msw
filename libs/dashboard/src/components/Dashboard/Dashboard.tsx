@@ -1,25 +1,24 @@
-import { saveToStorage } from '@dynamic-msw/core';
+import type { State } from '@dynamic-msw/core';
+import { saveToStorage, loadFromStorage } from '@dynamic-msw/core';
 import {
   Table,
-  TableRow,
-  TableCell,
-  ExpansionPanel,
   Button,
-  SelectInput,
-  TextInput,
-  ToggleInput,
   ExpansionPanelContextProvider,
-  Spacing,
   Stack,
 } from '@stela-ui/react';
+import { useState, useEffect, useRef } from 'react';
 import type { FC } from 'react';
 
 import {
   convertMockConfig,
+  convertScenarios,
+  updateMockOptions,
+  updateScenarioOptions,
+  resetAll,
   getInputType,
-  updateConfig,
-  convertOptionValue,
 } from './Dashboard.helpers';
+import { MockOptionsInput } from './MockOptionsInput';
+import { OptionsTableRow } from './OptionsTableRow';
 import { useGetMockConfig } from './useGetMockConfig';
 
 /* eslint-disable-next-line */
@@ -27,7 +26,21 @@ export interface DashboardProps {}
 
 export const Dashboard: FC<DashboardProps> = () => {
   const { mockConfig, isLoading, iFrameError } = useGetMockConfig();
-  const convertedMockConfig = mockConfig ? convertMockConfig(mockConfig) : [];
+  const [mockState, setMockState] = useState<State>();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!mockState && !isLoading && mockConfig) {
+      setMockState(mockConfig);
+    }
+  }, [mockConfig, isLoading, mockState]);
+
+  const convertedMockConfig = mockState
+    ? convertMockConfig(mockState.mocks)
+    : [];
+  const convertedScenarios = mockState
+    ? convertScenarios(mockState?.scenarios)
+    : [];
 
   return (
     <Stack gap={4}>
@@ -37,148 +50,141 @@ export const Dashboard: FC<DashboardProps> = () => {
       )}
       {iFrameError && <h4 data-testid="dashboard-state">{iFrameError}</h4>}
 
-      <Table columns={3}>
+      <Table columns={3} css={{ width: '100%' }}>
         <ExpansionPanelContextProvider>
-          {convertedMockConfig.map(
-            ({ scenarioTitle, mockOptions, openPageURL }, index) => (
-              <div
-                key={scenarioTitle}
-                css={{
-                  display: 'contents',
-                  '> * > *, summary': { display: 'flex', alignItems: 'center' },
-                  '&:nth-child(odd) div, &:nth-child(odd) summary, &:nth-child(odd) details':
-                    {
-                      background: '#f9f9f9',
-                    },
-                  '&:nth-child(even) div, &:nth-child(even) summary,  &:nth-child(even) details':
-                    {
-                      background: '#ededed',
-                    },
-                }}
-              >
-                <TableRow>
-                  <TableCell>
-                    <Spacing pl={2}>
-                      <h4 data-testid="scenario-title">{scenarioTitle}</h4>
-                    </Spacing>
-                  </TableCell>
+          <form
+            ref={formRef}
+            css={{
+              // TODO: fix this way of styling the table rows.
+              // TODO: This should be possible from the stela-ui lib for starters
+              display: 'contents',
+              '> * > *, summary': { display: 'flex', alignItems: 'center' },
+              '&:nth-child(odd) div, &:nth-child(odd) summary, &:nth-child(odd) details':
+                {
+                  background: '#f9f9f9',
+                },
+              '&:nth-child(even) div, &:nth-child(even) summary,  &:nth-child(even) details':
+                {
+                  background: '#ededed',
+                },
+            }}
+          >
+            {convertedMockConfig.map(
+              ({ mockTitle, mockOptions, openPageURL }, index) => (
+                <OptionsTableRow
+                  key={mockTitle}
+                  rowTitle={mockTitle}
+                  index={index}
+                  hasMockOptions={mockOptions.length >= 0}
+                  openPageURL={openPageURL}
+                >
+                  {mockOptions.map(
+                    ({ selectedValue, options, type, title }) => {
+                      const inputType = getInputType(
+                        selectedValue,
+                        options,
+                        type
+                      );
+                      return (
+                        <MockOptionsInput
+                          key={`${mockTitle}-${title}`}
+                          id={`${mockTitle}-${title}`}
+                          title={title}
+                          options={options}
+                          selectedValue={selectedValue}
+                          inputType={inputType}
+                          onChange={(value) => {
+                            updateMockOptions(
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                              mockState!,
+                              index,
+                              title,
+                              inputType === 'number' ? Number(value) : value
+                            );
+                            setMockState(loadFromStorage());
+                          }}
+                        />
+                      );
+                    }
+                  )}
+                </OptionsTableRow>
+              )
+            )}
+            {convertedScenarios.map(
+              ({ scenarioTitle, mocks, openPageURL }, index) => (
+                <>
+                  <OptionsTableRow
+                    key={`${scenarioTitle}`}
+                    rowTitle={scenarioTitle}
+                    index={index + convertedMockConfig.length}
+                    hasMockOptions={Boolean(mocks.length >= 0)}
+                    openPageURL={openPageURL}
+                    bootstrapScenario={(e) => {
+                      e.preventDefault();
+                      const clonedState: State = JSON.parse(
+                        JSON.stringify(mockState)
+                      );
+                      clonedState.scenarios.map((data) => ({
+                        ...data,
+                        isActive: false,
+                      }));
+                      clonedState.scenarios[index].isActive = true;
+                      saveToStorage(clonedState);
+                      setMockState(clonedState);
 
-                  {mockOptions.length >= 0 ? (
-                    <ExpansionPanel
-                      title="Configure"
-                      contextId={scenarioTitle}
-                      data-testid="configure-panel"
-                    >
-                      <TableCell row={index + 2} columnStart={1} columnEnd={4}>
-                        <Spacing px={2} pb={3}>
-                          <Stack gap={3}>
-                            {mockOptions.map(
-                              ({ selectedValue, options, type, title }) => {
-                                const optionId = `${scenarioTitle}-${title}`;
-                                const inputType = getInputType(
-                                  selectedValue,
-                                  options,
-                                  type
+                      if (openPageURL) {
+                        window.open(openPageURL, '_blank')?.focus();
+                      }
+                    }}
+                  >
+                    {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => (
+                      <>
+                        <h4 css={{ margin: 0 }}>{mockTitle}</h4>
+                        {mockOptions.map(({ selectedValue, title }) => {
+                          const inputType = getInputType(selectedValue);
+                          return (
+                            <MockOptionsInput
+                              key={`${scenarioTitle}-${mockTitle}-${title}`}
+                              id={`${scenarioTitle}-${mockTitle}-${title}`}
+                              title={title}
+                              selectedValue={selectedValue}
+                              onChange={(value) => {
+                                updateScenarioOptions(
+                                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                  mockState!,
+                                  index,
+                                  mocksIndex,
+                                  title,
+                                  inputType === 'number' ? Number(value) : value
                                 );
-                                const onChangeHandler = (
-                                  value: string | number | boolean
-                                ) => {
-                                  updateConfig(
-                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                    mockConfig!,
-                                    index,
-                                    title,
-                                    inputType === 'number'
-                                      ? Number(value)
-                                      : value
-                                  );
-                                };
-                                const defaultValue =
-                                  convertOptionValue(selectedValue);
-                                switch (inputType) {
-                                  case 'select':
-                                    return (
-                                      <SelectInput
-                                        data-testid="scenario-config-input"
-                                        key={optionId}
-                                        name={optionId}
-                                        label={title}
-                                        defaultValue={defaultValue}
-                                        onChange={onChangeHandler}
-                                        options={
-                                          options?.map((value) => ({
-                                            value:
-                                              convertOptionValue(value) ||
-                                              'value not specified',
-                                          })) || []
-                                        }
-                                      />
-                                    );
-                                  case 'text':
-                                  case 'number':
-                                    return (
-                                      <TextInput
-                                        data-testid="scenario-config-input"
-                                        key={optionId}
-                                        label={title}
-                                        type={inputType}
-                                        defaultValue={defaultValue}
-                                        onChange={onChangeHandler}
-                                      />
-                                    );
-                                  case 'boolean':
-                                    return (
-                                      <ToggleInput
-                                        data-testid="scenario-config-input"
-                                        key={optionId}
-                                        label={title}
-                                        defaultChecked={defaultValue === 'true'}
-                                        onChange={onChangeHandler}
-                                      />
-                                    );
-                                  default:
-                                    return null;
-                                }
-                              }
-                            )}
-                          </Stack>
-                        </Spacing>
-                      </TableCell>
-                    </ExpansionPanel>
-                  ) : (
-                    <TableCell>
-                      <h5>no options</h5>
-                    </TableCell>
-                  )}
-
-                  {openPageURL ? (
-                    <TableCell>
-                      <Spacing pr={2} css={{ textAlign: 'right' }}>
-                        <a href={openPageURL} target="_blank" rel="noreferrer">
-                          <Button>Open page</Button>
-                        </a>
-                      </Spacing>
-                    </TableCell>
-                  ) : (
-                    <TableCell>
-                      <div />
-                    </TableCell>
-                  )}
-                </TableRow>
-              </div>
-            )
-          )}
+                                setMockState(loadFromStorage());
+                              }}
+                              inputType={inputType}
+                            />
+                          );
+                        })}
+                      </>
+                    ))}
+                  </OptionsTableRow>
+                </>
+              )
+            )}
+          </form>
         </ExpansionPanelContextProvider>
       </Table>
-      <Button
-        data-testid="reset-all-mocks-button"
-        onClick={() => {
-          saveToStorage([]);
-          location.reload();
-        }}
-      >
-        Reset all mocks
-      </Button>
+      {mockConfig && (
+        <Button
+          data-testid="reset-all-mocks-button"
+          type="reset"
+          onClick={(e) => {
+            e.preventDefault();
+            setMockState(resetAll(mockConfig));
+            formRef.current?.reset();
+          }}
+        >
+          Reset all mocks
+        </Button>
+      )}
     </Stack>
   );
 };

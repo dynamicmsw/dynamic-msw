@@ -2,7 +2,7 @@ import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
 import { createMock } from './createMock';
-import type { MocksState } from './state';
+import type { State } from './state';
 import { dynamicMswStorageKey, state, saveToStorage } from './state';
 import { resetHandlers, stopWorker, setupWorker } from './worker';
 
@@ -16,26 +16,28 @@ const mockOptions = {
   },
 };
 
+const mockFn = (config) => {
+  return rest.get('http://localhost:1234/test', async (_req, res, ctx) => {
+    return res(
+      ctx.json({
+        success: config.success === true ? 'yes' : 'no',
+      })
+    );
+  });
+};
+
 export const exampleMock = createMock(
   {
-    scenarioTitle: 'example',
+    mockTitle: 'example',
     openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
     mockOptions,
   },
-  (config) => {
-    return rest.get('http://localhost:1234/test', async (req, res, ctx) => {
-      return res(
-        ctx.json({
-          success: config.success === true ? 'yes' : 'no',
-        })
-      );
-    });
-  }
+  mockFn
 );
 
 describe('dynamicMsw', () => {
   beforeAll(() => {
-    setupWorker([exampleMock], setupServer);
+    setupWorker({ mocks: [exampleMock], setupServer });
   });
   afterEach(() => {
     resetHandlers();
@@ -95,31 +97,37 @@ describe('dynamicMsw', () => {
   });
 
   it('saves state to localStorage', () => {
-    const expectedState: MocksState[] = [
-      {
-        scenarioTitle: 'example',
-        mockOptions,
-        openPageURL: 'yes-page',
-      },
-    ];
+    const expectedState: State = {
+      mocks: [
+        {
+          mockTitle: 'example',
+          mockOptions,
+          openPageURL: 'yes-page',
+        },
+      ],
+      scenarios: [],
+    };
     expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
       expectedState
     );
   });
   it('updates state in localStorage', () => {
     exampleMock.updateMock({ success: false });
-    const expectedState: MocksState[] = [
-      {
-        scenarioTitle: 'example',
-        mockOptions: {
-          success: { ...mockOptions.success, selectedValue: false },
-          optionTwo: {
-            defaultValue: 'hello',
+    const expectedState: State = {
+      mocks: [
+        {
+          mockTitle: 'example',
+          mockOptions: {
+            success: { ...mockOptions.success, selectedValue: false },
+            optionTwo: {
+              defaultValue: 'hello',
+            },
           },
+          openPageURL: 'no-page',
         },
-        openPageURL: 'no-page',
-      },
-    ];
+      ],
+      scenarios: [],
+    };
     expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
       expectedState
     );
@@ -127,7 +135,7 @@ describe('dynamicMsw', () => {
   it('initializes with storage state', async () => {
     exampleMock.updateMock({ success: false });
     stopWorker();
-    setupWorker([exampleMock], setupServer);
+    setupWorker({ mocks: [exampleMock], setupServer });
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
     );
@@ -137,20 +145,24 @@ describe('dynamicMsw', () => {
   });
 
   it('initializes with storage state', async () => {
-    saveToStorage([
-      {
-        scenarioTitle: 'example',
-        mockOptions: {
-          success: {
-            options: [true, false],
-            defaultValue: true,
-            selectedValue: false,
+    saveToStorage({
+      mocks: [
+        {
+          mockTitle: 'example',
+          mockOptions: {
+            success: {
+              options: [true, false],
+              defaultValue: true,
+              selectedValue: false,
+            },
           },
+          mockFn,
         },
-      },
-    ]);
+      ],
+      scenarios: [],
+    });
 
-    setupWorker([exampleMock], setupServer);
+    setupWorker({ mocks: [exampleMock], setupServer });
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
     );

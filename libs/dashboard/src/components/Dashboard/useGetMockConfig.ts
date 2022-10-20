@@ -60,7 +60,9 @@ const useLoadIframes = (mockServerSettings: MockServerSettingsStateType) => {
       (!mockServerSettings.initializePageURLs ||
         mockServerSettings.initializePageURLs.length < 0)
     ) {
-      setIsLoadingIframe(false);
+      setTimeout(() => {
+        setIsLoadingIframe(false);
+      }, 500);
       return;
     }
     if (

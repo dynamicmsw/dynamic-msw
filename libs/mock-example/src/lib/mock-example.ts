@@ -1,4 +1,4 @@
-import { createMock, setupWorker } from '@dynamic-msw/core';
+import { createMock, setupWorker, createScenario } from '@dynamic-msw/core';
 import { rest } from 'msw';
 import type { setupServer as setupServerMsw } from 'msw/node';
 
@@ -10,7 +10,7 @@ export interface ExampleResponse {
 
 export const exampleMock = createMock(
   {
-    scenarioTitle: 'example',
+    mockTitle: 'example',
     mockOptions: {
       success: {
         options: [true, false],
@@ -30,8 +30,8 @@ export const exampleMock = createMock(
 
 export const variatedExampleMock = createMock(
   {
-    scenarioTitle: 'Variated mock options',
-    openPageURL: '#',
+    mockTitle: 'Variated mock options',
+    openPageURL: 'http://localhost:4200',
     mockOptions: {
       someTextOption: {
         defaultValue: 'text value',
@@ -55,5 +55,15 @@ export const variatedExampleMock = createMock(
   }
 );
 
+export const exampleScenario = createScenario(
+  { scenarioTitle: 'example scenario', openPageURL: 'http://localhost:4200' },
+  { exampleMock },
+  { exampleMock: { success: false } }
+);
+
 export const setup = (setupServer?: typeof setupServerMsw) =>
-  setupWorker([exampleMock, variatedExampleMock], setupServer);
+  setupWorker({
+    mocks: [exampleMock, variatedExampleMock],
+    scenarios: [exampleScenario],
+    setupServer,
+  });

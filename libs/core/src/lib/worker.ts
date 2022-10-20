@@ -5,18 +5,31 @@ import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 import type { CreateMockFnReturnType } from './createMock.types';
 import { state } from './state';
 
-export const setupWorker = (
-  mocks: Array<RestHandler | CreateMockFnReturnType>,
+interface SetupWorkerArg {
+  mocks: Array<RestHandler | CreateMockFnReturnType>;
+  scenarios?: {
+    mocks: Array<RestHandler | CreateMockFnReturnType>;
+    isActive?: boolean;
+  }[];
   // enforce to pass setupServer for node environments
   // importing setupServer results in a error in browser environments
-  setupServer?: typeof setupServerMsw
-): SetupServerApi | SetupWorkerApi => {
+  setupServer?: typeof setupServerMsw;
+}
+export const setupWorker = ({
+  mocks,
+  scenarios,
+  setupServer,
+}: SetupWorkerArg): SetupServerApi | SetupWorkerApi => {
   const handlers = mocks.flatMap<RestHandler>(
     (mock) => (mock as CreateMockFnReturnType)?.mocks || (mock as RestHandler)
   );
   const setup = setupServer || setupWorkerMsw;
-
+  const activeScenarioIndex = state
+    .getState()
+    .scenarios?.findIndex(({ isActive }) => isActive);
+  const activeScenarioMocks = scenarios?.[activeScenarioIndex]?.mocks || [];
   global.__mock_worker = setup(...handlers);
+  global.__mock_worker.use(...activeScenarioMocks);
   startWorker();
   return global.__mock_worker;
 };
@@ -54,5 +67,5 @@ export const stopWorker = () => {
 
 export const resetHandlers = () => {
   state.resetMocks();
-  global.__mock_worker.resetHandlers();
+  global.__mock_worker?.resetHandlers();
 };

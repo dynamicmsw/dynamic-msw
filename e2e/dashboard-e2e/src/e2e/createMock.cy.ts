@@ -1,16 +1,15 @@
-const openConfig = () => {
+const openFirstConfig = () => {
   cy.containsByTestId('scenario-title', 'example');
   cy.getByTestId('configure-panel').first().children('summary').click();
 };
 
-describe('Dynamic MSW Dashboard', () => {
+describe('createMock', () => {
   beforeEach(() =>
     cy.visit('/iframe.html?id=dashboard--primary', { timeout: 30000 })
   );
-
   it('should load in config from iframe and save mock config when adjusted', () => {
     cy.getByTestId('dashboard-state').contains('Loading mock config...');
-    openConfig();
+    openFirstConfig();
     cy.getByTestId('configure-panel')
       .first()
       .findByTestId('scenario-config-input')
@@ -20,14 +19,14 @@ describe('Dynamic MSW Dashboard', () => {
       .findByTestId('scenario-config-input')
       .click();
     cy.reload();
-    openConfig();
+    openFirstConfig();
     cy.getByTestId('configure-panel')
       .first()
       .findByTestId('scenario-config-input')
       .should('not.be.checked');
   });
   it('should reset mocks when the reset mock button is pressed', () => {
-    openConfig();
+    openFirstConfig();
     cy.getByTestId('configure-panel')
       .first()
       .findByTestId('scenario-config-input')
@@ -41,6 +40,7 @@ describe('Dynamic MSW Dashboard', () => {
       .findByTestId('scenario-config-input')
       .should('not.be.checked');
     cy.getByTestId('reset-all-mocks-button').click();
+    openFirstConfig();
     cy.getByTestId('configure-panel')
       .first()
       .findByTestId('scenario-config-input')
