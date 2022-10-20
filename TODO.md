@@ -9,3 +9,4 @@
    In a scenario mocks should be enabled unless specified otherwise. Reconsider though.
 1. synced commit messages include dashboard. Alter the semver commit message to include dynamic-msw instead
 1. release actions seem to not use caching. Double check e2e cache
+1. remove semver hardcoded patch version from workflows
