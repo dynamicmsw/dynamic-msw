@@ -14,11 +14,9 @@ export const Index = () => {
         exampleMock,
         //eslint-disable-next-line @typescript-eslint/no-var-requires
       } = require('@dynamic-msw/mock-example');
-
       fetch(exampleEndpoint)
         .then((res) => res.json())
         .then((data) => setData(data));
-
       setTimeout(() => {
         exampleMock.updateMock({ success: false });
         fetch(exampleEndpoint)

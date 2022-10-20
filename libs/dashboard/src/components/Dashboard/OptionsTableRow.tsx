@@ -13,6 +13,7 @@ interface OptionsTableRowProps {
   index: number;
   hasMockOptions: boolean;
   openPageURL?: string;
+  bootstrapScenario?: React.MouseEventHandler<HTMLAnchorElement>;
   children: React.ReactNode | React.ReactNode[];
 }
 
@@ -21,6 +22,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
   index,
   hasMockOptions,
   openPageURL,
+  bootstrapScenario,
   children,
 }) => (
   <div
@@ -63,11 +65,18 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         </TableCell>
       )}
 
-      {openPageURL ? (
+      {openPageURL || bootstrapScenario ? (
         <TableCell>
           <Spacing pr={2} css={{ textAlign: 'right' }}>
-            <a href={openPageURL} target="_blank" rel="noreferrer">
-              <Button>Open page</Button>
+            <a
+              href={openPageURL}
+              onClick={bootstrapScenario}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button>
+                {bootstrapScenario ? 'Bootstrap scenario' : 'Open page'}
+              </Button>
             </a>
           </Spacing>
         </TableCell>

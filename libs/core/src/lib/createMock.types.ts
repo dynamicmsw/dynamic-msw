@@ -1,6 +1,6 @@
 import type { RestHandler } from 'msw';
 
-type ArrayElementType<T extends ReadonlyArray<unknown>> =
+export type ArrayElementType<T extends ReadonlyArray<unknown>> =
   T extends ReadonlyArray<infer ArrayElementType> ? ArrayElementType : never;
 
 export type OptionType = boolean | string | number;
@@ -43,8 +43,11 @@ export type SetupMocksFn = (
 ) => RestHandler[];
 
 export interface CreateMockFnReturnType<T extends Options = Options> {
-  mockTitle: string;
   mocks: RestHandler[];
-  updateMock: (updateValues: Partial<ConvertedOptions<T>>) => void;
+  mockTitle: string;
+  updateMock: (
+    updateValues: Partial<ConvertedOptions<T>>,
+    skipSaveToState?: boolean
+  ) => CreateMockFnReturnType<T>;
   resetMock: () => void;
 }

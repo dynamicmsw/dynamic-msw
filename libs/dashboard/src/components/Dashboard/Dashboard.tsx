@@ -1,13 +1,22 @@
-import { saveToStorage, defaultState } from '@dynamic-msw/core';
+import type { State } from '@dynamic-msw/core';
+import { saveToStorage, loadFromStorage } from '@dynamic-msw/core';
 import {
   Table,
   Button,
   ExpansionPanelContextProvider,
   Stack,
 } from '@stela-ui/react';
+import { useState, useEffect, useRef } from 'react';
 import type { FC } from 'react';
 
-import { convertMockConfig, convertScenarios } from './Dashboard.helpers';
+import {
+  convertMockConfig,
+  convertScenarios,
+  updateMockOptions,
+  updateScenarioOptions,
+  resetAll,
+  getInputType,
+} from './Dashboard.helpers';
 import { MockOptionsInput } from './MockOptionsInput';
 import { OptionsTableRow } from './OptionsTableRow';
 import { useGetMockConfig } from './useGetMockConfig';
@@ -17,11 +26,20 @@ export interface DashboardProps {}
 
 export const Dashboard: FC<DashboardProps> = () => {
   const { mockConfig, isLoading, iFrameError } = useGetMockConfig();
-  const convertedMockConfig = mockConfig
-    ? convertMockConfig(mockConfig.mocks)
+  const [mockState, setMockState] = useState<State>();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!mockState && !isLoading && mockConfig) {
+      setMockState(mockConfig);
+    }
+  }, [mockConfig, isLoading, mockState]);
+
+  const convertedMockConfig = mockState
+    ? convertMockConfig(mockState.mocks)
     : [];
-  const convertedScenarios = mockConfig
-    ? convertScenarios(mockConfig.scenarios, mockConfig.mocks)
+  const convertedScenarios = mockState
+    ? convertScenarios(mockState?.scenarios)
     : [];
 
   return (
@@ -34,8 +52,11 @@ export const Dashboard: FC<DashboardProps> = () => {
 
       <Table columns={3} css={{ width: '100%' }}>
         <ExpansionPanelContextProvider>
-          <div
+          <form
+            ref={formRef}
             css={{
+              // TODO: fix this way of styling the table rows.
+              // TODO: This should be possible from the stela-ui lib for starters
               display: 'contents',
               '> * > *, summary': { display: 'flex', alignItems: 'center' },
               '&:nth-child(odd) div, &:nth-child(odd) summary, &:nth-child(odd) details':
@@ -58,19 +79,33 @@ export const Dashboard: FC<DashboardProps> = () => {
                   openPageURL={openPageURL}
                 >
                   {mockOptions.map(
-                    ({ selectedValue, options, type, title }) => (
-                      <MockOptionsInput
-                        key={`${mockTitle}-${title}`}
-                        id={`${mockTitle}-${title}`}
-                        mockConfigIndex={index}
-                        title={title}
-                        options={options}
-                        selectedValue={selectedValue}
-                        type={type}
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        mockConfig={mockConfig!}
-                      />
-                    )
+                    ({ selectedValue, options, type, title }) => {
+                      const inputType = getInputType(
+                        selectedValue,
+                        options,
+                        type
+                      );
+                      return (
+                        <MockOptionsInput
+                          key={`${mockTitle}-${title}`}
+                          id={`${mockTitle}-${title}`}
+                          title={title}
+                          options={options}
+                          selectedValue={selectedValue}
+                          inputType={inputType}
+                          onChange={(value) => {
+                            updateMockOptions(
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                              mockState!,
+                              index,
+                              title,
+                              inputType === 'number' ? Number(value) : value
+                            );
+                            setMockState(loadFromStorage());
+                          }}
+                        />
+                      );
+                    }
                   )}
                 </OptionsTableRow>
               )
@@ -82,46 +117,74 @@ export const Dashboard: FC<DashboardProps> = () => {
                     key={`${scenarioTitle}`}
                     rowTitle={scenarioTitle}
                     index={index + convertedMockConfig.length}
-                    hasMockOptions={Boolean(
-                      mocks.find(({ mockOptions }) => mockOptions.length >= 0)
-                    )}
+                    hasMockOptions={Boolean(mocks.length >= 0)}
                     openPageURL={openPageURL}
+                    bootstrapScenario={(e) => {
+                      e.preventDefault();
+                      const clonedState: State = JSON.parse(
+                        JSON.stringify(mockState)
+                      );
+                      clonedState.scenarios.map((data) => ({
+                        ...data,
+                        isActive: false,
+                      }));
+                      clonedState.scenarios[index].isActive = true;
+                      saveToStorage(clonedState);
+                      setMockState(clonedState);
+
+                      if (openPageURL) {
+                        window.open(openPageURL, '_blank')?.focus();
+                      }
+                    }}
                   >
-                    {mocks.map(({ mockTitle, mockOptions }) =>
-                      mockOptions.map(
-                        ({ selectedValue, options, type, title }) => (
-                          <MockOptionsInput
-                            key={`${scenarioTitle}-${mockTitle}-${title}`}
-                            id={`${scenarioTitle}-${mockTitle}-${title}`}
-                            mockConfigIndex={convertedMockConfig.findIndex(
-                              (data) => mockTitle === data.mockTitle
-                            )}
-                            title={title}
-                            options={options}
-                            selectedValue={selectedValue}
-                            type={type}
-                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                            mockConfig={mockConfig!}
-                          />
-                        )
-                      )
-                    )}
+                    {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => (
+                      <>
+                        <h4 css={{ margin: 0 }}>{mockTitle}</h4>
+                        {mockOptions.map(({ selectedValue, title }) => {
+                          const inputType = getInputType(selectedValue);
+                          return (
+                            <MockOptionsInput
+                              key={`${scenarioTitle}-${mockTitle}-${title}`}
+                              id={`${scenarioTitle}-${mockTitle}-${title}`}
+                              title={title}
+                              selectedValue={selectedValue}
+                              onChange={(value) => {
+                                updateScenarioOptions(
+                                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                  mockState!,
+                                  index,
+                                  mocksIndex,
+                                  title,
+                                  inputType === 'number' ? Number(value) : value
+                                );
+                                setMockState(loadFromStorage());
+                              }}
+                              inputType={inputType}
+                            />
+                          );
+                        })}
+                      </>
+                    ))}
                   </OptionsTableRow>
                 </>
               )
             )}
-          </div>
+          </form>
         </ExpansionPanelContextProvider>
       </Table>
-      <Button
-        data-testid="reset-all-mocks-button"
-        onClick={() => {
-          saveToStorage(defaultState);
-          location.reload();
-        }}
-      >
-        Reset all mocks
-      </Button>
+      {mockConfig && (
+        <Button
+          data-testid="reset-all-mocks-button"
+          type="reset"
+          onClick={(e) => {
+            e.preventDefault();
+            setMockState(resetAll(mockConfig));
+            formRef.current?.reset();
+          }}
+        >
+          Reset all mocks
+        </Button>
+      )}
     </Stack>
   );
 };

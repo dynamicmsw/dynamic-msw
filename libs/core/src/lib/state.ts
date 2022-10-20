@@ -1,18 +1,34 @@
-import type { Options, ConvertedOptions } from './createMock.types';
+import type {
+  Options,
+  ConvertedOptions,
+  CreateMockMockFn,
+  OptionType,
+} from './createMock.types';
 
 export interface MocksState {
   mockTitle: string;
   mockOptions: Options;
   openPageURL?: string;
   dashboardScenarioOnly?: boolean;
+  mockFn?: CreateMockMockFn;
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
 
+export type MockOptionsState = {
+  mockTitle: string;
+  mockOptions: Record<
+    string,
+    { defaultValue: OptionType; selectedValue?: OptionType }
+  >;
+};
+
 export interface ScenariosState {
   scenarioTitle: string;
-  mocks: string[];
+  mocks: MockOptionsState[];
+  isActive?: boolean;
   openPageURL?: string;
+  resetMock?: () => void;
 }
 
 export interface State {
@@ -41,18 +57,32 @@ export const loadFromStorage = (): State => {
 };
 
 class CreateState {
-  state: State = loadFromStorage();
+  state: State = loadFromStorage() || defaultState;
 
   addScenario = (data: ScenariosState) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
     if (existingScenarioIndex >= 0) {
-      this.state.scenarios[existingScenarioIndex] = data;
+      this.state.scenarios[existingScenarioIndex].resetMock = data.resetMock;
     } else {
       this.state.scenarios.push(data);
+      saveToStorage(this.state);
     }
-    saveToStorage(this.state);
+
+    return data;
+  };
+  updateScenario = (data: ScenariosState) => {
+    const existingScenarioIndex = this.state.scenarios.findIndex(
+      ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
+    );
+
+    if (existingScenarioIndex >= 0) {
+      this.state.scenarios[existingScenarioIndex] = data;
+      saveToStorage(this.state);
+    }
+
+    return data;
   };
 
   addMock = (data: MocksState) => {
@@ -65,6 +95,7 @@ class CreateState {
         updateMock: data.updateMock,
         resetMock: data.resetMock,
         openPageURL: data.openPageURL,
+        mockFn: data.mockFn,
       };
     } else {
       this.state.mocks.push(data);
@@ -82,6 +113,9 @@ class CreateState {
 
   resetMocks = () => {
     this.state.mocks.forEach(({ resetMock }) => {
+      resetMock?.();
+    });
+    this.state.scenarios.forEach(({ resetMock }) => {
       resetMock?.();
     });
   };
