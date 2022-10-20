@@ -14,7 +14,6 @@ type CreateMockOptions = {
   mockTitle: string;
 };
 
-// TODO: fix type defs
 type ScenarioMock<T extends CreateMockFnReturnType[]> = {
   [K in keyof T]: {
     mock: T[K];
@@ -28,6 +27,8 @@ type SetupMocksFn = (
   options: CreateMockOptions,
   mockFn: CreateMockMockFn
 ) => RestHandler[];
+
+type OpenPageFn<T> = (mockConfig: T) => string;
 
 const initializeMocks: SetupMocksFn = (options, mockFn) => {
   const mockFnReturnValue = mockFn(options.mockOptions);
@@ -83,17 +84,23 @@ export const createScenario = <T extends Mocks>(
   optionsArg:
     | {
         scenarioTitle: string;
-        // TODO: think of function openPageURL
-        openPageURL?: string | null;
+        openPageURL?:
+          | string
+          | OpenPageFn<{ [K in keyof T]: Parameters<T[K]['updateMock']>[0] }>;
       }
     | string,
   mocks: T,
   mockOptions: { [K in keyof T]: Parameters<T[K]['updateMock']>[0] }
 ) => {
-  const { openPageURL, scenarioTitle } =
+  const { scenarioTitle, ...restOptions } =
     typeof optionsArg === 'string'
       ? { scenarioTitle: optionsArg, openPageURL: null }
       : optionsArg;
+
+  const openPageURL =
+    typeof restOptions.openPageURL === 'function'
+      ? restOptions.openPageURL(mockOptions)
+      : restOptions.openPageURL;
 
   const initialState = state.getState();
   const initialScenarioIndex = initialState.scenarios.findIndex(
