@@ -53,7 +53,7 @@ jobs:
         run: yarn nx run dashboard:versionCI --base=last-release --releaseAs=patch --noVerify --skip-nx-cache
 
       - name: Check for created tags to see if a new version has been made
-        run: git tag -l --contains $(git rev-parse HEAD) | cat | grep . && echo "Found newly created tag" || { echo "No changes found"; exit 1; };}
+        run: git tag -l --contains $(git rev-parse HEAD) | cat | grep . && echo "Found newly created tag" || { echo "No changes found"; exit 1; };
 
       - name: Push changes
         run: git push origin HEAD
