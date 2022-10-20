@@ -10,7 +10,7 @@
         "commands": [
           "vite build",
           "cpy ./package.json ../../dist/libs/dashboard",
-          "cpy ./copyHtmlFile.js ../../dist/libs/dashboard",
+          "cpy ./copyDashboardFiles.js ../../dist/libs/dashboard",
           "cpy ./src/types.ts ../../dist/libs/dashboard --rename=types.d.ts --flat",
           "cpy ../../dist/libs/dashboard/index.html ../../examples/next/public/mock-server --flat"
         ],

@@ -21,11 +21,11 @@
   },
   "types": "types.d.ts",
   "files": [
-    "./copyHtmlFile.js",
+    "./copyDashboardFiles.js",
     "./mock-server-settings.js",
     "./index.html"
   ],
   "bin": {
-    "setupMockServer": "node copyHtmlFile.js"
+    "setupMockServer": "node copyDashboardFiles.js"
   }
 }
