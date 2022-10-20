@@ -1,9 +1,7 @@
 import type {
   Options,
   ConvertedOptions,
-  CreateMockFnReturnType,
   CreateMockMockFn,
-  OpenPageFn,
   OptionType,
 } from './createMock.types';
 
@@ -12,10 +10,7 @@ export interface MocksState {
   mockOptions: Options;
   openPageURL?: string;
   dashboardScenarioOnly?: boolean;
-  createMockBaseArgs: {
-    mockFn: CreateMockMockFn;
-    openPageURL: string | OpenPageFn;
-  };
+  mockFn?: CreateMockMockFn;
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
@@ -100,6 +95,7 @@ class CreateState {
         updateMock: data.updateMock,
         resetMock: data.resetMock,
         openPageURL: data.openPageURL,
+        mockFn: data.mockFn,
       };
     } else {
       this.state.mocks.push(data);

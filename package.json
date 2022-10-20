@@ -7,7 +7,6 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "postinstall": "nx run dashboard:build",
     "prepare": "husky install"
   },
   "lint-staged": {

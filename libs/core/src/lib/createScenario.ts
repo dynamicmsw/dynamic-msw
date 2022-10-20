@@ -47,7 +47,7 @@ const initializeManyMocks = ({
   createMockOptions: CreateMockOptions[];
   isActive?: boolean;
 }) =>
-  mocksFromState.flatMap(({ createMockBaseArgs: { mockFn } }, index) => {
+  mocksFromState.flatMap(({ mockFn }, index) => {
     const mockOptions = createMockOptions[index];
     const initializedMocks = initializeMocks(mockOptions, mockFn);
     if (isActive) {

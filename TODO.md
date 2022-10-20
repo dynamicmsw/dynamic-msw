@@ -9,3 +9,4 @@
 1. implement getPageUrl function for scenarios
 1. add docs
 1. extract the open-app-page module to seperate project
+1. e2e tests log a lot of assets with the dev vite storybook

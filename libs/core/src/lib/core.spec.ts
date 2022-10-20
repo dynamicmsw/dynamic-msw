@@ -16,21 +16,23 @@ const mockOptions = {
   },
 };
 
+const mockFn = (config) => {
+  return rest.get('http://localhost:1234/test', async (_req, res, ctx) => {
+    return res(
+      ctx.json({
+        success: config.success === true ? 'yes' : 'no',
+      })
+    );
+  });
+};
+
 export const exampleMock = createMock(
   {
     mockTitle: 'example',
     openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
     mockOptions,
   },
-  (config) => {
-    return rest.get('http://localhost:1234/test', async (req, res, ctx) => {
-      return res(
-        ctx.json({
-          success: config.success === true ? 'yes' : 'no',
-        })
-      );
-    });
-  }
+  mockFn
 );
 
 describe('dynamicMsw', () => {
@@ -154,6 +156,7 @@ describe('dynamicMsw', () => {
               selectedValue: false,
             },
           },
+          mockFn,
         },
       ],
       scenarios: [],

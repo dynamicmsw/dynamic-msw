@@ -66,11 +66,6 @@ export const createMock = <T extends Options = Options>(
     .getState()
     .mocks.find((stateData) => stateData.mockTitle === mockTitle);
 
-  const createMockBaseArgs = {
-    mockFn,
-    openPageURL,
-  };
-
   let convertedConfig = convertMockOptions(
     initialState?.mockOptions || mockOptions
   );
@@ -88,7 +83,7 @@ export const createMock = <T extends Options = Options>(
         openPageURL: getPageURL(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
-        createMockBaseArgs,
+        mockFn,
       });
       return returnValue;
     },
@@ -101,7 +96,7 @@ export const createMock = <T extends Options = Options>(
         openPageURL: getPageURL(convertedConfig, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
-        createMockBaseArgs,
+        mockFn,
       });
     },
   };
@@ -112,7 +107,7 @@ export const createMock = <T extends Options = Options>(
     openPageURL: getPageURL(convertedConfig, openPageURL),
     updateMock: returnValue.updateMock,
     resetMock: returnValue.resetMock,
-    createMockBaseArgs,
+    mockFn,
   });
 
   return returnValue;

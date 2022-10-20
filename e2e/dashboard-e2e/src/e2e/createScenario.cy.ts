@@ -19,8 +19,7 @@ describe('createScenario', () => {
       .findByTestId('scenario-config-input')
       .first()
       .click();
-    // TODO: CRITICAL: pretty tire but this reload messes with the e2e tests:
-    // cy.reload();
+    cy.reload();
     openLastConfig();
     cy.getByTestId('configure-panel')
       .last()
