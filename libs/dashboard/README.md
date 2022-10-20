@@ -1,7 +1,9 @@
 # @dynamic-msw/dashboard
 
-This project is ready for proof of concepts. The API's might undergo some refactoring.
+## Setup
 
-## Running locally
-
-> `nx serve dashboard`
+1. `yarn add -D @dynamic-msw/core @dynamic-msw/dashboard` or
+   `npm i -D @dynamic-msw/core @dynamic-msw/dashboard -D`
+2. Setup the dashboard
+   `yarn setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-server`
+   `npx setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-server`
