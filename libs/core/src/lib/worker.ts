@@ -24,7 +24,9 @@ export const setupWorker = ({
     (mock) => (mock as CreateMockFnReturnType)?.mocks || (mock as RestHandler)
   );
   const setup = setupServer || setupWorkerMsw;
-  const activeScenarioIndex = scenarios?.findIndex(({ isActive }) => isActive);
+  const activeScenarioIndex = state
+    .getState()
+    .scenarios?.findIndex(({ isActive }) => isActive);
   const activeScenarioMocks = scenarios?.[activeScenarioIndex]?.mocks || [];
   global.__mock_worker = setup(...handlers);
   global.__mock_worker.use(...activeScenarioMocks);
