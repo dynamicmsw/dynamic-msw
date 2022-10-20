@@ -9,20 +9,17 @@ import type {
 import type { MocksState, MockOptionsState } from './state';
 import { state } from './state';
 
-// TODO: figure out if something like this is possible
-// <
-//   B extends CreateMockFnReturnType,
-//   T extends { mock: B; options: B['mockOptions'] }[]
-// >
-
 type CreateMockOptions = {
   mockOptions: Record<string, OptionType>;
   mockTitle: string;
 };
 
-type ScenarioMock = {
-  mock: CreateMockFnReturnType;
-  mockOptions: CreateMockOptions['mockOptions'];
+// TODO: fix type defs
+type ScenarioMock<T extends CreateMockFnReturnType[]> = {
+  [K in keyof T]: {
+    mock: T[K];
+    mockOptions: Parameters<T[K]['updateMock']>[0];
+  };
 };
 
 type SetupMocksFn = (
@@ -57,7 +54,7 @@ const initializeManyMocks = ({
   });
 
 const getMockOptionsArray = (
-  mocks: ScenarioMock[],
+  mocks: ScenarioMock<CreateMockFnReturnType[]>,
   mocksFromState: MocksState[]
 ) =>
   mocks.map(({ mockOptions }, index) => ({
@@ -80,7 +77,7 @@ const convertToStateMockOptions = (
     ),
   }));
 
-export const createScenario = (
+export const createScenario = <T extends CreateMockFnReturnType[]>(
   optionsArg:
     | {
         scenarioTitle: string;
@@ -88,7 +85,7 @@ export const createScenario = (
         openPageURL?: string | null;
       }
     | string,
-  mocks: ScenarioMock[]
+  mocks: ScenarioMock<T>
 ) => {
   const { openPageURL, scenarioTitle } =
     typeof optionsArg === 'string'

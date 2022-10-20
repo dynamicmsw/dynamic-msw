@@ -68,7 +68,9 @@ describe('createMock type definitions', () => {
           someNumberOption: {
             defaultValue: 123,
           },
-          someUndefinedOption: {},
+          someUndefinedOption: {
+            type: 'text',
+          },
         },
         openPageURL: (config) => {
           // ✅
@@ -168,8 +170,16 @@ describe('createMock type definitions', () => {
       {
         mock: exampleMock,
         mockOptions: {
-          success: true,
-          someUndefinedOption: '123',
+          someUndefinedOption: 'sd',
+        },
+      },
+      {
+        mock: exampleMock,
+        mockOptions: {
+          // TODO: fix type defs
+          // TODO: ❌
+          // TODO: @ts-expect-error is not part of exampleMock its options
+          someTextOption: 'sd',
         },
       },
       {
@@ -177,6 +187,19 @@ describe('createMock type definitions', () => {
         mockOptions: {
           someTextOption: '123',
           someUndefinedOption: '123',
+          // ❌
+          // @ts-expect-error is not a number
+          someNumberOption: 'bla',
+        },
+      },
+      {
+        mock: variatedExampleMock,
+        mockOptions: {
+          someTextOption: '123',
+          someUndefinedOption: '123',
+          // ❌
+          // @ts-expect-error does not exists
+          iDoNotExist: '123',
         },
       },
     ]);

@@ -54,7 +54,6 @@ export type SetupMocksFn = (
 export interface CreateMockFnReturnType<T extends Options = Options> {
   mocks: RestHandler[];
   mockTitle: string;
-  typeHackMockOptions?: Partial<ConvertedOptions<T>>;
   updateMock: (
     updateValues: Partial<ConvertedOptions<T>>,
     skipSaveToState?: boolean
