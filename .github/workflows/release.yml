@@ -50,7 +50,7 @@ jobs:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
       # TODO: we should probably not disable hooks as it can lead to unwanted formatting changes (just disable for now)
       - name: Version
-        run: yarn nx affected --target=versionCI --base=last-release --releaseAs=patch --noVerify
+        run: yarn nx affected --target=versionCI --base=last-release --releaseAs=patch --noVerify --skip-nx-cache
 
       - name: Check for created tags to see if a new version has been made
         run: git tag -l --contains $(git rev-parse HEAD) | cat | grep . && echo "Found newly created tag" || { echo "No changes found"; exit 1; };}

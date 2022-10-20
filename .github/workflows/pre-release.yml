@@ -60,7 +60,7 @@ jobs:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 
       - name: Version
-        run: yarn nx affected --target=versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }}
+        run: yarn nx affected --target=versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }} --skip-nx-cache
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 
