@@ -72,8 +72,8 @@ jobs:
       - name: Push tags
         run: git push --tags
 
-      # - name: Publish changes
-      #   run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+      - name: Publish changes
+        run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
