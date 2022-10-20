@@ -80,6 +80,12 @@ const convertToStateMockOptions = (
     ),
   }));
 
+const getOpenPageURL = (
+  openPageURL: string | OpenPageFn<unknown>,
+  mockOptions: unknown
+) =>
+  typeof openPageURL === 'function' ? openPageURL(mockOptions) : openPageURL;
+
 export const createScenario = <T extends Mocks>(
   optionsArg:
     | {
@@ -97,10 +103,7 @@ export const createScenario = <T extends Mocks>(
       ? { scenarioTitle: optionsArg, openPageURL: null }
       : optionsArg;
 
-  const openPageURL =
-    typeof restOptions.openPageURL === 'function'
-      ? restOptions.openPageURL(mockOptions)
-      : restOptions.openPageURL;
+  const openPageURL = getOpenPageURL(restOptions.openPageURL, mockOptions);
 
   const initialState = state.getState();
   const initialScenarioIndex = initialState.scenarios.findIndex(
@@ -136,7 +139,7 @@ export const createScenario = <T extends Mocks>(
   const scenarioReturnValue = {
     mocks: initializedMocks,
     scenarioTitle,
-    resetMock: () => {
+    resetMocks: () => {
       scenarioReturnValue.mocks = initializeManyMocks({
         mocksFromState,
         createMockOptions: createMockOptions,
@@ -145,8 +148,17 @@ export const createScenario = <T extends Mocks>(
         ...(initialScenario || {}),
         scenarioTitle,
         mocks: convertToStateMockOptions(createMockOptions, mocksFromState),
-        resetMock: scenarioReturnValue.resetMock,
+        resetMocks: scenarioReturnValue.resetMocks,
       });
+    },
+    activateScenario: () => {
+      const existingScenario = state
+        .getState()
+        .scenarios.find((data) => scenarioTitle === data.scenarioTitle);
+
+      if (existingScenario) {
+        global.__mock_worker?.use(...existingScenario.mocks);
+      }
     },
   };
   state.addScenario({
@@ -154,7 +166,7 @@ export const createScenario = <T extends Mocks>(
     scenarioTitle,
     openPageURL,
     mocks: convertToStateMockOptions(createMockOptions, mocksFromState),
-    resetMock: scenarioReturnValue.resetMock,
+    resetMocks: scenarioReturnValue.resetMocks,
   });
   return scenarioReturnValue;
 };

@@ -1,6 +1,5 @@
 # TODOS
 
-1. ensure mock titles are uniques or show a warning
 1. add docs
 1. add package.json example for open-app-page implementation and consider exposing it as a .bin script
 1. add more tests

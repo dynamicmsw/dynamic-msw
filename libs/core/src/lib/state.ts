@@ -28,7 +28,7 @@ export interface ScenariosState {
   mocks: MockOptionsState[];
   isActive?: boolean;
   openPageURL?: string;
-  resetMock?: () => void;
+  resetMocks?: () => void;
 }
 
 export interface State {
@@ -64,7 +64,7 @@ class CreateState {
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
     if (existingScenarioIndex >= 0) {
-      this.state.scenarios[existingScenarioIndex].resetMock = data.resetMock;
+      this.state.scenarios[existingScenarioIndex].resetMocks = data.resetMocks;
     } else {
       this.state.scenarios.push(data);
       saveToStorage(this.state);
@@ -72,13 +72,17 @@ class CreateState {
 
     return data;
   };
-  updateScenario = (data: ScenariosState) => {
+
+  updateScenario = (data: Partial<ScenariosState>) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
 
     if (existingScenarioIndex >= 0) {
-      this.state.scenarios[existingScenarioIndex] = data;
+      this.state.scenarios[existingScenarioIndex] = {
+        ...this.state.scenarios[existingScenarioIndex],
+        ...data,
+      };
       saveToStorage(this.state);
     }
 
@@ -89,9 +93,10 @@ class CreateState {
     const existingMockIndex = this.state.mocks.findIndex(
       ({ mockTitle }) => mockTitle === data.mockTitle
     );
-    if (existingMockIndex >= 0) {
+    const existingMock = this.state.mocks[existingMockIndex];
+    if (existingMock) {
       this.state.mocks[existingMockIndex] = {
-        ...this.state.mocks[existingMockIndex],
+        ...existingMock,
         updateMock: data.updateMock,
         resetMock: data.resetMock,
         openPageURL: data.openPageURL,
@@ -100,14 +105,23 @@ class CreateState {
     } else {
       this.state.mocks.push(data);
     }
+
+    if (existingMock?.mockFn) {
+      console.warn(
+        `Looks like you initialized 2 createMock functions with the same mock title: '${existingMock.mockTitle}'. Please ensure the mockTitle option is unique across your mocks.`
+      );
+    }
     saveToStorage(this.state);
   };
 
-  updateMock = (data: MocksState) => {
+  updateMock = (data: Partial<MocksState>) => {
     const existingMockIndex = this.state.mocks.findIndex(
       ({ mockTitle }) => mockTitle === data.mockTitle
     );
-    this.state.mocks[existingMockIndex] = data;
+    this.state.mocks[existingMockIndex] = {
+      ...this.state.mocks[existingMockIndex],
+      ...data,
+    };
     saveToStorage(this.state);
   };
 
@@ -115,8 +129,8 @@ class CreateState {
     this.state.mocks.forEach(({ resetMock }) => {
       resetMock?.();
     });
-    this.state.scenarios.forEach(({ resetMock }) => {
-      resetMock?.();
+    this.state.scenarios.forEach(({ resetMocks }) => {
+      resetMocks?.();
     });
   };
 
