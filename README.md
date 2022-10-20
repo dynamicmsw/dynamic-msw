@@ -21,14 +21,14 @@ Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worke
 ## Usage example
 
 ```
-import { createMock, setupWorker, createScenario } from '@dynamic-msw/core';
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
+import { createMock, setupWorker, createScenario } from "@dynamic-msw/core";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
 
 export const exampleMock = createMock(
   {
     mockTitle: "example",
-    openPageURL: 'http://localhost:4200/example',
+    openPageURL: "http://localhost:4200/example",
     mockOptions: {
       success: {
         options: [true, false],
@@ -50,19 +50,23 @@ export const exampleMock = createMock(
       success: config.success === true ? "yes" : "no",
       countryCode: config.countryCode,
       number: config.someNumberOption,
-      content: config.textWithoutDefault',
+      content: config.textWithoutDefault,
     };
+
     return rest.get("http://localhost:1234/example", async (_req, res, ctx) => {
       return res(ctx.json(response));
     });
   }
 );
 
-
 export const exampleScenario = createScenario(
-  { scenarioTitle: 'example scenario', openPageURL: (config) => `http://localhost:4200/${config.exampleMock.countryCode}/example`},
+  {
+    scenarioTitle: "example scenario",
+    openPageURL: (config) =>
+      `http://localhost:4200/${config.exampleMock.countryCode}/example`,
+  },
   { exampleMock },
-  { exampleMock: { countryCode: 'nl', success: false } }
+  { exampleMock: { countryCode: "nl", success: false } }
 );
 
 setupWorker({
