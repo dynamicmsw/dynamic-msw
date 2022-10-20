@@ -66,13 +66,6 @@
         "cwd": "libs/core"
       }
     },
-    "versionCI": {
-      "executor": "@jscutlery/semver:version",
-      "options": {
-        "preset": "conventional",
-        "syncVersions": true
-      }
-    },
     "publishCI": {
       "executor": "nx:run-commands",
       "options": {
