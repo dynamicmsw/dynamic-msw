@@ -80,6 +80,6 @@ setupWorker({
 
 - [Next.JS](./examples/next)
 
-<h1 align="center">Looking for collaboratos</h1>
+<h1 align="center">Looking for collaborators</h1>
 
 Wanna help improve Dynamic Mock Service Worker? Great! You can get in touch via [bramzijpcode@gmail.com](mailto:bramzijpcode@gmail.com?subject=[Dynamic-MSW]Collaboration).
