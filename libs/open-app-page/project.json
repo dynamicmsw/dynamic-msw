@@ -32,6 +32,12 @@
         "assets": ["libs/open-app-page/*.md"]
       }
     },
+    "versionCI": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional"
+      }
+    },
     "publishCI": {
       "executor": "nx:run-commands",
       "options": {
