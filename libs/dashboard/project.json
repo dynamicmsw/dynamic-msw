@@ -11,6 +11,7 @@
           "vite build",
           "cpy ./package.json ../../dist/libs/dashboard",
           "cpy ./copyDashboardFiles.js ../../dist/libs/dashboard",
+          "cpy ./mock-server-settings.js ../../dist/libs/dashboard",
           "cpy ./src/types.ts ../../dist/libs/dashboard --rename=types.d.ts --flat",
           "cpy ../../dist/libs/dashboard/index.html ../../examples/next/public/mock-server --flat"
         ],
@@ -69,13 +70,6 @@
         "ci": {
           "quiet": true
         }
-      }
-    },
-    "versionCI": {
-      "executor": "@jscutlery/semver:version",
-      "options": {
-        "preset": "conventional",
-        "syncVersions": true
       }
     },
     "publishCI": {
