@@ -26,6 +26,10 @@ export const variatedExampleMock = createMock(
     mockTitle: 'Variated mock options',
     openPageURL: '#',
     mockOptions: {
+      success: {
+        options: ['true', 'false'],
+        defaultValue: 'true',
+      },
       someTextOption: {
         defaultValue: 'text value',
       },
@@ -58,25 +62,50 @@ describe('createMock type definitions', () => {
             options: [true, false],
             defaultValue: true,
           },
+          someTextOption: {
+            defaultValue: 'text value',
+          },
+          someNumberOption: {
+            defaultValue: 123,
+          },
+          someUndefinedOption: {},
         },
         openPageURL: (config) => {
           // ✅
-          satisfies<typeof config>()({
+          satisfies<Partial<typeof config>>()({
             success: false,
           });
           // ✅
-          satisfies<typeof config>()({
+          satisfies<Partial<typeof config>>()({
             success: true,
           });
+          // ✅
+          satisfies<Partial<typeof config>>()({
+            someNumberOption: 123,
+          });
+          // ✅
+          satisfies<Partial<typeof config>>()({
+            someUndefinedOption: 'i-am-text',
+          });
           // ❌
-          satisfies<typeof config>()({
+          satisfies<Partial<typeof config>>()({
             // @ts-expect-error config type is a boolean
             success: 'bad',
           });
           // ❌
-          satisfies<typeof config>()({
+          satisfies<Partial<typeof config>>()({
             // @ts-expect-error config type is a boolean
             success: 1,
+          });
+          // ❌
+          satisfies<Partial<typeof config>>()({
+            // @ts-expect-error config type is a boolean
+            someNumberOption: '123',
+          });
+          // ❌
+          satisfies<Partial<typeof config>>()({
+            // @ts-expect-error config type is a boolean
+            someUndefinedOption: 123,
           });
 
           return config.success ? 'yes-page' : 'no-page';
@@ -84,22 +113,40 @@ describe('createMock type definitions', () => {
       },
       (config) => {
         // ✅
-        satisfies<typeof config>()({
+        satisfies<Partial<typeof config>>()({
           success: false,
         });
         // ✅
-        satisfies<typeof config>()({
+        satisfies<Partial<typeof config>>()({
           success: true,
         });
+        // ✅
+        satisfies<Partial<typeof config>>()({
+          someNumberOption: 123,
+        });
+        // ✅
+        satisfies<Partial<typeof config>>()({
+          someUndefinedOption: 'i-am-text',
+        });
         // ❌
-        satisfies<typeof config>()({
+        satisfies<Partial<typeof config>>()({
           // @ts-expect-error config type is a boolean
           success: 'bad',
         });
         // ❌
-        satisfies<typeof config>()({
+        satisfies<Partial<typeof config>>()({
           // @ts-expect-error config type is a boolean
           success: 1,
+        });
+        // ❌
+        satisfies<Partial<typeof config>>()({
+          // @ts-expect-error config type is a boolean
+          someNumberOption: '123',
+        });
+        // ❌
+        satisfies<Partial<typeof config>>()({
+          // @ts-expect-error config type is a boolean
+          someUndefinedOption: 123,
         });
 
         return rest.get('test', async (req, res, ctx) => {
@@ -122,9 +169,16 @@ describe('createMock type definitions', () => {
         mock: exampleMock,
         mockOptions: {
           success: true,
+          someUndefinedOption: '123',
         },
       },
-      { mock: variatedExampleMock, mockOptions: {} },
+      {
+        mock: variatedExampleMock,
+        mockOptions: {
+          someTextOption: '123',
+          someUndefinedOption: '123',
+        },
+      },
     ]);
   });
 });

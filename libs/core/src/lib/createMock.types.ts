@@ -9,20 +9,29 @@ export type OptionRenderType = 'text' | 'number' | 'boolean' | 'select';
 
 export type Options<T extends OptionType = OptionType> = Record<
   string,
-  | {
-      options?: T[];
-      selectedValue?: T;
-    } & (
-      | { defaultValue: T; type?: OptionRenderType }
-      | {
-          defaultValue?: T;
-          type: OptionRenderType;
-        }
-    )
+  {
+    options?: T[];
+    selectedValue?: T;
+    type?: OptionRenderType;
+    defaultValue?: T;
+  }
 >;
 
+interface OptionRenderTypeMap {
+  text: string;
+  number: number;
+  boolean: boolean;
+  select: never;
+}
+
 export type ConvertedOptions<T extends Options = Options> = {
-  [Key in keyof T]: ArrayElementType<T[Key]['options']>;
+  [Key in keyof T]: T[Key]['defaultValue'] extends OptionType
+    ? T[Key]['defaultValue'] extends true | false
+      ? boolean
+      : T[Key]['defaultValue']
+    : OptionRenderTypeMap[T[Key]['type']] extends never
+    ? ArrayElementType<T[Key]['options']>
+    : OptionRenderTypeMap[T[Key]['type']];
 };
 
 export type CreateMockMockFn<T extends Options = Options> = (
@@ -45,6 +54,7 @@ export type SetupMocksFn = (
 export interface CreateMockFnReturnType<T extends Options = Options> {
   mocks: RestHandler[];
   mockTitle: string;
+  typeHackMockOptions?: Partial<ConvertedOptions<T>>;
   updateMock: (
     updateValues: Partial<ConvertedOptions<T>>,
     skipSaveToState?: boolean
