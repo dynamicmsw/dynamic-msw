@@ -1,14 +1,53 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { createMock, setupWorker, createScenario } from '@dynamic-msw/core';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 
-import { App } from './App';
-import { Dashboard } from './components/Dashboard/Dashboard';
+export const exampleMock = createMock(
+  {
+    mockTitle: 'example',
+    openPageURL: 'http://localhost:4200/example',
+    mockOptions: {
+      success: {
+        options: [true, false],
+        defaultValue: true,
+      },
+      countryCode: {
+        defaultValue: 'en',
+      },
+      someNumberOption: {
+        defaultValue: 123,
+      },
+      textWithoutDefault: {
+        type: 'text',
+      },
+    },
+  },
+  (config) => {
+    const response = {
+      success: config.success === true ? 'yes' : 'no',
+      countryCode: config.countryCode,
+      number: config.someNumberOption,
+      content: config.textWithoutDefault,
+    };
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App>
-      <Dashboard />
-    </App>
-  </React.StrictMode>,
-  document.getElementById('root')
+    return rest.get('http://localhost:1234/example', async (_req, res, ctx) => {
+      return res(ctx.json(response));
+    });
+  }
 );
+
+export const exampleScenario = createScenario(
+  {
+    scenarioTitle: 'example scenario',
+    openPageURL: (config) =>
+      `http://localhost:4200/${config.exampleMock.countryCode}/example`,
+  },
+  { exampleMock },
+  { exampleMock: { countryCode: 'nl', success: false } }
+);
+
+setupWorker({
+  mocks: [exampleMock],
+  scenarios: [exampleScenario],
+  setupServer,
+});

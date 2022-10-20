@@ -21,39 +21,39 @@ Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worke
 ## Usage example
 
 ```
-import { createMock, setupWorker, createScenario } from "@dynamic-msw/core";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
+import { createMock, setupWorker, createScenario } from '@dynamic-msw/core';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 
 export const exampleMock = createMock(
   {
-    mockTitle: "example",
-    openPageURL: "http://localhost:4200/example",
+    mockTitle: 'example',
+    openPageURL: 'http://localhost:4200/example',
     mockOptions: {
       success: {
         options: [true, false],
         defaultValue: true,
       },
       countryCode: {
-        defaultValue: "en",
+        defaultValue: 'en',
       },
       someNumberOption: {
         defaultValue: 123,
       },
       textWithoutDefault: {
-        type: "text",
+        type: 'text',
       },
     },
   },
   (config) => {
     const response = {
-      success: config.success === true ? "yes" : "no",
+      success: config.success === true ? 'yes' : 'no',
       countryCode: config.countryCode,
       number: config.someNumberOption,
       content: config.textWithoutDefault,
     };
 
-    return rest.get("http://localhost:1234/example", async (_req, res, ctx) => {
+    return rest.get('http://localhost:1234/example', async (_req, res, ctx) => {
       return res(ctx.json(response));
     });
   }
@@ -61,12 +61,12 @@ export const exampleMock = createMock(
 
 export const exampleScenario = createScenario(
   {
-    scenarioTitle: "example scenario",
+    scenarioTitle: 'example scenario',
     openPageURL: (config) =>
       `http://localhost:4200/${config.exampleMock.countryCode}/example`,
   },
   { exampleMock },
-  { exampleMock: { countryCode: "nl", success: false } }
+  { exampleMock: { countryCode: 'nl', success: false } }
 );
 
 setupWorker({
