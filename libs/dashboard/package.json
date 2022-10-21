@@ -2,6 +2,7 @@
   "name": "@dynamic-msw/dashboard",
   "sideEffects": false,
   "version": "0.0.4",
+  "license": "MIT",
   "description": "User interface for adjusting mocks created with dynamic-msw (@dynamic-msw/core)",
   "keywords": [
     "dynamic-msw",
@@ -10,7 +11,7 @@
     "mocking",
     "dashboard"
   ],
-  "homepage": "https://github.com/dynamicmsw/dynamic-msw/libs/dashboard",
+  "homepage": "https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/dashboard",
   "bugs": {
     "url": "https://github.com/dynamicmsw/dynamic-msw/issues"
   },
