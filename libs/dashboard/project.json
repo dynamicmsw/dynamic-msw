@@ -13,7 +13,7 @@
           "cpy ./copyDashboardFiles.js ../../dist/libs/dashboard",
           "cpy ./mock-server-settings.js ../../dist/libs/dashboard",
           "cpy ./src/types.ts ../../dist/libs/dashboard --rename=types.d.ts --flat",
-          "cpy ../../dist/libs/dashboard/index.html ../../examples/next/public/mock-server --flat"
+          "cpy ../../dist/libs/dashboard/index.html ../../examples/next/public/mock-dashboard --flat"
         ],
         "parallel": false,
         "cwd": "libs/dashboard"

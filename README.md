@@ -74,6 +74,8 @@ setupWorker({
   scenarios: [exampleScenario],
   setupServer,
 });
+
+exampleMock.updateMock({ success: false });
 ```
 
 ## Framework examples
