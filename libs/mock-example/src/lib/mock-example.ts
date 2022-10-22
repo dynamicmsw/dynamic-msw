@@ -49,8 +49,16 @@ export const variatedExampleMock = createMock(
       iAmText: config.someTextOption,
       iAmNumber: config.someNumberOption,
     };
-    return rest.get('/i-am-relative', async (_req, res, ctx) => {
-      return res(ctx.json(response));
+    return rest.post('/login', async (req, res, ctx) => {
+      const { username } = await req.json();
+      return res(
+        // Send a valid HTTP status code
+        ctx.status(403),
+        // And a response body, if necessary
+        ctx.json({
+          errorMessage: `User '${username}' not found`,
+        })
+      );
     });
   }
 );

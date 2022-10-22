@@ -11,10 +11,12 @@
 1. release actions seem to not use caching. Double check e2e cache
 1. remove semver hardcoded patch version from workflows
 1. perhaps it's better to leave the msw setup to the user and expose an setupDynamicMocks helper
-1. types: refactor namings and cleanup and export more.
+1. types: refactor namings and cleanup and export more. (createMock args are important type defs)
 1. consider making scenarios updatable
 1. refine and add examples for more frameworks
 1. improve styling of form components
 1. add contribution docs
 1. evaluate resetMocks in createScenario. when it's active, it will now deactivate. The resetHandlers helper will clear the createScenario mocks
    as it's running msw resetHandlers after running state.resetHandlers()
+1. add proper type defs for options: [] in mockOptions
+1. remove selectedValue from mockOptions type
