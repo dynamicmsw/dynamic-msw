@@ -20,3 +20,5 @@
    as it's running msw resetHandlers after running state.resetHandlers()
 1. add proper type defs for options: [] in mockOptions
 1. remove selectedValue from mockOptions type
+1. think about a convenient way to reset mocks on startup with or without using the dashboard. I read about a way to use session storage
+   in combination with localStorage to re-use session storage across tabs. Reconsider if this is usefull for non dashboard usage.

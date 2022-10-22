@@ -1,6 +1,8 @@
 # @dynamic-msw/dashboard
 
-The dashboard is an optional user interface for @dynamic-msw/core. It allows you to alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
+WARNING: This library is in alpha phase and might be patched with breaking changes. It is recommended to only use this as proof of concept.
+
+The dashboard is an optional user interface for [@dynamic-msw/core](../core/README.md). It allows you to alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
 
 Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worker (MSW). It conveniently makes mocked endpoint responses dynamic and updatable.
 

@@ -1,6 +1,9 @@
 <h1 align="center">Dynamic Mock Service Worker</h1>
 
+WARNING: This library is in alpha phase and might be updated with breaking changes. It is recommended to only use this as proof of concept.
+
 Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worker (MSW). It conveniently makes mocked endpoint responses dynamic and updatable.
+This library expects you to have a basic grasp of Mock Service Worker (MSW). It's recommended that you resort to their [own documentation](https://github.com/mswjs/msw#documentation) before getting started with Dynamic Mock Service Worker.
 
 ## Features
 
