@@ -67,13 +67,18 @@ Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worke
      // Only needed for node environments
      setupServer,
    });
+
+   loginMock.updateMock({ success: false});
+
+   loginMock.resetMocks();
+
    ```
 
 ## API
 
 #### `createMock()` API
 
-`createMock({ mockTitle, openPageURL, mockOptions }, (activeOptions) => RestHandler);`
+`createMock({ mockTitle, openPageURL, mockOptions }, (activeOptions) => msw.RestHandler[]);`
 
 | Argument                           |            | Type                                       | Description                                                                                                                                             |
 | ---------------------------------- | ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -84,6 +89,16 @@ Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worke
 | `mockOptions.someKey.options`      | `optional` | `Array<string number boolean>`             | An array of possible values. Shown as select input in the dashboard.                                                                                    |
 | `mockOptions.someKey.type`         | `optional` | `'text'` `'number'` `'boolean'` `'select'` | Usefull for when you don't want a default value.                                                                                                        |
 | `activeOptions`                    | --         | `{ [mockOptions.keys]: activeValue }`      | Object containing the keys from `mockOptions` and their respective active value (`defaultValue` or an updated value after calling `updateOptions(...)`) |
+
+```ts
+import { RestHandler } from 'msw';
+
+const {
+  mocks: RestHandler[],
+  updateMock: ({ exampleMockOption: 'updateValue' }) => 'return value of createMock(...)',
+  resetMock: () => 'return value of createMock(...)',
+} = createMock(...)
+```
 
 ## Examples
 
