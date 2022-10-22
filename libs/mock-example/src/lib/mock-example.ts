@@ -18,9 +18,9 @@ export const exampleMock = createMock(
       },
     },
   },
-  (config) => {
+  (options) => {
     const response: ExampleResponse = {
-      success: config.success === true ? 'yes' : 'no',
+      success: options.success === true ? 'yes' : 'no',
     };
     return rest.get(exampleEndpoint, async (_req, res, ctx) => {
       return res(ctx.json(response));
@@ -44,21 +44,13 @@ export const variatedExampleMock = createMock(
       },
     },
   },
-  (config) => {
+  (options) => {
     const response = {
-      iAmText: config.someTextOption,
-      iAmNumber: config.someNumberOption,
+      iAmText: options.someTextOption,
+      iAmNumber: options.someNumberOption,
     };
-    return rest.post('/login', async (req, res, ctx) => {
-      const { username } = await req.json();
-      return res(
-        // Send a valid HTTP status code
-        ctx.status(403),
-        // And a response body, if necessary
-        ctx.json({
-          errorMessage: `User '${username}' not found`,
-        })
-      );
+    return rest.get('/i-am-relative', async (_req, res, ctx) => {
+      return res(ctx.json(response));
     });
   }
 );

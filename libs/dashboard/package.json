@@ -27,6 +27,6 @@
     "./index.html"
   ],
   "bin": {
-    "setupMockServer": "node copyDashboardFiles.js"
+    "initMockServer": "node copyDashboardFiles.js"
   }
 }

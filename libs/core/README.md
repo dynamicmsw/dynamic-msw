@@ -15,80 +15,84 @@ Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worke
 - [Getting started](#getting-started)
 - API
   - [`createMock`](#createmock-api)
-  <!-- - [`createScenario`](#createScenario-API)
-  - [`setupWorker`](#setupWorker-API) -->
-  <!-- - [Helpers](#helpers) -->
+  - [`createScenario`](#createScenario-API)
+    <!-- TODO: alter API then document -->
+    <!-- - [`setupWorker`](#setupWorker-API) -->
+    <!-- - [Helpers](#helpers) -->
 - [Examples](#examples)
+  <!-- TODO: alter API then document -->
   <!-- - [Test example](#test-example) -->
 
 ## Getting started
 
-1. Install module using yarn or npm
-   - `yarn add -D @dynamic-msw/core`
-   - `npm i -D @dynamic-msw/core`
-1. Create your first dynamic mock
+Install the module using yarn or npm:
 
-   ```
-   import { createMock, setupWorker } from '@dynamic-msw/core';
-   import { rest } from 'msw';
-   import { setupServer } from 'msw/node';
+- `yarn add -D @dynamic-msw/core`
+- `npm i -D @dynamic-msw/core`
 
-   export const loginMock = createMock(
-     {
-       mockTitle: 'login',
-       mockOptions: {
-         success: {
-           defaultValue: true,
-         },
-       },
-     },
-     (options) => {
-       return rest.post('/login', async (req, res, ctx) => {
-         const { username } = await req.json();
+Create your first dynamic mock
 
-         return options.success
-           ? res(
-               ctx.json({
-                 firstName: 'John',
-               })
-             )
-           : res(
-               ctx.status(403),
-               ctx.json({
-                 errorMessage: `User '${username}' not found`,
-               })
-             );
-       });
-     }
-   );
+```
+import { createMock, setupWorker } from '@dynamic-msw/core';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 
-   setupWorker({
-     mocks: [loginMock],
-     // Only needed for node environments
-     setupServer,
-   });
+export const loginMock = createMock(
+  {
+    mockTitle: 'login',
+    mockOptions: {
+      success: {
+        defaultValue: true,
+      },
+    },
+  },
+  (options) => {
+    return rest.post('/login', async (req, res, ctx) => {
+      const { username } = await req.json();
 
-   loginMock.updateMock({ success: false});
+      return options.success
+        ? res(
+            ctx.json({
+              firstName: 'John',
+            })
+          )
+        : res(
+            ctx.status(403),
+            ctx.json({
+              errorMessage: `User '${username}' not found`,
+            })
+          );
+    });
+  }
+);
 
-   loginMock.resetMocks();
+setupWorker({
+  mocks: [loginMock],
+  // Only needed for node environments
+  setupServer,
+});
 
-   ```
+loginMock.updateMock({ success: false});
+
+loginMock.resetMock();
+
+```
 
 ## API
 
 #### `createMock()` API
 
-`createMock({ mockTitle, openPageURL, mockOptions }, (activeOptions) => msw.RestHandler[]);`
+`createMock({ mockTitle, openPageURL, mockOptions }, (ACTIVE_OPTIONS) => msw.RestHandler[]);`
 
-| Argument                           |            | Type                                       | Description                                                                                                                                             |
-| ---------------------------------- | ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mockTitle`                        | `required` | `string` `unique`                          | An unique identifier for your mock. If you choose to use the dashboard, this will be used as title there.                                               |
-| `openPageURL`                      | `optional` | `string` or `(activeOptions)=>string`      | Adds an link to the dashboard to open an page where the mock can be tested                                                                              |
-| `mockOptions`                      | `required` | `Object` `Object keys: string`             | Dynamic mock options used to alter the response. The keys are used in `activeOptions` and their value will be the active value e.g. `true`.             |
-| `mockOptions.someKey.defaultValue` | `optional` | `string` `number` `boolean`                | The default value of an option.                                                                                                                         |
-| `mockOptions.someKey.options`      | `optional` | `Array<string number boolean>`             | An array of possible values. Shown as select input in the dashboard.                                                                                    |
-| `mockOptions.someKey.type`         | `optional` | `'text'` `'number'` `'boolean'` `'select'` | Usefull for when you don't want a default value.                                                                                                        |
-| `activeOptions`                    | --         | `{ [mockOptions.keys]: activeValue }`      | Object containing the keys from `mockOptions` and their respective active value (`defaultValue` or an updated value after calling `updateOptions(...)`) |
+| Argument                           |            | Type                                       | Description                                                                                                                                                     |
+| ---------------------------------- | ---------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mockTitle`                        | `required` | `string` `unique`                          | An unique identifier for your mock. If you choose to use the dashboard, this will be used as title there.                                                       |
+| `openPageURL`                      | `optional` | `string` or `(ACTIVE_OPTIONS)=>string`     | Adds an link to the dashboard to open an page where the mock can be tested                                                                                      |
+| `mockOptions`                      | `required` | `Object` `Object keys: string`             | Dynamic mock options used to alter the response and/or openPageURL. The keys are used in `ACTIVE_OPTIONS` and their value will be the active value e.g. `true`. |
+| `mockOptions.someKey.defaultValue` | `optional` | `string` `number` `boolean`                | The default value of an option.                                                                                                                                 |
+| `mockOptions.someKey.options`      | `optional` | `Array<string number boolean>`             | An array of possible values. Shown as select input in the dashboard.                                                                                            |
+| `mockOptions.someKey.type`         | `optional` | `'text'` `'number'` `'boolean'` `'select'` | Usefull for when you don't want a default value.                                                                                                                |
+| `ACTIVE_OPTIONS`                   | --         | `{ [mockOptions.keys]: activeValue }`      | Object containing the keys from `mockOptions` and their respective active value (`defaultValue` or an updated value after calling `updateOptions(...)`)         |
 
 ```ts
 import { RestHandler } from 'msw';

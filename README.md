@@ -6,17 +6,50 @@ Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worke
 
 - **Dynamic & Flexible**. Alter mocked responses on the fly using an infinite amount of configuration parameters. Usefull for testing feature flags, error responses or what ever reason you have to alter your API mocks.
 
-- **Dashboard UI**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
+- **[Dashboard UI](../dashboard/README.md)**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
 
 - **Scenarios**. Want to have a predefined set of mocks configured for a specific scenario? We got you covered! Configure defaults for your mocks and bootstrap the scenario. You can even dynamically construct or set an page URL to navigate to after bootstrapping from the dashboard!
 
+## Table of contents
+
+- [Setup](#setup)
+  - [Setup core without Dashboard](#setup-core-without-dashboard)
+  - [Setup with Dashboard](#setup-with-dashboard)
+- [Usage example](#usage-example)
+- [Getting started](#getting-started)
+- [Framework examples](#framework-examples)
+
 ## Setup
 
-1. `yarn add -D @dynamic-msw/core @dynamic-msw/dashboard` or
-   `npm i -D @dynamic-msw/core @dynamic-msw/dashboard -D`
-2. Setup the dashboard if you wanna use it
-   `yarn setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-dashboard`
-   `npx setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-dashboard`
+#### Setup core without dashboard
+
+Install the module using yarn or npm:
+
+- `yarn add -D @dynamic-msw/core`
+- `npm i -D @dynamic-msw/core`
+
+#### Setup with dashboard
+
+Install the modules using yarn or npm:
+
+- `yarn add -D @dynamic-msw/core @dynamic-msw/dashboard`
+- `npm i -D @dynamic-msw/core @dynamic-msw/dashboard`
+
+Run the `initMockServer` command (you can alter 'mock-dashboard' with any location you prefer):
+
+- `npx initMockServer <PUBLIC_DIR>/mock-dashboard`
+
+Replace the `<PUBLIC_DIR>` placeholder with the relative path to your server's public directory. For example, in a Create React App project this command would be:
+
+- `npx initMockServer public/mock-dashboard`
+
+Don't forget to initialize MSW for the browser if you didn't already:
+
+- `npx msw init <PUBLIC_DIR> --save`
+
+Replace the `<PUBLIC_DIR>` placeholder with the relative path to your server's public directory. For example, in a Create React App project this command would be:
+
+- `npx msw init public/ --save`
 
 ## Usage example
 
@@ -31,10 +64,10 @@ export const exampleMock = createMock(
     openPageURL: 'http://localhost:4200/example',
     mockOptions: {
       success: {
-        options: [true, false],
         defaultValue: true,
       },
       countryCode: {
+        options: ['en', 'nl'],
         defaultValue: 'en',
       },
       someNumberOption: {
@@ -45,12 +78,12 @@ export const exampleMock = createMock(
       },
     },
   },
-  (config) => {
+  (options) => {
     const response = {
-      success: config.success === true ? 'yes' : 'no',
-      countryCode: config.countryCode,
-      number: config.someNumberOption,
-      content: config.textWithoutDefault,
+      success: options.success === true ? 'yes' : 'no',
+      countryCode: options.countryCode,
+      number: options.someNumberOption,
+      content: options.textWithoutDefault,
     };
 
     return rest.get('http://localhost:1234/example', async (_req, res, ctx) => {
@@ -62,8 +95,8 @@ export const exampleMock = createMock(
 export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',
-    openPageURL: (config) =>
-      `http://localhost:4200/${config.exampleMock.countryCode}/example`,
+    openPageURL: (options) =>
+      `http://localhost:4200/${options.exampleMock.countryCode}/example`,
   },
   { exampleMock },
   { exampleMock: { countryCode: 'nl', success: false } }
@@ -77,6 +110,11 @@ setupWorker({
 
 exampleMock.updateMock({ success: false });
 ```
+
+## Getting started
+
+- [Core](./libs/core/README.md#getting-started)
+- [Dashboard](./libs/dashboard/README.md#setup)
 
 ## Framework examples
 
