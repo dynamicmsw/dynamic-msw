@@ -76,7 +76,8 @@
       "executor": "@jscutlery/semver:version",
       "options": {
         "preset": "conventional",
-        "syncVersions": true
+        "syncVersions": true,
+        "commitMessageFormat": "chore: release version ${version} [skip ci]"
       }
     },
     "publishCI": {
