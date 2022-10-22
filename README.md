@@ -15,8 +15,8 @@ Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worke
 1. `yarn add -D @dynamic-msw/core @dynamic-msw/dashboard` or
    `npm i -D @dynamic-msw/core @dynamic-msw/dashboard -D`
 2. Setup the dashboard if you wanna use it
-   `yarn setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-server`
-   `npx setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-server`
+   `yarn setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-dashboard`
+   `npx setupMockServer ./PATH_TO_PUBLIC_FOLDER/mock-dashboard`
 
 ## Usage example
 
@@ -82,6 +82,6 @@ exampleMock.updateMock({ success: false });
 
 - [Next.JS](./examples/next)
 
-<h1 align="center">Looking for collaborators</h1>
+# Looking for collaborators
 
 Wanna help improve Dynamic Mock Service Worker? Great! You can get in touch via [bramzijpcode@gmail.com](mailto:bramzijpcode@gmail.com?subject=[Dynamic-MSW]Collaboration).
