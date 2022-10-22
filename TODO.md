@@ -22,3 +22,4 @@
 1. remove selectedValue from mockOptions type
 1. think about a convenient way to reset mocks on startup with or without using the dashboard. I read about a way to use session storage
    in combination with localStorage to re-use session storage across tabs. Reconsider if this is usefull for non dashboard usage.
+1. add redirect to 404 page for production environments when accessing the dashboard. Maybe even the dashboard-settings.js file. Reconsider though.
