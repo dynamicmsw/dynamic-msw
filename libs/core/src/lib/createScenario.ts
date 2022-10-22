@@ -152,13 +152,7 @@ export const createScenario = <T extends Mocks>(
       });
     },
     activateScenario: () => {
-      const existingScenario = state
-        .getState()
-        .scenarios.find((data) => scenarioTitle === data.scenarioTitle);
-
-      if (existingScenario) {
-        global.__mock_worker?.use(...existingScenario.mocks);
-      }
+      global.__mock_worker?.use(...scenarioReturnValue.mocks);
     },
   };
   state.addScenario({

@@ -42,7 +42,7 @@ Thumbs.db
 .next
 
 # dashboard
-**/mock-server/index.html
+**/mock-dashboard/index.html
 
 # env
 nx-cloud.env

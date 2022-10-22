@@ -98,6 +98,7 @@ export const createMock = <T extends Options = Options>(
         resetMock: returnValue.resetMock,
         mockFn,
       });
+      return returnValue;
     },
   };
 

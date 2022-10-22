@@ -18,9 +18,9 @@ export const exampleMock = createMock(
       },
     },
   },
-  (config) => {
+  (options) => {
     const response: ExampleResponse = {
-      success: config.success === true ? 'yes' : 'no',
+      success: options.success === true ? 'yes' : 'no',
     };
     return rest.get(exampleEndpoint, async (_req, res, ctx) => {
       return res(ctx.json(response));
@@ -44,10 +44,10 @@ export const variatedExampleMock = createMock(
       },
     },
   },
-  (config) => {
+  (options) => {
     const response = {
-      iAmText: config.someTextOption,
-      iAmNumber: config.someNumberOption,
+      iAmText: options.someTextOption,
+      iAmNumber: options.someNumberOption,
     };
     return rest.get('/i-am-relative', async (_req, res, ctx) => {
       return res(ctx.json(response));
