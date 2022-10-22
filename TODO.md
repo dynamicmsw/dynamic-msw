@@ -7,7 +7,7 @@
 1. dashboard-e2e tests log a lot of assets with the dev vite storybook. Perhaps this can be filtered.
 1. Allow to disable mocks by default. Allow to disable/enable mocks in the dashboard.
    In a scenario mocks should be enabled unless specified otherwise. Reconsider though.
-1. synced commit messages include dashboard. Alter the semver commit message to include dynamic-msw instead
+1. synced commit messages include dashboard. Alter the semver commit message to something generic
 1. release actions seem to not use caching. Double check e2e cache
 1. remove semver hardcoded patch version from workflows
 1. perhaps it's better to leave the msw setup to the user and expose an setupDynamicMocks helper
@@ -16,3 +16,5 @@
 1. refine and add examples for more frameworks
 1. improve styling of form components
 1. add contribution docs
+1. evaluate resetMocks in createScenario. when it's active, it will now deactivate. The resetHandlers helper will clear the createScenario mocks
+   as it's running msw resetHandlers after running state.resetHandlers()
