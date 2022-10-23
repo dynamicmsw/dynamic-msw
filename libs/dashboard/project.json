@@ -77,7 +77,7 @@
       "options": {
         "preset": "conventional",
         "syncVersions": true,
-        "commitMessageFormat": "chore: release version ${version} [skip ci]"
+        "commitMessageFormat": "chore: release version ${version}"
       }
     },
     "publishCI": {

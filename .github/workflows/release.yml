@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  # quality-assurance:
-  #   if: startsWith(github.ref, 'refs/heads/release')
-  #   uses: ./.github/workflows/quality-assurance.yml
+  quality-assurance:
+    if: startsWith(github.ref, 'refs/heads/release')
+    uses: ./.github/workflows/quality-assurance.yml
   release:
     if: startsWith(github.ref, 'refs/heads/release')
     environment: release
     runs-on: ubuntu-latest
-    # needs: quality-assurance
+    needs: quality-assurance
     steps:
       - uses: actions/checkout@v2
         with:
