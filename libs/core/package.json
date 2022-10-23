@@ -2,7 +2,7 @@
   "name": "@dynamic-msw/core",
   "license": "MIT",
   "sideEffects": false,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Alter mocked responses on the fly using an infinite amount of configuration parameters. Usefull for testing feature flags, error responses or what ever reason you have to alter your API mocks.",
   "keywords": [
     "dynamic-msw",
