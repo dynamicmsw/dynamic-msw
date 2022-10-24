@@ -36,10 +36,10 @@ export const variatedExampleMock = createMock(
       },
     },
   },
-  (config) => {
+  (options) => {
     const response = {
-      iAmText: config.someTextOption,
-      iAmNumber: config.someNumberOption,
+      iAmText: options.someTextOption,
+      iAmNumber: options.someNumberOption,
     };
     return rest.get('/i-am-relative', async (_req, res, ctx) => {
       return res(ctx.json(response));
@@ -48,7 +48,7 @@ export const variatedExampleMock = createMock(
 );
 
 describe('createMock type definitions', () => {
-  it('passes down converted config types', () => {
+  it('passes down converted options types', () => {
     createMock(
       {
         mockTitle: 'example',
@@ -70,89 +70,89 @@ describe('createMock type definitions', () => {
             // xss: '1',
           },
         },
-        openPageURL: (config) => {
+        openPageURL: (options) => {
           // ✅
-          satisfies<Partial<typeof config>>()({
+          satisfies<Partial<typeof options>>()({
             success: false,
           });
           // ✅
-          satisfies<Partial<typeof config>>()({
+          satisfies<Partial<typeof options>>()({
             success: true,
           });
           // ✅
-          satisfies<Partial<typeof config>>()({
+          satisfies<Partial<typeof options>>()({
             someNumberOption: 123,
           });
           // ✅
-          satisfies<Partial<typeof config>>()({
+          satisfies<Partial<typeof options>>()({
             someUndefinedOption: 'i-am-text',
           });
           // ❌
-          satisfies<Partial<typeof config>>()({
-            // @ts-expect-error config type is a boolean
+          satisfies<Partial<typeof options>>()({
+            // @ts-expect-error options type is a boolean
             success: 'bad',
           });
           // ❌
-          satisfies<Partial<typeof config>>()({
-            // @ts-expect-error config type is a boolean
+          satisfies<Partial<typeof options>>()({
+            // @ts-expect-error options type is a boolean
             success: 1,
           });
           // ❌
-          satisfies<Partial<typeof config>>()({
-            // @ts-expect-error config type is a number
+          satisfies<Partial<typeof options>>()({
+            // @ts-expect-error options type is a number
             someNumberOption: '123',
           });
           // ❌
-          satisfies<Partial<typeof config>>()({
-            // @ts-expect-error config type is a boolean
+          satisfies<Partial<typeof options>>()({
+            // @ts-expect-error options type is a boolean
             someUndefinedOption: 123,
           });
 
-          return config.success ? 'yes-page' : 'no-page';
+          return options.success ? 'yes-page' : 'no-page';
         },
       },
-      (config) => {
+      (options) => {
         // ✅
-        satisfies<Partial<typeof config>>()({
+        satisfies<Partial<typeof options>>()({
           success: false,
         });
         // ✅
-        satisfies<Partial<typeof config>>()({
+        satisfies<Partial<typeof options>>()({
           success: true,
         });
         // ✅
-        satisfies<Partial<typeof config>>()({
+        satisfies<Partial<typeof options>>()({
           someNumberOption: 123,
         });
         // ✅
-        satisfies<Partial<typeof config>>()({
+        satisfies<Partial<typeof options>>()({
           someUndefinedOption: 'i-am-text',
         });
         // ❌
-        satisfies<Partial<typeof config>>()({
-          // @ts-expect-error config type is a boolean
+        satisfies<Partial<typeof options>>()({
+          // @ts-expect-error options type is a boolean
           success: 'bad',
         });
         // ❌
-        satisfies<Partial<typeof config>>()({
-          // @ts-expect-error config type is a boolean
+        satisfies<Partial<typeof options>>()({
+          // @ts-expect-error options type is a boolean
           success: 1,
         });
         // ❌
-        satisfies<Partial<typeof config>>()({
-          // @ts-expect-error config type is a number
+        satisfies<Partial<typeof options>>()({
+          // @ts-expect-error options type is a number
           someNumberOption: '123',
         });
         // ❌
-        satisfies<Partial<typeof config>>()({
-          // @ts-expect-error config type is a text
+        satisfies<Partial<typeof options>>()({
+          // @ts-expect-error options type is a text
           someUndefinedOption: 123,
         });
 
         return rest.get('test', async (req, res, ctx) => {
           return res(
             ctx.json({
-              success: config.success === true ? 'yes' : 'no',
+              success: options.success === true ? 'yes' : 'no',
             })
           );
         });
@@ -171,13 +171,13 @@ describe('createMock type definitions', () => {
       someNumberOption: 123,
     });
     // ❌
-    // @ts-expect-error config type is a text
+    // @ts-expect-error options type is a text
     variatedExampleMock.updateMock({ success: false });
   });
 });
 
 describe('createScenario type definitions', () => {
-  it('passes down converted config types', () => {
+  it('passes down converted options types', () => {
     // ✅
     createScenario('test', { exampleMock }, { exampleMock: { success: true } });
     // ✅

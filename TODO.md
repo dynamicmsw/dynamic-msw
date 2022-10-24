@@ -16,6 +16,7 @@
 
 # TODOS after releasing a stable/well tested version
 
+1. make type checking more strict
 1. refine and add examples for more frameworks
 1. refactor core types and helpers
 1. remove selectedValue from mockOptions type
