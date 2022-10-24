@@ -1,4 +1,4 @@
-import { setupWorker as setupWorkerMsw } from 'msw';
+import { setupWorker } from 'msw';
 import type { RestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
@@ -59,7 +59,7 @@ type SetupWorkerArg = GetDynamicMocksArg &
     nonDynamicMocks?: RestHandler[];
   };
 
-export const setupWorker = ({
+export const initializeWorker = ({
   mocks,
   scenarios,
   nonDynamicMocks,
@@ -67,7 +67,7 @@ export const setupWorker = ({
   startFnArg,
 }: SetupWorkerArg): SetupServerApi | SetupWorkerApi => {
   const dynamicMocks = getDynamicMocks({ mocks, scenarios });
-  const setup = setupServer || setupWorkerMsw;
+  const setup = setupServer || setupWorker;
   global.__mock_worker = setup(...(nonDynamicMocks || []), ...dynamicMocks);
   startWorker(startFnArg);
   return global.__mock_worker;
