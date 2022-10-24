@@ -13,6 +13,7 @@
 1. scan for project todos and filter important ones out
 1. add contribution docs
 1. remove semver hardcoded patch version from workflows
+1. How to keep the code clean and make it work for non typescript users
 
 # TODOS after releasing a stable/well tested version
 
