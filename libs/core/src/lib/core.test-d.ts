@@ -141,12 +141,12 @@ describe('createMock type definitions', () => {
         });
         // ❌
         satisfies<Partial<typeof config>>()({
-          // @ts-expect-error config type is a boolean
+          // @ts-expect-error config type is a number
           someNumberOption: '123',
         });
         // ❌
         satisfies<Partial<typeof config>>()({
-          // @ts-expect-error config type is a boolean
+          // @ts-expect-error config type is a text
           someUndefinedOption: 123,
         });
 

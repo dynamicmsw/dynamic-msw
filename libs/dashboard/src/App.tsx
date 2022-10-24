@@ -4,6 +4,8 @@ import { theme } from '@stela-ui/css';
 import type { FC, PropsWithChildren } from 'react';
 import { ThemeProvider } from 'theme-ui';
 
+import { useResetMocksQueryParam } from './useResetMocksQueryParam';
+
 const emotionCache = createCache({
   key: 'x',
   // Browser prefixes are not required
@@ -11,7 +13,8 @@ const emotionCache = createCache({
 });
 
 export const App: FC<Required<PropsWithChildren>> = ({ children }) => {
-  return (
+  const { shouldResetMocks } = useResetMocksQueryParam();
+  return shouldResetMocks ? null : (
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </CacheProvider>
