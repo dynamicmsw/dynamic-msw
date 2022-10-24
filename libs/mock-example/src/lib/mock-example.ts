@@ -35,7 +35,7 @@ export const exampleMock = createMock(
 export const variatedExampleMock = createMock(
   {
     mockTitle: 'Variated mock options',
-    openPageURL: 'http://localhost:4200',
+    openPageURL: '/iframe.html?id=development-examplemocks--primary',
     mockOptions: {
       someTextOption: {
         defaultValue: 'text value',
@@ -60,18 +60,21 @@ export const variatedExampleMock = createMock(
 );
 
 export const exampleScenario = createScenario(
-  { scenarioTitle: 'example scenario', openPageURL: 'http://localhost:4200' },
+  {
+    scenarioTitle: 'example scenario',
+    openPageURL: '/iframe.html?id=development-examplemocks--primary',
+  },
   { exampleMock },
   { exampleMock: { success: false } }
 );
 
 export const setup = (setupServer?: typeof setupServerMsw) => {
-  const dynamicMocks = initializeWorker({
+  const mockWorker = initializeWorker({
     mocks: [exampleMock, variatedExampleMock],
     scenarios: [exampleScenario],
     setupServer,
     startFnArg: { onUnhandledRequest: 'bypass' },
   });
 
-  return dynamicMocks;
+  return mockWorker;
 };

@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node';
 import { createMock } from './createMock';
 import type { State } from './state';
 import { dynamicMswStorageKey, state, saveToStorage } from './state';
-import { resetHandlers, stopWorker, setupWorker } from './worker';
+import { resetHandlers, stopWorker, initializeWorker } from './worker';
 
 const mockOptions = {
   success: {
@@ -37,7 +37,7 @@ export const exampleMock = createMock(
 
 describe('dynamicMsw', () => {
   beforeAll(() => {
-    setupWorker({ mocks: [exampleMock], setupServer });
+    initializeWorker({ mocks: [exampleMock], setupServer });
   });
   afterEach(() => {
     resetHandlers();
@@ -135,7 +135,7 @@ describe('dynamicMsw', () => {
   it('initializes with storage state', async () => {
     exampleMock.updateMock({ success: false });
     stopWorker();
-    setupWorker({ mocks: [exampleMock], setupServer });
+    initializeWorker({ mocks: [exampleMock], setupServer });
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
     );
@@ -162,7 +162,7 @@ describe('dynamicMsw', () => {
       scenarios: [],
     });
 
-    setupWorker({ mocks: [exampleMock], setupServer });
+    initializeWorker({ mocks: [exampleMock], setupServer });
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
     );
