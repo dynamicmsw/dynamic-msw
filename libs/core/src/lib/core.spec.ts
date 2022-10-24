@@ -11,9 +11,7 @@ const mockOptions = {
     options: [true, false],
     defaultValue: true,
   },
-  optionTwo: {
-    defaultValue: 'hello',
-  },
+  optionTwo: 'hello',
 };
 
 const mockFn = (config) => {
@@ -101,7 +99,13 @@ describe('dynamicMsw', () => {
       mocks: [
         {
           mockTitle: 'example',
-          mockOptions,
+          mockOptions: {
+            success: {
+              options: [true, false],
+              defaultValue: true,
+            },
+            optionTwo: { defaultValue: 'hello' },
+          },
           openPageURL: 'yes-page',
         },
       ],

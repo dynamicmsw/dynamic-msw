@@ -1,5 +1,5 @@
 import type {
-  Options,
+  StateOptions,
   ConvertedOptions,
   CreateMockMockFn,
   OptionType,
@@ -7,7 +7,7 @@ import type {
 
 export interface MocksState {
   mockTitle: string;
-  mockOptions: Options;
+  mockOptions: StateOptions;
   openPageURL?: string;
   dashboardScenarioOnly?: boolean;
   mockFn?: CreateMockMockFn;
