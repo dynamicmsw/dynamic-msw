@@ -21,3 +21,6 @@
    in combination with localStorage to re-use session storage across tabs. Reconsider if this is usefull for non dashboard usage.
 1. add redirect to 404 page for production environments when accessing the dashboard. Maybe even the dashboard-settings.js file. Reconsider though.
 1. auto remove unwanted changelog files after releases. reconsider though.
+1. simplify createScenario. I believe the initial state mutation can be simplified.
+1. add open-app-page module example and include resetMocks query param to it
+1. add resetMocks docs to dashboard readme
