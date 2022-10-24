@@ -1,36 +1,75 @@
 import { setupWorker as setupWorkerMsw } from 'msw';
-import type { SetupWorkerApi, RestHandler } from 'msw';
+import type { RestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
 import type { CreateMockFnReturnType } from './createMock.types';
 import { state } from './state';
 
-interface SetupWorkerArg {
-  mocks: Array<RestHandler | CreateMockFnReturnType>;
+interface GetDynamicMocksArg {
+  mocks: Array<CreateMockFnReturnType>;
   scenarios?: {
-    mocks: Array<RestHandler | CreateMockFnReturnType>;
-    isActive?: boolean;
+    mocks: Array<RestHandler>;
   }[];
-  // enforce to pass setupServer for node environments
-  // importing setupServer results in a error in browser environments
-  setupServer?: typeof setupServerMsw;
 }
-export const setupWorker = ({
-  mocks,
-  scenarios,
-  setupServer,
-}: SetupWorkerArg): SetupServerApi | SetupWorkerApi => {
-  const handlers = mocks.flatMap<RestHandler>(
-    (mock) => (mock as CreateMockFnReturnType)?.mocks || (mock as RestHandler)
-  );
-  const setup = setupServer || setupWorkerMsw;
+
+export const getActiveScenarioHandlers = (
+  scenarios: GetDynamicMocksArg['scenarios']
+): RestHandler[] => {
   const activeScenarioIndex = state
     .getState()
     .scenarios?.findIndex(({ isActive }) => isActive);
-  const activeScenarioMocks = scenarios?.[activeScenarioIndex]?.mocks || [];
-  global.__mock_worker = setup(...handlers);
-  global.__mock_worker.use(...activeScenarioMocks);
-  startWorker();
+  return scenarios?.[activeScenarioIndex]?.mocks || [];
+};
+
+export const getDynamicMockHandlers = (
+  mocks: GetDynamicMocksArg['mocks']
+): RestHandler[] => mocks.flatMap<RestHandler>((mock) => mock.mocks);
+
+export const getDynamicMocks = ({
+  mocks,
+  scenarios,
+}: GetDynamicMocksArg): RestHandler[] => {
+  const dynamicMocksHandlers = getDynamicMockHandlers(mocks);
+  const activeScenarioHandlers = getActiveScenarioHandlers(scenarios);
+  return [...activeScenarioHandlers, ...dynamicMocksHandlers];
+};
+
+export const resetDynamicMocks = () => {
+  state.resetMocks();
+};
+
+export const setGlobalWorker = (worker: SetupServerApi | SetupWorkerApi) => {
+  global.__mock_worker = worker;
+};
+
+// Convenience helpers
+
+interface SetupServerArgs {
+  setupServer: typeof setupServerMsw;
+  startFnArg?: Parameters<SetupServerApi['listen']>[0];
+}
+
+interface SetupWorkerArgs {
+  setupServer?: undefined;
+  startFnArg?: Parameters<SetupWorkerApi['start']>[0];
+}
+
+type SetupWorkerArg = GetDynamicMocksArg &
+  (SetupServerArgs | SetupWorkerArgs) & {
+    nonDynamicMocks?: RestHandler[];
+  };
+
+export const setupWorker = ({
+  mocks,
+  scenarios,
+  nonDynamicMocks,
+  setupServer,
+  startFnArg,
+}: SetupWorkerArg): SetupServerApi | SetupWorkerApi => {
+  const dynamicMocks = getDynamicMocks({ mocks, scenarios });
+  const setup = setupServer || setupWorkerMsw;
+  global.__mock_worker = setup(...(nonDynamicMocks || []), ...dynamicMocks);
+  startWorker(startFnArg);
   return global.__mock_worker;
 };
 
@@ -40,18 +79,15 @@ const isGlobalWorkerDefined = () => {
   }
 };
 
-export const startWorker = () => {
+export const startWorker = (
+  options: SetupServerArgs['startFnArg'] | SetupWorkerArgs['startFnArg']
+) => {
   isGlobalWorkerDefined();
   const startFn = (global.__mock_worker as SetupWorkerApi).start;
   if (typeof startFn === 'function') {
-    // TODO: make configurable
-    startFn({
-      onUnhandledRequest: 'bypass',
-    });
+    startFn(options);
   } else {
-    (global.__mock_worker as SetupServerApi).listen({
-      onUnhandledRequest: 'bypass',
-    });
+    (global.__mock_worker as SetupServerApi).listen(options);
   }
 };
 

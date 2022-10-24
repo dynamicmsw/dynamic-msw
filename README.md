@@ -57,7 +57,12 @@ Replace the `<PUBLIC_DIR>` placeholder with the relative path to your server's p
 ## Usage example
 
 ```
-import { createMock, setupWorker, createScenario } from '@dynamic-msw/core';
+import {
+  createMock,
+  getDynamicMocks,
+  createScenario,
+  setGlobalWorker,
+} from '@dynamic-msw/core';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
@@ -105,13 +110,19 @@ export const exampleScenario = createScenario(
   { exampleMock: { countryCode: 'nl', success: false } }
 );
 
-setupWorker({
-  mocks: [exampleMock],
-  scenarios: [exampleScenario],
-  setupServer,
-});
+const mockServer = setupServer(
+  ...getDynamicMocks({ mocks: [exampleMock], scenarios: [exampleScenario] })
+);
+
+// Required: adds the mockServer to global.__mock_worker
+setGlobalWorker(mockServer);
+
+mockServer.listen();
 
 exampleMock.updateMock({ success: false });
+
+exampleMock.resetMock();
+
 ```
 
 ## Getting started

@@ -61,9 +61,13 @@ export const exampleScenario = createScenario(
   { exampleMock: { success: false } }
 );
 
-export const setup = (setupServer?: typeof setupServerMsw) =>
-  setupWorker({
+export const setup = (setupServer?: typeof setupServerMsw) => {
+  const dynamicMocks = setupWorker({
     mocks: [exampleMock, variatedExampleMock],
     scenarios: [exampleScenario],
     setupServer,
+    startFnArg: { onUnhandledRequest: 'bypass' },
   });
+
+  return dynamicMocks;
+};

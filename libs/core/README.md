@@ -36,7 +36,7 @@ Install the module using yarn or npm:
 Create your first dynamic mock
 
 ```
-import { createMock, setupWorker } from '@dynamic-msw/core';
+import { createMock, getDynamicMocks } from '@dynamic-msw/core';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
@@ -69,13 +69,14 @@ export const loginMock = createMock(
   }
 );
 
-setupWorker({
-  mocks: [loginMock],
-  // Only needed for node environments
-  setupServer,
-});
+const mockServer = setupServer(...getDynamicMocks({ mocks: [loginMock] }));
 
-loginMock.updateMock({ success: false});
+// Required: adds the mockServer to global.__mock_worker
+setGlobalWorker(mockServer);
+
+mockServer.listen();
+
+loginMock.updateMock({ success: false });
 
 loginMock.resetMock();
 
