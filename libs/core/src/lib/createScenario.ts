@@ -1,16 +1,16 @@
 import type { RestHandler } from 'msw';
 
-import { convertMockOptions } from './createMock';
+import { getActiveOptions } from './createMock';
 import type {
   CreateMockFnReturnType,
-  OptionType,
+  ConvertedOptions,
   CreateMockMockFn,
 } from './createMock.types';
 import type { MocksState, MockOptionsState } from './state';
 import { state } from './state';
 
 type CreateMockOptions = {
-  mockOptions: Record<string, OptionType>;
+  mockOptions: ConvertedOptions;
   mockTitle: string;
 };
 
@@ -56,12 +56,11 @@ const initializeManyMocks = ({
     return initializedMocks;
   });
 
-const getMockOptionsArray = (
-  mocks: ScenarioMock<CreateMockFnReturnType[]>,
-  mocksFromState: MocksState[]
+const getMockOptionsAndTitleArray = (
+  mocks: ScenarioMock<CreateMockFnReturnType[]>
 ) =>
-  mocks.map(({ mockOptions }, index) => ({
-    mockTitle: mocksFromState[index].mockTitle,
+  mocks.map(({ mockOptions, mock }) => ({
+    mockTitle: mock.mockTitle,
     mockOptions,
   }));
 
@@ -106,28 +105,30 @@ export const createScenario = <T extends Mocks>(
   const openPageURL = getOpenPageURL(restOptions.openPageURL, mockOptions);
 
   const initialState = state.getState();
-  const initialScenarioIndex = initialState.scenarios.findIndex(
+  const initialScenarioStateIndex = initialState.scenarios.findIndex(
     (scenario) => scenario.scenarioTitle === scenarioTitle
   );
-  const initialScenario = initialState.scenarios[initialScenarioIndex];
+  const initialScenarioState =
+    initialState.scenarios[initialScenarioStateIndex];
 
+  // Mapping mockOptions arg to passed mocks
   const mappedOptionsToMocks = Object.keys(mocks).map((key) => ({
     mock: mocks[key],
     mockOptions: mockOptions[key],
   }));
 
+  // Get mocks from state so that we can use it's default options
   const mocksFromState = mappedOptionsToMocks.map(({ mock }) =>
     initialState.mocks.find(({ mockTitle }) => mockTitle === mock.mockTitle)
   );
 
-  const defaultMockOptions = getMockOptionsArray(
-    mappedOptionsToMocks,
-    mocksFromState
-  );
+  // TODO: perhaps we can simplify this
+  // Get only the title and mocks handler array
+  const defaultMockOptions = getMockOptionsAndTitleArray(mappedOptionsToMocks);
 
   const createMockOptions: CreateMockOptions[] =
-    initialScenario?.mocks.map(({ mockOptions, mockTitle }) => ({
-      mockOptions: convertMockOptions(mockOptions),
+    initialScenarioState?.mocks.map(({ mockOptions, mockTitle }) => ({
+      mockOptions: getActiveOptions(mockOptions),
       mockTitle,
     })) || defaultMockOptions;
 
@@ -145,7 +146,7 @@ export const createScenario = <T extends Mocks>(
         createMockOptions: createMockOptions,
       });
       state.updateScenario({
-        ...(initialScenario || {}),
+        ...(initialScenarioState || {}),
         scenarioTitle,
         mocks: convertToStateMockOptions(createMockOptions, mocksFromState),
         resetMocks: scenarioReturnValue.resetMocks,
@@ -156,7 +157,7 @@ export const createScenario = <T extends Mocks>(
     },
   };
   state.addScenario({
-    ...(initialScenario || {}),
+    ...(initialScenarioState || {}),
     scenarioTitle,
     openPageURL,
     mocks: convertToStateMockOptions(createMockOptions, mocksFromState),

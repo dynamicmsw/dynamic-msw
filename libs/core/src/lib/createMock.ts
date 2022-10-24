@@ -3,13 +3,16 @@ import type {
   ConvertMockOptionsFn,
   ConvertedOptions,
   Options,
+  StateOptions,
   OpenPageFn,
   CreateMockMockFn,
   CreateMockFnReturnType,
+  OptionType,
+  ConvertedStateOptions,
 } from './createMock.types';
 import { state } from './state';
 
-export const convertMockOptions: ConvertMockOptionsFn = (options) =>
+export const getActiveOptions: ConvertMockOptionsFn = (options) =>
   Object.keys(options).reduce(
     (prev, curr) => ({
       ...prev,
@@ -18,7 +21,7 @@ export const convertMockOptions: ConvertMockOptionsFn = (options) =>
           ? options[curr].selectedValue
           : options[curr].defaultValue,
     }),
-    {} as ConvertedOptions
+    {} as ConvertedStateOptions
   );
 
 export const initializeMocks: SetupMocksFn = (options, mockFn) => {
@@ -31,15 +34,16 @@ export const initializeMocks: SetupMocksFn = (options, mockFn) => {
 };
 
 const updateMockOptions = (
-  options: Options,
-  updatedOptions: Partial<ConvertedOptions>
-) =>
-  Object.keys(updatedOptions).reduce(
-    (prev, curr) => ({
+  options: StateOptions,
+  updateObject: ConvertedOptions
+): StateOptions =>
+  Object.keys(options).reduce(
+    (prev, optionKey) => ({
       ...prev,
-      [curr]: {
-        ...options[curr],
-        selectedValue: updatedOptions[curr],
+      [optionKey]: {
+        ...options[optionKey],
+        // TODO: perhaps this type cast can be removed
+        selectedValue: updateObject[optionKey] as OptionType,
       },
     }),
     options
@@ -50,6 +54,18 @@ const getPageURL = (
   openPageURL: string | OpenPageFn
 ) => (typeof openPageURL === 'function' ? openPageURL(config) : openPageURL);
 
+const convertMockOptionsToState = (options: Options): StateOptions =>
+  (Object.keys(options) as Array<keyof Options>).reduce((prev, optionKey) => {
+    const option = options[optionKey];
+    return {
+      ...prev,
+      [optionKey]: {
+        ...(typeof option === 'object' ? option : {}),
+        defaultValue: typeof option === 'object' ? option.defaultValue : option,
+      },
+    };
+  }, {});
+
 export const createMock = <T extends Options = Options>(
   {
     mockOptions,
@@ -57,30 +73,35 @@ export const createMock = <T extends Options = Options>(
     mockTitle,
   }: {
     mockTitle: string;
-    openPageURL?: string | OpenPageFn<T>;
+    openPageURL?: string | OpenPageFn<ConvertedOptions<T>>;
     mockOptions?: T;
   },
   mockFn: CreateMockMockFn<T>
 ): CreateMockFnReturnType<T> => {
-  const initialState = state
+  const intialMockState = state
     .getState()
     .mocks.find((stateData) => stateData.mockTitle === mockTitle);
 
-  let convertedConfig = convertMockOptions(
-    initialState?.mockOptions || mockOptions
+  const convertedMockOptionsToState = convertMockOptionsToState(mockOptions);
+
+  let activeOptions = getActiveOptions(
+    intialMockState?.mockOptions || convertedMockOptionsToState
   );
 
   const returnValue: CreateMockFnReturnType<T> = {
-    mocks: initializeMocks(convertedConfig, mockFn),
+    mocks: initializeMocks(activeOptions, mockFn),
     mockTitle,
-    updateMock: (updateValues) => {
-      convertedConfig = { ...convertedConfig, ...updateValues };
+    updateMock: (updateObject) => {
+      activeOptions = { ...activeOptions, ...updateObject };
       // TODO: is mutating an returned object an anti pattern? Something tells me it might be buggy
-      returnValue.mocks = initializeMocks(convertedConfig, mockFn);
+      returnValue.mocks = initializeMocks(activeOptions, mockFn);
       state.updateMock({
         mockTitle,
-        mockOptions: updateMockOptions(mockOptions, updateValues),
-        openPageURL: getPageURL(convertedConfig, openPageURL),
+        mockOptions: updateMockOptions(
+          convertedMockOptionsToState,
+          updateObject
+        ),
+        openPageURL: getPageURL(activeOptions, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
         mockFn,
@@ -88,12 +109,12 @@ export const createMock = <T extends Options = Options>(
       return returnValue;
     },
     resetMock: () => {
-      convertedConfig = convertMockOptions(mockOptions);
-      returnValue.mocks = initializeMocks(convertedConfig, mockFn);
+      activeOptions = getActiveOptions(convertedMockOptionsToState);
+      returnValue.mocks = initializeMocks(activeOptions, mockFn);
       state.updateMock({
         mockTitle,
-        mockOptions,
-        openPageURL: getPageURL(convertedConfig, openPageURL),
+        mockOptions: convertedMockOptionsToState,
+        openPageURL: getPageURL(activeOptions, openPageURL),
         updateMock: returnValue.updateMock,
         resetMock: returnValue.resetMock,
         mockFn,
@@ -104,8 +125,8 @@ export const createMock = <T extends Options = Options>(
 
   state.addMock({
     mockTitle,
-    mockOptions,
-    openPageURL: getPageURL(convertedConfig, openPageURL),
+    mockOptions: convertedMockOptionsToState,
+    openPageURL: getPageURL(activeOptions, openPageURL),
     updateMock: returnValue.updateMock,
     resetMock: returnValue.resetMock,
     mockFn,

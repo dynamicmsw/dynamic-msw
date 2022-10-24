@@ -29,12 +29,8 @@ export const variatedExampleMock = createMock(
       success: {
         options: ['true', 'false'],
       },
-      someTextOption: {
-        defaultValue: 'text value',
-      },
-      someNumberOption: {
-        defaultValue: 123,
-      },
+      someTextOption: 'text value',
+      someNumberOption: 123,
       someUndefinedOption: {
         type: 'text',
       },
@@ -61,14 +57,17 @@ describe('createMock type definitions', () => {
             options: [true, false],
             defaultValue: true,
           },
-          someTextOption: {
-            defaultValue: 'text value',
-          },
-          someNumberOption: {
-            defaultValue: 123,
-          },
+          someTextOption: 'text value',
+          someNumberOption: 123,
           someUndefinedOption: {
             type: 'text',
+            // TODO: figure out why unknown object keys do not error
+            // // ❌
+            // // @ts-expect-error invalid property
+            // selectedValue: '1',
+            // // ❌
+            // // @ts-expect-error invalid property
+            // xss: '1',
           },
         },
         openPageURL: (config) => {
@@ -100,7 +99,7 @@ describe('createMock type definitions', () => {
           });
           // ❌
           satisfies<Partial<typeof config>>()({
-            // @ts-expect-error config type is a boolean
+            // @ts-expect-error config type is a number
             someNumberOption: '123',
           });
           // ❌
@@ -159,6 +158,21 @@ describe('createMock type definitions', () => {
         });
       }
     );
+  });
+  it('Has proper updateMock param type', () => {
+    // ✅
+    variatedExampleMock.updateMock({ success: 'false' });
+    // ✅
+    variatedExampleMock.updateMock({
+      someUndefinedOption: 's',
+    });
+    // ✅
+    variatedExampleMock.updateMock({
+      someNumberOption: 123,
+    });
+    // ❌
+    // @ts-expect-error config type is a text
+    variatedExampleMock.updateMock({ success: false });
   });
 });
 
