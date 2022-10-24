@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+### [0.0.6](https://github.com/dynamicmsw/dynamic-msw/compare/v0.0.5...v0.0.6) (2022-10-24)
+
+### ⚠ BREAKING CHANGES
+
+- rework core worker functions
+
+### Features
+
+- add resetMocks query param to dashboard ([#64](https://github.com/dynamicmsw/dynamic-msw/issues/64)) ([62d5e49](https://github.com/dynamicmsw/dynamic-msw/commit/62d5e49399d9fdb9507d921abfd2baf541ef9311))
+
+### Code Refactoring
+
+- rework core worker functions ([75e2d3b](https://github.com/dynamicmsw/dynamic-msw/commit/75e2d3bcc69f013903bac757067f593b8a9c99e9))
+
 ### [0.0.5](https://github.com/dynamicmsw/dynamic-msw/compare/v0.0.4...v0.0.5) (2022-10-23)
 
 ### [0.0.4](https://github.com/dynamicmsw/dynamic-msw/compare/v0.0.3...v0.0.4) (2022-10-20)
