@@ -17,6 +17,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PUSH_TOKEN }}
+      - run: git rebase origin/main
       - uses: nrwl/nx-set-shas@v3
       - name: Set up Node.js
         uses: actions/setup-node@v3
