@@ -16,10 +16,7 @@ export const exampleMock = createMock(
   {
     mockTitle: 'example',
     mockOptions: {
-      success: {
-        options: [true, false],
-        defaultValue: true,
-      },
+      success: true,
     },
   },
   (options) => {
@@ -37,14 +34,14 @@ export const variatedExampleMock = createMock(
     mockTitle: 'Variated mock options',
     openPageURL: '/iframe.html?id=development-examplemocks--primary',
     mockOptions: {
-      someTextOption: {
-        defaultValue: 'text value',
-      },
-      someNumberOption: {
-        defaultValue: 123,
-      },
+      someTextOption: 'text value',
+      someNumberOption: 123,
       someUndefinedOption: {
         type: 'text',
+      },
+      someSelectOption: {
+        options: ['nl', 'en'],
+        defaultValue: 'nl',
       },
     },
   },

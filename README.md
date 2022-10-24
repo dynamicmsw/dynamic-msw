@@ -71,16 +71,12 @@ export const exampleMock = createMock(
     mockTitle: 'example',
     openPageURL: 'http://localhost:4200/example',
     mockOptions: {
-      success: {
-        defaultValue: true,
-      },
+      success: true,
       countryCode: {
         options: ['en', 'nl'],
         defaultValue: 'en',
       },
-      someNumberOption: {
-        defaultValue: 123,
-      },
+      someNumberOption: 123,
       textWithoutDefault: {
         type: 'text',
       },
