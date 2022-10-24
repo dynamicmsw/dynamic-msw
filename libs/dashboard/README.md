@@ -1,6 +1,6 @@
 # @dynamic-msw/dashboard
 
-WARNING: This library is in alpha phase and might be patched with breaking changes. It is recommended to only use this as proof of concept.
+WARNING: This library is in beta phase and might be patched with breaking changes. It is recommended to only use this as proof of concept.
 
 The dashboard is an optional user interface for [@dynamic-msw/core](../core/README.md). It allows you to alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
 
