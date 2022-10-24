@@ -28,3 +28,4 @@
 1. auto remove unwanted changelog files after releases. reconsider though.
 1. consider including or referencing the same setup docs as msw (the public folder part)
 1. release actions seem to not use caching. Double check e2e cache
+1. does rebase and merge really not change commit hashes in github?
