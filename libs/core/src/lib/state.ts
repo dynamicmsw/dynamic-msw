@@ -5,6 +5,10 @@ import type {
   OptionType,
 } from './createMock.types';
 
+export interface StateConfig {
+  saveToLocalStorage: boolean;
+}
+
 export interface MocksState {
   mockTitle: string;
   mockOptions: StateOptions;
@@ -37,14 +41,17 @@ export interface State {
 }
 
 export const dynamicMswStorageKey = 'dynamic-msw-state';
+export const defaultState = { mocks: [], scenarios: [] };
+const defaultStateConfig = { saveToLocalStorage: true };
 
-export const saveToStorage = (state: State) => {
-  if (typeof sessionStorage !== 'undefined') {
+export const saveToStorage = (
+  state: State,
+  config: StateConfig = defaultStateConfig
+) => {
+  if (typeof sessionStorage !== 'undefined' && config.saveToLocalStorage) {
     localStorage.setItem(dynamicMswStorageKey, JSON.stringify(state));
   }
 };
-
-export const defaultState = { mocks: [], scenarios: [] };
 
 export const loadFromStorage = (): State => {
   if (typeof localStorage !== 'undefined') {
@@ -57,8 +64,13 @@ export const loadFromStorage = (): State => {
 };
 
 class CreateState {
-  state: State = loadFromStorage() || defaultState;
-
+  state: State;
+  config: StateConfig;
+  constructor() {
+    this.config = defaultStateConfig;
+    this.state =
+      (this.config.saveToLocalStorage && loadFromStorage()) || defaultState;
+  }
   addScenario = (data: ScenariosState) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
@@ -67,7 +79,7 @@ class CreateState {
       this.state.scenarios[existingScenarioIndex].resetMocks = data.resetMocks;
     } else {
       this.state.scenarios.push(data);
-      saveToStorage(this.state);
+      saveToStorage(this.state, this.config);
     }
 
     return data;
@@ -83,7 +95,7 @@ class CreateState {
         ...this.state.scenarios[existingScenarioIndex],
         ...data,
       };
-      saveToStorage(this.state);
+      saveToStorage(this.state, this.config);
     }
 
     return data;
@@ -111,7 +123,7 @@ class CreateState {
         `Looks like you initialized 2 createMock functions with the same mock title: '${existingMock.mockTitle}'. Please ensure the mockTitle option is unique across your mocks.`
       );
     }
-    saveToStorage(this.state);
+    saveToStorage(this.state, this.config);
   };
 
   updateMock = (data: Partial<MocksState>) => {
@@ -122,7 +134,7 @@ class CreateState {
       ...this.state.mocks[existingMockIndex],
       ...data,
     };
-    saveToStorage(this.state);
+    saveToStorage(this.state, this.config);
   };
 
   resetMocks = () => {
@@ -136,6 +148,10 @@ class CreateState {
 
   getState = () => {
     return this.state;
+  };
+
+  setConfig = (config: StateConfig) => {
+    this.config = { ...this.config, ...config };
   };
 }
 

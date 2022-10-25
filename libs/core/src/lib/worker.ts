@@ -3,6 +3,7 @@ import type { RestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
 import type { CreateMockFnReturnType } from './createMock.types';
+import type { StateConfig } from './state';
 import { state } from './state';
 
 interface GetDynamicMocksArg {
@@ -10,6 +11,7 @@ interface GetDynamicMocksArg {
   scenarios?: {
     mocks: Array<RestHandler>;
   }[];
+  config?: StateConfig;
 }
 
 export const getActiveScenarioHandlers = (
@@ -28,7 +30,11 @@ export const getDynamicMockHandlers = (
 export const getDynamicMocks = ({
   mocks,
   scenarios,
+  config,
 }: GetDynamicMocksArg): RestHandler[] => {
+  if (config) {
+    state.setConfig(config);
+  }
   const dynamicMocksHandlers = getDynamicMockHandlers(mocks);
   const activeScenarioHandlers = getActiveScenarioHandlers(scenarios);
   return [...activeScenarioHandlers, ...dynamicMocksHandlers];
@@ -65,8 +71,9 @@ export const initializeWorker = ({
   nonDynamicMocks,
   setupServer,
   startFnArg,
+  config,
 }: SetupWorkerArg): SetupServerApi | SetupWorkerApi => {
-  const dynamicMocks = getDynamicMocks({ mocks, scenarios });
+  const dynamicMocks = getDynamicMocks({ mocks, scenarios, config });
   const setup = setupServer || setupWorker;
   global.__mock_worker = setup(...(nonDynamicMocks || []), ...dynamicMocks);
   startWorker(startFnArg);
