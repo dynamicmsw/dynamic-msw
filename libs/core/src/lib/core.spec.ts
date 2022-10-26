@@ -1,10 +1,10 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { createMock } from './createMock';
-import type { State } from './state';
-import { dynamicMswStorageKey, state, saveToStorage } from './state';
-import { resetHandlers, stopWorker, initializeWorker } from './worker';
+import { createMock } from './createMock/createMock';
+import type { State } from './state/state';
+import { dynamicMswStorageKey, state, saveToStorage } from './state/state';
+import { resetHandlers, stopWorker, initializeWorker } from './worker/worker';
 
 const mockOptions = {
   success: {

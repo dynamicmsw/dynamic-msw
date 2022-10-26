@@ -3,7 +3,7 @@ import type {
   ConvertedOptions,
   CreateMockMockFn,
   OptionType,
-} from './createMock.types';
+} from '../createMock/createMock.types';
 
 export interface StateConfig {
   saveToLocalStorage: boolean;

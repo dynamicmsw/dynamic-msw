@@ -2,36 +2,44 @@ import { setupWorker } from 'msw';
 import type { RestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
-import type { CreateMockFnReturnType } from './createMock.types';
-import type { StateConfig } from './state';
-import { state } from './state';
+import type {
+  CreateMockFnReturnType,
+  HandlerArray,
+} from '../createMock/createMock.types';
+import type { StateConfig } from '../state/state';
+import { state } from '../state/state';
 
 interface GetDynamicMocksArg {
   mocks: Array<CreateMockFnReturnType>;
   scenarios?: {
-    mocks: Array<RestHandler>;
+    scenarioTitle: string;
+    mocks: HandlerArray;
   }[];
   config?: StateConfig;
 }
 
 export const getActiveScenarioHandlers = (
   scenarios: GetDynamicMocksArg['scenarios']
-): RestHandler[] => {
-  const activeScenarioIndex = state
-    .getState()
-    .scenarios?.findIndex(({ isActive }) => isActive);
-  return scenarios?.[activeScenarioIndex]?.mocks || [];
+): HandlerArray => {
+  const scenariosFromState = state.getState().scenarios;
+  const activeScenario = scenarios?.find((data) =>
+    scenariosFromState?.find(
+      ({ isActive, scenarioTitle }) =>
+        isActive && data.scenarioTitle === scenarioTitle
+    )
+  );
+  return activeScenario?.mocks || [];
 };
 
 export const getDynamicMockHandlers = (
   mocks: GetDynamicMocksArg['mocks']
-): RestHandler[] => mocks.flatMap<RestHandler>((mock) => mock.mocks);
+): HandlerArray => mocks.flatMap((mock) => mock.mocks);
 
 export const getDynamicMocks = ({
   mocks,
   scenarios,
   config,
-}: GetDynamicMocksArg): RestHandler[] => {
+}: GetDynamicMocksArg): HandlerArray => {
   if (config) {
     state.setConfig(config);
   }
@@ -100,7 +108,7 @@ export const startWorker = (
 
 export const stopWorker = () => {
   isGlobalWorkerDefined();
-  const stopFn = (global.__mock_worker as SetupWorkerApi).start;
+  const stopFn = (global.__mock_worker as SetupWorkerApi).stop;
   if (typeof stopFn === 'function') {
     stopFn();
   } else {

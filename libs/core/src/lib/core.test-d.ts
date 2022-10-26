@@ -1,8 +1,8 @@
 import { rest } from 'msw';
 
 import { describe, it, satisfies } from '../utils/tests';
-import { createMock } from './createMock';
-import { createScenario } from './createScenario';
+import { createMock } from './createMock/createMock';
+import { createScenario } from './createScenario/createScenario';
 
 export const exampleMock = createMock(
   {

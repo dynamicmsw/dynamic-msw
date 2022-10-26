@@ -9,37 +9,33 @@ This library expects you to have a basic grasp of Mock Service Worker (MSW). It'
 
 - **Dynamic & Flexible**. Alter mocked responses on the fly using an infinite amount of configuration parameters. Usefull for testing feature flags, error responses or what ever reason you have to alter your API mocks.
 
-- **[Dashboard UI](../dashboard/README.md)**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
+- **[Dashboard UI](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/dashboard/README.md)**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
 
 - **Scenarios**. Want to have a predefined set of mocks configured for a specific scenario? We got you covered! Configure defaults for your mocks and bootstrap the scenario. You can even dynamically construct or set an page URL to navigate to after bootstrapping from the dashboard!
 
 ## Table of contents
 
-- [Getting started](#getting-started)
-- API
-  - [`createMock`](#createmock-api)
-  - [`createScenario`](#createScenario-API)
-    <!-- TODO: alter API then document -->
-    <!-- - [`setupWorker`](#setupWorker-API) -->
-    <!-- - [Helpers](#helpers) -->
-- [Examples](#examples)
-  <!-- TODO: alter API then document -->
-  <!-- - [Test example](#test-example) -->
+- [Setup](#getting-started)
+- [Usage examples](#usage-examples)
+- [References](#references)
+- [Framework examples](#framework-examples)
 
-## Getting started
+## Setup
 
 Install the module using yarn or npm:
 
 - `yarn add -D @dynamic-msw/core`
 - `npm i -D @dynamic-msw/core`
 
-Create your first dynamic mock
+## Usage examples
 
-```
-import { createMock, getDynamicMocks } from '@dynamic-msw/core';
+Create your first dynamic mocks:
+
+```js
+import { createMock } from '@dynamic-msw/core';
 import { rest } from 'msw';
-import { setupServer } from 'msw/node';
 
+// Used in subsequent examples
 export const loginMock = createMock(
   {
     mockTitle: 'login',
@@ -67,48 +63,148 @@ export const loginMock = createMock(
   }
 );
 
-const mockServer = setupServer(...getDynamicMocks({ mocks: [loginMock] }));
+// Used in subsequent examples
+export const exampleMock = createMock(
+  {
+    mockTitle: 'example',
+    openPageURL: 'http://localhost:4200/example', // Optional for the dashboard
+    mockOptions: {
+      success: true,
+      countryCode: {
+        options: ['en', 'nl'],
+        defaultValue: 'en',
+      },
+      someNumberOption: 123,
+      textWithoutDefault: {
+        type: 'text',
+      },
+    },
+  },
+  (options) => {
+    const response = {
+      success: options.success === true ? 'yes' : 'no',
+      countryCode: options.countryCode,
+      number: options.someNumberOption,
+      content: options.textWithoutDefault,
+    };
 
-// Required: adds the mockServer to global.__mock_worker
+    return rest.get('http://localhost:1234/example', async (_req, res, ctx) => {
+      return res(ctx.json(response));
+    });
+  }
+);
+```
+
+Create a scenario (optional):
+
+```js
+import { createScenario } from '@dynamic-msw/core';
+
+// Used in subsequent examples
+export const exampleScenario = createScenario(
+  {
+    scenarioTitle: 'example scenario',
+    // Optional for the dashboard
+    openPageURL: (options) =>
+      `http://localhost:4200/${options.exampleMock.countryCode}/example`,
+  },
+  { loginMock, exampleMock },
+  {
+    loginMock: { success: false },
+    exampleMock: { countryCode: 'nl', success: false },
+  }
+);
+```
+
+Option A: Starting up the MSW server manually:
+
+```js
+import { getDynamicMocks, setGlobalWorker } from '@dynamic-msw/core';
+import { setupServer } from 'msw/node';
+
+const mockServer = setupServer(
+  ...getDynamicMocks({
+    mocks: [loginMock, exampleMock],
+    scenarios: [exampleScenario],
+  })
+);
+
 setGlobalWorker(mockServer);
 
 mockServer.listen();
+```
 
+Option B: Starting up the MSW server automatically:
+
+```js
+import { initializeWorker } from '@dynamic-msw/core';
+import { setupServer } from 'msw/node';
+
+const mockWorker = initializeWorker({
+  mocks: [loginMock, exampleMock],
+  scenarios: [exampleScenario],
+  setupServer, // Optional for Node.JS environments
+});
+```
+
+Updating mocks:
+
+```js
 loginMock.updateMock({ success: false });
+exampleMock.updateMock({ countryCode: 'nl', success: true });
 
-loginMock.resetMock();
-
+exampleMock.resetMock();
 ```
 
-## API
+Reset all mocks and scenarios:
 
-#### `createMock()` API
+```js
+import { resetHandlers } from '@dynamic-msw/core';
 
-`createMock({ mockTitle, openPageURL, mockOptions }, (ACTIVE_OPTIONS) => msw.RestHandler[]);`
-
-| Argument                           |            | Type                                   | Description                                                                                                                                                                       |
-| ---------------------------------- | ---------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mockTitle`                        | `required` | `string` `unique`                      | An unique identifier for your mock. If you choose to use the dashboard, this will be used as title there.                                                                         |
-| `openPageURL`                      | `optional` | `string` or `(ACTIVE_OPTIONS)=>string` | Adds an link to the dashboard to open an page where the mock can be tested                                                                                                        |
-| `mockOptions`                      | `required` | `Object` `Object keys: string`         | Dynamic mock options used to alter the response and/or openPageURL. The keys are used in `ACTIVE_OPTIONS` and their value will be the active value e.g. `true`.                   |
-| `mockOptions.someKey`              | `required` | `string` `number` `boolean`            | An default value for your mock option. The type is automatically inherited. That means a string will become an string input in the dashboard and typed as such in your mock code. |
-| `mockOptions.someKey.options`      | `optional` | `Array<string number boolean>`         | An array of possible values. Shown as select input in the dashboard.                                                                                                              |
-| `mockOptions.someKey.defaultValue` | `optional` | `string` `number` `boolean`            | The default value when using select options as shown above.                                                                                                                       |
-| `mockOptions.someKey.type`         | `optional` | `'text'` `'number'` `'boolean'`        | Only to be used when you don't want a default value.                                                                                                                              |
-| `ACTIVE_OPTIONS`                   | --         | `{ [mockOptions.keys]: activeValue }`  | Object containing the keys from `mockOptions` and their respective active value (`defaultValue` or an updated value after calling `updateOptions(...)`)                           |
-
-```ts
-import { RestHandler } from 'msw';
-
-const {
-  mocks: RestHandler[],
-  updateMock: ({ exampleMockOption: 'updateValue' }) => 'return value of createMock(...)',
-  resetMock: () => 'return value of createMock(...)',
-} = createMock(...)
+resetHandlers();
 ```
 
-## Examples
+Test example:
 
-Temporary examples
-[testing mocks](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/core.spec.ts)
-[setting up mocks](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/mock-example/src/lib/mock-example.ts)
+```js
+import { setupServer } from 'msw/node';
+
+import { resetHandlers, stopWorker, initializeWorker } from '@dynamic-msw/core';
+
+describe('test example', () => {
+  beforeAll(() => {
+    initializeWorker({ mocks: [exampleMock], setupServer });
+  });
+  afterEach(() => {
+    resetHandlers();
+  });
+  afterAll(() => {
+    stopWorker();
+  });
+
+  it("test exampleMock's updated response", async () => {
+    exampleMock.updateMock({ success: false });
+
+    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
+      res.json()
+    );
+    expect(exampleFetch.success).toEqual('no');
+  });
+  it("test exampleMock's default response", async () => {
+    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
+      res.json()
+    );
+    expect(exampleFetch.success).toEqual('yes');
+  });
+});
+```
+
+## References
+
+- [`createMock`](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/createMock/README.md)
+- [`createScenario`](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/createScenario/README.md)
+- [`worker helpers`](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/worker/README.md)
+
+## Framework examples
+
+[Next.JS](https://github.com/dynamicmsw/dynamic-msw/tree/main/examples/next/)

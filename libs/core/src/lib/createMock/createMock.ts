@@ -1,3 +1,4 @@
+import { state } from '../state/state';
 import type {
   SetupMocksFn,
   ConvertMockOptionsFn,
@@ -10,7 +11,6 @@ import type {
   OptionType,
   ConvertedStateOptions,
 } from './createMock.types';
-import { state } from './state';
 
 export const getActiveOptions: ConvertMockOptionsFn = (options) =>
   Object.keys(options).reduce(
@@ -29,7 +29,6 @@ export const initializeMocks: SetupMocksFn = (options, mockFn) => {
   const arrayOfMocks = Array.isArray(mockFnReturnValue)
     ? mockFnReturnValue
     : [mockFnReturnValue];
-  global.__mock_worker?.use(...arrayOfMocks);
   return arrayOfMocks;
 };
 
@@ -95,6 +94,8 @@ export const createMock = <T extends Options = Options>(
       activeOptions = { ...activeOptions, ...updateObject };
       // TODO: is mutating an returned object an anti pattern? Something tells me it might be buggy
       returnValue.mocks = initializeMocks(activeOptions, mockFn);
+      global.__mock_worker?.use(...returnValue.mocks);
+
       state.updateMock({
         mockTitle,
         mockOptions: updateMockOptions(
@@ -111,6 +112,7 @@ export const createMock = <T extends Options = Options>(
     resetMock: () => {
       activeOptions = getActiveOptions(convertedMockOptionsToState);
       returnValue.mocks = initializeMocks(activeOptions, mockFn);
+      global.__mock_worker?.use(...returnValue.mocks);
       state.updateMock({
         mockTitle,
         mockOptions: convertedMockOptionsToState,
