@@ -79,7 +79,7 @@ loginMock.resetMock();
 
 - [`createMock`](./src/lib/createMock/README.md)
 - [`createScenario`](./src/lib/createScenario/README.md)
-- [`worker startup helpers`](./src/lib/worker/README.md)
+- [`worker helpers`](./src/lib/worker/README.md)
 
 ## Examples
 
