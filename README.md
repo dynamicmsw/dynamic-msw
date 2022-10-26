@@ -56,7 +56,9 @@ Replace the `<PUBLIC_DIR>` placeholder with the relative path to your server's p
 
 ## Usage example
 
-```
+Creating a dynamic mock and scenario:
+
+```js
 import {
   createMock,
   getDynamicMocks,
@@ -64,12 +66,12 @@ import {
   setGlobalWorker,
 } from '@dynamic-msw/core';
 import { rest } from 'msw';
-import { setupServer } from 'msw/node';
 
+// Used in subsequent examples
 export const exampleMock = createMock(
   {
     mockTitle: 'example',
-    openPageURL: 'http://localhost:4200/example',
+    openPageURL: 'http://localhost:4200/example', // Optional for the dashboard
     mockOptions: {
       success: true,
       countryCode: {
@@ -96,29 +98,61 @@ export const exampleMock = createMock(
   }
 );
 
+// Used in subsequent examples
 export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',
-    openPageURL: (options) =>
-      `http://localhost:4200/${options.exampleMock.countryCode}/example`,
+    openPageURL: (
+      options // Optional for the dashboard
+    ) => `http://localhost:4200/${options.exampleMock.countryCode}/example`,
   },
   { exampleMock },
   { exampleMock: { countryCode: 'nl', success: false } }
 );
+```
+
+Option A: Setting up the MSW server manually:
+
+```js
+import { getDynamicMocks, setGlobalWorker } from '@dynamic-msw/core';
+import { setupServer } from 'msw/node';
 
 const mockServer = setupServer(
   ...getDynamicMocks({ mocks: [exampleMock], scenarios: [exampleScenario] })
 );
 
-// Required: adds the mockServer to global.__mock_worker
 setGlobalWorker(mockServer);
 
 mockServer.listen();
+```
 
+Option B: Setting up the MSW server automatically:
+
+```js
+import { initializeWorker, stopWorker } from '@dynamic-msw/core';
+import { setupServer } from 'msw/node';
+
+const mockWorker = initializeWorker({
+  mocks: [exampleMock],
+  scenarios: [exampleScenario],
+  setupServer, // Optional for Node.JS environments
+});
+```
+
+Updating mocks:
+
+```js
 exampleMock.updateMock({ success: false });
 
 exampleMock.resetMock();
+```
 
+Reset all mocks:
+
+```js
+import { resetHandlers } from '@dynamic-msw/core';
+
+resetHandlers();
 ```
 
 ## Getting started

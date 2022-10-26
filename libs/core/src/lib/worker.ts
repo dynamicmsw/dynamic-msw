@@ -100,7 +100,7 @@ export const startWorker = (
 
 export const stopWorker = () => {
   isGlobalWorkerDefined();
-  const stopFn = (global.__mock_worker as SetupWorkerApi).start;
+  const stopFn = (global.__mock_worker as SetupWorkerApi).stop;
   if (typeof stopFn === 'function') {
     stopFn();
   } else {
