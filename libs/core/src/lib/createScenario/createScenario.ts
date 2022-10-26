@@ -40,18 +40,13 @@ const initializeMocks: SetupMocksFn = (options, mockFn) => {
 const initializeManyMocks = ({
   mocksFromState,
   createMockOptions,
-  isActive,
 }: {
   mocksFromState: MocksState[];
   createMockOptions: CreateMockOptions[];
-  isActive?: boolean;
 }) =>
   mocksFromState.flatMap(({ mockFn }, index) => {
     const mockOptions = createMockOptions[index];
     const initializedMocks = initializeMocks(mockOptions, mockFn);
-    if (isActive) {
-      global.__mock_worker?.use(initializedMocks);
-    }
     return initializedMocks;
   });
 
