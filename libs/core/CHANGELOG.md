@@ -2,6 +2,12 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+### [0.0.7](https://github.com/dynamicmsw/dynamic-msw/compare/v0.0.6...v0.0.7) (2022-10-26)
+
+### Features
+
+- add option to disable saving to local storage ([1d4bd77](https://github.com/dynamicmsw/dynamic-msw/commit/1d4bd779c84223455e8551bcff646280c9eb58e5))
+
 ### [0.0.6](https://github.com/dynamicmsw/dynamic-msw/compare/v0.0.5...v0.0.6) (2022-10-24)
 
 ### ⚠ BREAKING CHANGES
