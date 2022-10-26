@@ -2,7 +2,7 @@
 
 ### `createMock` function
 
-`createMock({ mockTitle, openPageURL, mockOptions }, (ACTIVE_OPTIONS) => msw.RestHandler[]);`
+`createMock({ mockTitle, openPageURL, mockOptions }, (ACTIVE_OPTIONS) => Array<RestHandler | GraphQLHandler>);`
 
 | Argument                           | Type                                                                                | Description                                                                                                                                                                       |
 | ---------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -59,5 +59,5 @@ export const loginMock = createMock(
 
 loginMock.updateMock({ success: false });
 
-loginMock.resetMock({ success: false });
+loginMock.resetMock();
 ```
