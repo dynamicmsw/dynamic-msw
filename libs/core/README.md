@@ -182,13 +182,19 @@ describe('test example', () => {
     stopWorker();
   });
 
-  it('test exampleMock', async () => {
+  it("test exampleMock's updated response", async () => {
+    exampleMock.updateMock({ success: false });
+
     const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
       res.json()
     );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
+    expect(exampleFetch.success).toEqual('no');
+  });
+  it("test exampleMock's default response", async () => {
+    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
+      res.json()
+    );
+    expect(exampleFetch.success).toEqual('yes');
   });
 });
 ```
