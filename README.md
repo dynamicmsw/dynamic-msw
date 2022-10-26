@@ -9,7 +9,7 @@ This library expects you to have a basic grasp of Mock Service Worker (MSW). It'
 
 - **Dynamic & Flexible**. Alter mocked responses on the fly using an infinite amount of configuration parameters. Usefull for testing feature flags, error responses or what ever reason you have to alter your API mocks.
 
-- **[Dashboard UI](../dashboard/README.md)**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
+- **[Dashboard UI](./libs/dashboard/README.md)**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
 
 - **Scenarios**. Want to have a predefined set of mocks configured for a specific scenario? We got you covered! Configure defaults for your mocks and bootstrap the scenario. You can even dynamically construct or set an page URL to navigate to after bootstrapping from the dashboard!
 
@@ -59,9 +59,8 @@ Replace the `<PUBLIC_DIR>` placeholder with the relative path to your server's p
 Create your first dynamic mocks:
 
 ```js
-import { createMock, getDynamicMocks } from '@dynamic-msw/core';
+import { createMock } from '@dynamic-msw/core';
 import { rest } from 'msw';
-import { setupServer } from 'msw/node';
 
 // Used in subsequent examples
 export const loginMock = createMock(

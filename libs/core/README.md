@@ -19,8 +19,6 @@ This library expects you to have a basic grasp of Mock Service Worker (MSW). It'
 - [Usage examples](#usage-examples)
 - [References](#references)
 - [Framework examples](#framework-examples)
-  <!-- TODO: alter API then document -->
-  <!-- - [Test example](#test-example) -->
 
 ## Setup
 
@@ -34,9 +32,8 @@ Install the module using yarn or npm:
 Create your first dynamic mocks:
 
 ```js
-import { createMock, getDynamicMocks } from '@dynamic-msw/core';
+import { createMock } from '@dynamic-msw/core';
 import { rest } from 'msw';
-import { setupServer } from 'msw/node';
 
 // Used in subsequent examples
 export const loginMock = createMock(
