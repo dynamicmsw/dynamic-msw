@@ -6,15 +6,12 @@ on:
       - main
   pull_request:
 
-env:
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-
 jobs:
   main:
-    secrets: inherit
     name: Nx Cloud - Main Job
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.8
     with:
+      number-of-agents: 3
       parallel-commands: |
         npx nx workspace-lint
         npx nx format:check
@@ -24,7 +21,6 @@ jobs:
         npx nx affected --target=build --parallel=3
 
   agents:
-    secrets: inherit
     name: Nx Cloud - Agents
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.8
     with:
