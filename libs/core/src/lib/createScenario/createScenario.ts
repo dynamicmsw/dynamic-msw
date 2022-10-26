@@ -1,10 +1,9 @@
-import type { RestHandler } from 'msw';
-
 import { getActiveOptions } from '../createMock/createMock';
 import type {
   CreateMockFnReturnType,
   ConvertedOptions,
   CreateMockMockFn,
+  HandlerArray,
 } from '../createMock/createMock.types';
 import type { MocksState, MockOptionsState } from '../state/state';
 import { state } from '../state/state';
@@ -26,7 +25,7 @@ type Mocks = Record<string, CreateMockFnReturnType>;
 type SetupMocksFn = (
   options: CreateMockOptions,
   mockFn: CreateMockMockFn
-) => RestHandler[];
+) => HandlerArray;
 
 type OpenPageFn<T> = (mockConfig: T) => string;
 

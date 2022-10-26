@@ -1,4 +1,4 @@
-import type { RestHandler } from 'msw';
+import type { RestHandler, GraphQLHandler } from 'msw';
 
 export type ArrayElementType<T extends ReadonlyArray<unknown>> =
   T extends ReadonlyArray<infer ArrayElementType> ? ArrayElementType : never;
@@ -64,7 +64,7 @@ export type ConvertedOptions<T extends Options = Options> = {
 
 export type CreateMockMockFn<T extends Options = Options> = (
   config: ConvertedOptions<T>
-) => RestHandler | RestHandler[];
+) => RestHandler | GraphQLHandler | HandlerArray;
 
 export type OpenPageFn<T extends Options = Options> = (
   config: ConvertedOptions<T>
@@ -77,10 +77,10 @@ export type ConvertMockOptionsFn = (
 export type SetupMocksFn = (
   options: ConvertedStateOptions<StateOptions>,
   mockFn: CreateMockMockFn
-) => RestHandler[];
+) => HandlerArray;
 
 export interface CreateMockFnReturnType<T extends Options = Options> {
-  mocks: RestHandler[];
+  mocks: HandlerArray;
   mockTitle: string;
   updateMock: (
     updateValues: Partial<ConvertedOptions<T>>,
@@ -88,3 +88,5 @@ export interface CreateMockFnReturnType<T extends Options = Options> {
   ) => CreateMockFnReturnType<T>;
   resetMock: () => void;
 }
+
+export type HandlerArray = Array<RestHandler | GraphQLHandler>;

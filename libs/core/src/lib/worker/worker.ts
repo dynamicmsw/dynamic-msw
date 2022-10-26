@@ -2,21 +2,24 @@ import { setupWorker } from 'msw';
 import type { RestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
-import type { CreateMockFnReturnType } from './createMock.types';
-import type { StateConfig } from './state';
-import { state } from './state';
+import type {
+  CreateMockFnReturnType,
+  HandlerArray,
+} from '../createMock/createMock.types';
+import type { StateConfig } from '../state/state';
+import { state } from '../state/state';
 
 interface GetDynamicMocksArg {
   mocks: Array<CreateMockFnReturnType>;
   scenarios?: {
-    mocks: Array<RestHandler>;
+    mocks: HandlerArray;
   }[];
   config?: StateConfig;
 }
 
 export const getActiveScenarioHandlers = (
   scenarios: GetDynamicMocksArg['scenarios']
-): RestHandler[] => {
+): HandlerArray => {
   const activeScenarioIndex = state
     .getState()
     .scenarios?.findIndex(({ isActive }) => isActive);
@@ -25,13 +28,13 @@ export const getActiveScenarioHandlers = (
 
 export const getDynamicMockHandlers = (
   mocks: GetDynamicMocksArg['mocks']
-): RestHandler[] => mocks.flatMap<RestHandler>((mock) => mock.mocks);
+): HandlerArray => mocks.flatMap((mock) => mock.mocks);
 
 export const getDynamicMocks = ({
   mocks,
   scenarios,
   config,
-}: GetDynamicMocksArg): RestHandler[] => {
+}: GetDynamicMocksArg): HandlerArray => {
   if (config) {
     state.setConfig(config);
   }
