@@ -9,7 +9,7 @@ This library expects you to have a basic grasp of Mock Service Worker (MSW). It'
 
 - **Dynamic & Flexible**. Alter mocked responses on the fly using an infinite amount of configuration parameters. Usefull for testing feature flags, error responses or what ever reason you have to alter your API mocks.
 
-- **[Dashboard UI](../dashboard/README.md)**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
+- **[Dashboard UI](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/dashboard/README.md)**. Alter dynamic mocks using an user interface. This is usefull for development/smoke testing purposes.
 
 - **Scenarios**. Want to have a predefined set of mocks configured for a specific scenario? We got you covered! Configure defaults for your mocks and bootstrap the scenario. You can even dynamically construct or set an page URL to navigate to after bootstrapping from the dashboard!
 
@@ -17,8 +17,8 @@ This library expects you to have a basic grasp of Mock Service Worker (MSW). It'
 
 - [Setup](#getting-started)
 - [Usage examples](#usage-examples)
-- [Examples](#examples)
 - [References](#references)
+- [Framework examples](#framework-examples)
   <!-- TODO: alter API then document -->
   <!-- - [Test example](#test-example) -->
 
@@ -167,14 +167,41 @@ import { resetHandlers } from '@dynamic-msw/core';
 resetHandlers();
 ```
 
+Test example:
+
+```js
+import { setupServer } from 'msw/node';
+
+import { resetHandlers, stopWorker, initializeWorker } from '@dynamic-msw/core';
+
+describe('test example', () => {
+  beforeAll(() => {
+    initializeWorker({ mocks: [exampleMock], setupServer });
+  });
+  afterEach(() => {
+    resetHandlers();
+  });
+  afterAll(() => {
+    stopWorker();
+  });
+
+  it('test exampleMock', async () => {
+    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
+      res.json()
+    );
+    expect(exampleFetch).toEqual({
+      success: 'yes',
+    });
+  });
+});
+```
+
 ## References
 
-- [`createMock`](./src/lib/createMock/README.md)
-- [`createScenario`](./src/lib/createScenario/README.md)
-- [`worker helpers`](./src/lib/worker/README.md)
+- [`createMock`](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/createMock/README.md)
+- [`createScenario`](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/createScenario/README.md)
+- [`worker helpers`](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/worker/README.md)
 
-## Examples
+## Framework examples
 
-Temporary examples
-[testing mocks](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core/src/lib/core.spec.ts)
-[setting up mocks](https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/mock-example/src/lib/mock-example.ts)
+[Next.JS](https://github.com/dynamicmsw/dynamic-msw/tree/main/examples/next/)
