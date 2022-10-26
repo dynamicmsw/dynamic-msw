@@ -20,6 +20,16 @@
       }
     },
     "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run open-app-page:build",
+          "yarn nx run next:serveNext"
+        ],
+        "parallel": false
+      }
+    },
+    "serveNext": {
       "executor": "@nrwl/next:server",
       "defaultConfiguration": "development",
       "options": {
