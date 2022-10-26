@@ -4,7 +4,7 @@
   "sourceRoot": "e2e/next-e2e/src",
   "projectType": "application",
   "targets": {
-    "e2e": {
+    "e2eBACKUP": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
         "cypressConfig": "e2e/next-e2e/cypress.config.ts",
