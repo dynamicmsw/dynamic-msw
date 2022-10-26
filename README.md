@@ -56,11 +56,40 @@ Replace the `<PUBLIC_DIR>` placeholder with the relative path to your server's p
 
 ## Usage examples
 
-Creating a dynamic mock:
+Create your first dynamic mocks:
 
 ```js
-import { createMock } from '@dynamic-msw/core';
+import { createMock, getDynamicMocks } from '@dynamic-msw/core';
 import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+
+// Used in subsequent examples
+export const loginMock = createMock(
+  {
+    mockTitle: 'login',
+    mockOptions: {
+      success: true,
+    },
+  },
+  (options) => {
+    return rest.post('/login', async (req, res, ctx) => {
+      const { username } = await req.json();
+
+      return options.success
+        ? res(
+            ctx.json({
+              firstName: 'John',
+            })
+          )
+        : res(
+            ctx.status(403),
+            ctx.json({
+              errorMessage: `User '${username}' not found`,
+            })
+          );
+    });
+  }
+);
 
 // Used in subsequent examples
 export const exampleMock = createMock(
@@ -94,8 +123,7 @@ export const exampleMock = createMock(
 );
 ```
 
-Create a scenario
-Note: the idea is to combine multiple mocks and configure them with specific defaults but we only use `exampleMock` to keep the examples tidy.
+Create a scenario (optional):
 
 ```js
 import { createScenario } from '@dynamic-msw/core';
@@ -104,12 +132,15 @@ import { createScenario } from '@dynamic-msw/core';
 export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',
-    openPageURL: (
-      options // Optional for the dashboard
-    ) => `http://localhost:4200/${options.exampleMock.countryCode}/example`,
+    // Optional for the dashboard
+    openPageURL: (options) =>
+      `http://localhost:4200/${options.exampleMock.countryCode}/example`,
   },
-  { exampleMock },
-  { exampleMock: { countryCode: 'nl', success: false } }
+  { loginMock, exampleMock },
+  {
+    loginMock: { success: false },
+    exampleMock: { countryCode: 'nl', success: false },
+  }
 );
 ```
 
@@ -120,7 +151,10 @@ import { getDynamicMocks, setGlobalWorker } from '@dynamic-msw/core';
 import { setupServer } from 'msw/node';
 
 const mockServer = setupServer(
-  ...getDynamicMocks({ mocks: [exampleMock], scenarios: [exampleScenario] })
+  ...getDynamicMocks({
+    mocks: [loginMock, exampleMock],
+    scenarios: [exampleScenario],
+  })
 );
 
 setGlobalWorker(mockServer);
@@ -135,7 +169,7 @@ import { initializeWorker } from '@dynamic-msw/core';
 import { setupServer } from 'msw/node';
 
 const mockWorker = initializeWorker({
-  mocks: [exampleMock],
+  mocks: [loginMock, exampleMock],
   scenarios: [exampleScenario],
   setupServer, // Optional for Node.JS environments
 });
@@ -144,7 +178,8 @@ const mockWorker = initializeWorker({
 Updating mocks:
 
 ```js
-exampleMock.updateMock({ success: false });
+loginMock.updateMock({ success: false });
+exampleMock.updateMock({ countryCode: 'nl', success: true });
 
 exampleMock.resetMock();
 ```

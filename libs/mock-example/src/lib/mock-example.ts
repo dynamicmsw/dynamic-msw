@@ -61,8 +61,11 @@ export const exampleScenario = createScenario(
     scenarioTitle: 'example scenario',
     openPageURL: '/iframe.html?id=development-examplemocks--primary',
   },
-  { exampleMock },
-  { exampleMock: { success: false } }
+  { exampleMock, variatedExampleMock },
+  {
+    exampleMock: { success: false },
+    variatedExampleMock: { someNumberOption: 123 },
+  }
 );
 
 export const setup = (setupServer?: typeof setupServerMsw) => {

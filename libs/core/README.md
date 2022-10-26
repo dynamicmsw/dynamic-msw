@@ -31,13 +31,14 @@ Install the module using yarn or npm:
 
 ## Usage examples
 
-Create your first dynamic mock
+Create your first dynamic mocks:
 
-```
+```js
 import { createMock, getDynamicMocks } from '@dynamic-msw/core';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
+// Used in subsequent examples
 export const loginMock = createMock(
   {
     mockTitle: 'login',
@@ -65,17 +66,105 @@ export const loginMock = createMock(
   }
 );
 
-const mockServer = setupServer(...getDynamicMocks({ mocks: [loginMock] }));
+// Used in subsequent examples
+export const exampleMock = createMock(
+  {
+    mockTitle: 'example',
+    openPageURL: 'http://localhost:4200/example', // Optional for the dashboard
+    mockOptions: {
+      success: true,
+      countryCode: {
+        options: ['en', 'nl'],
+        defaultValue: 'en',
+      },
+      someNumberOption: 123,
+      textWithoutDefault: {
+        type: 'text',
+      },
+    },
+  },
+  (options) => {
+    const response = {
+      success: options.success === true ? 'yes' : 'no',
+      countryCode: options.countryCode,
+      number: options.someNumberOption,
+      content: options.textWithoutDefault,
+    };
 
-// Required: adds the mockServer to global.__mock_worker
+    return rest.get('http://localhost:1234/example', async (_req, res, ctx) => {
+      return res(ctx.json(response));
+    });
+  }
+);
+```
+
+Create a scenario (optional):
+
+```js
+import { createScenario } from '@dynamic-msw/core';
+
+// Used in subsequent examples
+export const exampleScenario = createScenario(
+  {
+    scenarioTitle: 'example scenario',
+    // Optional for the dashboard
+    openPageURL: (options) =>
+      `http://localhost:4200/${options.exampleMock.countryCode}/example`,
+  },
+  { loginMock, exampleMock },
+  {
+    loginMock: { success: false },
+    exampleMock: { countryCode: 'nl', success: false },
+  }
+);
+```
+
+Option A: Starting up the MSW server manually:
+
+```js
+import { getDynamicMocks, setGlobalWorker } from '@dynamic-msw/core';
+import { setupServer } from 'msw/node';
+
+const mockServer = setupServer(
+  ...getDynamicMocks({
+    mocks: [loginMock, exampleMock],
+    scenarios: [exampleScenario],
+  })
+);
+
 setGlobalWorker(mockServer);
 
 mockServer.listen();
+```
 
+Option B: Starting up the MSW server automatically:
+
+```js
+import { initializeWorker } from '@dynamic-msw/core';
+import { setupServer } from 'msw/node';
+
+const mockWorker = initializeWorker({
+  mocks: [loginMock, exampleMock],
+  scenarios: [exampleScenario],
+  setupServer, // Optional for Node.JS environments
+});
+```
+
+Updating mocks:
+
+```js
 loginMock.updateMock({ success: false });
+exampleMock.updateMock({ countryCode: 'nl', success: true });
 
-loginMock.resetMock();
+exampleMock.resetMock();
+```
 
+Reset all mocks and scenarios:
+
+```js
+import { resetHandlers } from '@dynamic-msw/core';
+
+resetHandlers();
 ```
 
 ## References
