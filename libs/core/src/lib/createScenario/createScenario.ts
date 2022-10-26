@@ -1,13 +1,13 @@
 import type { RestHandler } from 'msw';
 
-import { getActiveOptions } from './createMock';
+import { getActiveOptions } from '../createMock/createMock';
 import type {
   CreateMockFnReturnType,
   ConvertedOptions,
   CreateMockMockFn,
-} from './createMock.types';
-import type { MocksState, MockOptionsState } from './state';
-import { state } from './state';
+} from '../createMock/createMock.types';
+import type { MocksState, MockOptionsState } from '../state/state';
+import { state } from '../state/state';
 
 type CreateMockOptions = {
   mockOptions: ConvertedOptions;

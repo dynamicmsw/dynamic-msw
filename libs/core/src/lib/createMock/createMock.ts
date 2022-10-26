@@ -1,3 +1,4 @@
+import { state } from '../state/state';
 import type {
   SetupMocksFn,
   ConvertMockOptionsFn,
@@ -10,7 +11,6 @@ import type {
   OptionType,
   ConvertedStateOptions,
 } from './createMock.types';
-import { state } from './state';
 
 export const getActiveOptions: ConvertMockOptionsFn = (options) =>
   Object.keys(options).reduce(
