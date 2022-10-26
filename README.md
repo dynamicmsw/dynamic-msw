@@ -18,7 +18,7 @@ This library expects you to have a basic grasp of Mock Service Worker (MSW). It'
 - [Setup](#setup)
   - [Setup core without Dashboard](#setup-core-without-dashboard)
   - [Setup with Dashboard](#setup-with-dashboard)
-- [Usage example](#usage-example)
+- [Usage examples](#usage-examples)
 - [Getting started](#getting-started)
 - [Framework examples](#framework-examples)
 
@@ -54,17 +54,12 @@ Replace the `<PUBLIC_DIR>` placeholder with the relative path to your server's p
 
 - `npx msw init public/ --save`
 
-## Usage example
+## Usage examples
 
-Creating a dynamic mock and scenario:
+Creating a dynamic mock:
 
 ```js
-import {
-  createMock,
-  getDynamicMocks,
-  createScenario,
-  setGlobalWorker,
-} from '@dynamic-msw/core';
+import { createMock } from '@dynamic-msw/core';
 import { rest } from 'msw';
 
 // Used in subsequent examples
@@ -97,6 +92,13 @@ export const exampleMock = createMock(
     });
   }
 );
+```
+
+Create a scenario
+Note: the idea is to combine multiple mocks and configure them with specific defaults but we only use `exampleMock` to keep the examples tidy.
+
+```js
+import { createScenario } from '@dynamic-msw/core';
 
 // Used in subsequent examples
 export const exampleScenario = createScenario(
@@ -111,7 +113,7 @@ export const exampleScenario = createScenario(
 );
 ```
 
-Option A: Setting up the MSW server manually:
+Option A: Starting up the MSW server manually:
 
 ```js
 import { getDynamicMocks, setGlobalWorker } from '@dynamic-msw/core';
@@ -126,10 +128,10 @@ setGlobalWorker(mockServer);
 mockServer.listen();
 ```
 
-Option B: Setting up the MSW server automatically:
+Option B: Starting up the MSW server automatically:
 
 ```js
-import { initializeWorker, stopWorker } from '@dynamic-msw/core';
+import { initializeWorker } from '@dynamic-msw/core';
 import { setupServer } from 'msw/node';
 
 const mockWorker = initializeWorker({
@@ -147,7 +149,7 @@ exampleMock.updateMock({ success: false });
 exampleMock.resetMock();
 ```
 
-Reset all mocks:
+Reset all mocks and scenarios:
 
 ```js
 import { resetHandlers } from '@dynamic-msw/core';

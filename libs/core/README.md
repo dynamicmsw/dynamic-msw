@@ -15,18 +15,21 @@ This library expects you to have a basic grasp of Mock Service Worker (MSW). It'
 
 ## Table of contents
 
-- [Getting started](#getting-started)
+- [Setup](#getting-started)
+- [Usage examples](#usage-examples)
 - [Examples](#examples)
 - [References](#references)
   <!-- TODO: alter API then document -->
   <!-- - [Test example](#test-example) -->
 
-## Getting started
+## Setup
 
 Install the module using yarn or npm:
 
 - `yarn add -D @dynamic-msw/core`
 - `npm i -D @dynamic-msw/core`
+
+## Usage examples
 
 Create your first dynamic mock
 
