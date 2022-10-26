@@ -12,6 +12,7 @@ import { state } from '../state/state';
 interface GetDynamicMocksArg {
   mocks: Array<CreateMockFnReturnType>;
   scenarios?: {
+    scenarioTitle: string;
     mocks: HandlerArray;
   }[];
   config?: StateConfig;
@@ -20,10 +21,14 @@ interface GetDynamicMocksArg {
 export const getActiveScenarioHandlers = (
   scenarios: GetDynamicMocksArg['scenarios']
 ): HandlerArray => {
-  const activeScenarioIndex = state
-    .getState()
-    .scenarios?.findIndex(({ isActive }) => isActive);
-  return scenarios?.[activeScenarioIndex]?.mocks || [];
+  const scenariosFromState = state.getState().scenarios;
+  const activeScenario = scenarios?.find((data) =>
+    scenariosFromState?.find(
+      ({ isActive, scenarioTitle }) =>
+        isActive && data.scenarioTitle === scenarioTitle
+    )
+  );
+  return activeScenario?.mocks || [];
 };
 
 export const getDynamicMockHandlers = (
