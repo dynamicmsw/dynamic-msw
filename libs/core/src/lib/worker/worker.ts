@@ -2,15 +2,13 @@ import { setupWorker } from 'msw';
 import type { RestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
-import type {
-  CreateMockFnReturnType,
-  HandlerArray,
-} from '../createMock/createMock.types';
+import type { CreateMock } from '../createMock/createMock';
+import type { HandlerArray } from '../createMock/createMock.types';
 import type { StateConfig } from '../state/state';
 import { state } from '../state/state';
 
 interface GetDynamicMocksArg {
-  mocks: Array<CreateMockFnReturnType>;
+  mocks: Array<CreateMock>;
   scenarios?: {
     scenarioTitle: string;
     mocks: HandlerArray;
@@ -32,8 +30,15 @@ export const getActiveScenarioHandlers = (
 };
 
 export const getDynamicMockHandlers = (
-  mocks: GetDynamicMocksArg['mocks']
-): HandlerArray => mocks.flatMap((mock) => mock.mocks);
+  createMocks: GetDynamicMocksArg['mocks']
+): HandlerArray => {
+  const { mocks } = state.getState();
+  const mockTitles = createMocks.map(({ mockTitle }) => mockTitle);
+  const filteredMocks = mocks.filter(({ mockTitle }) =>
+    mockTitles.includes(mockTitle)
+  );
+  return filteredMocks.flatMap(({ mockHandlers }) => mockHandlers);
+};
 
 export const getDynamicMocks = ({
   mocks,

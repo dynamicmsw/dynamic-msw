@@ -1,8 +1,8 @@
 import { getActiveOptions } from '../createMock/createMock';
+import type { CreateMock } from '../createMock/createMock';
 import type {
-  CreateMockFnReturnType,
   ConvertedOptions,
-  CreateMockMockFn,
+  CreateMockHandlerFn,
   HandlerArray,
 } from '../createMock/createMock.types';
 import type { MocksState, MockOptionsState } from '../state/state';
@@ -13,27 +13,27 @@ type CreateMockOptions = {
   mockTitle: string;
 };
 
-type ScenarioMock<T extends CreateMockFnReturnType[]> = {
+type ScenarioMock<T extends CreateMock[]> = {
   [K in keyof T]: {
     mock: T[K];
     mockOptions: Parameters<T[K]['updateMock']>[0];
   };
 };
 
-type Mocks = Record<string, CreateMockFnReturnType>;
+type Mocks = Record<string, CreateMock>;
 
 type SetupMocksFn = (
   options: CreateMockOptions,
-  mockFn: CreateMockMockFn
+  createMockHandler: CreateMockHandlerFn
 ) => HandlerArray;
 
 type OpenPageFn<T> = (mockConfig: T) => string;
 
-const initializeMocks: SetupMocksFn = (options, mockFn) => {
-  const mockFnReturnValue = mockFn(options.mockOptions);
-  const arrayOfMocks = Array.isArray(mockFnReturnValue)
-    ? mockFnReturnValue
-    : [mockFnReturnValue];
+const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
+  const createMockHandlerReturnValue = createMockHandler(options.mockOptions);
+  const arrayOfMocks = Array.isArray(createMockHandlerReturnValue)
+    ? createMockHandlerReturnValue
+    : [createMockHandlerReturnValue];
   return arrayOfMocks;
 };
 
@@ -44,15 +44,13 @@ const initializeManyMocks = ({
   mocksFromState: MocksState[];
   createMockOptions: CreateMockOptions[];
 }) =>
-  mocksFromState.flatMap(({ mockFn }, index) => {
+  mocksFromState.flatMap(({ createMockHandler }, index) => {
     const mockOptions = createMockOptions[index];
-    const initializedMocks = initializeMocks(mockOptions, mockFn);
+    const initializedMocks = initializeMocks(mockOptions, createMockHandler);
     return initializedMocks;
   });
 
-const getMockOptionsAndTitleArray = (
-  mocks: ScenarioMock<CreateMockFnReturnType[]>
-) =>
+const getMockOptionsAndTitleArray = (mocks: ScenarioMock<CreateMock[]>) =>
   mocks.map(({ mockOptions, mock }) => ({
     mockTitle: mock.mockTitle,
     mockOptions,

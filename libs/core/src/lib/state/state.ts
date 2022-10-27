@@ -1,8 +1,11 @@
+import { stat } from 'fs';
+
 import type {
   StateOptions,
   ConvertedOptions,
-  CreateMockMockFn,
+  CreateMockHandlerFn,
   OptionType,
+  HandlerArray,
 } from '../createMock/createMock.types';
 
 export interface StateConfig {
@@ -13,8 +16,8 @@ export interface MocksState {
   mockTitle: string;
   mockOptions: StateOptions;
   openPageURL?: string;
-  dashboardScenarioOnly?: boolean;
-  mockFn?: CreateMockMockFn;
+  mockHandlers?: HandlerArray;
+  createMockHandler?: CreateMockHandlerFn;
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
@@ -41,7 +44,7 @@ export interface State {
 }
 
 export const dynamicMswStorageKey = 'dynamic-msw-state';
-export const defaultState = { mocks: [], scenarios: [] };
+export const defaultState: State = { mocks: [], scenarios: [] };
 const defaultStateConfig = { saveToLocalStorage: true };
 
 export const saveToStorage = (
@@ -49,7 +52,15 @@ export const saveToStorage = (
   config: StateConfig = defaultStateConfig
 ) => {
   if (typeof sessionStorage !== 'undefined' && config.saveToLocalStorage) {
-    localStorage.setItem(dynamicMswStorageKey, JSON.stringify(state));
+    const cleanedState = {
+      ...state,
+      mocks: state.mocks.map(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ({ mockHandlers, createMockHandler, updateMock, resetMock, ...data }) =>
+          data
+      ),
+    };
+    localStorage.setItem(dynamicMswStorageKey, JSON.stringify(cleanedState));
   }
 };
 
@@ -71,6 +82,7 @@ class CreateState {
     this.state =
       (this.config.saveToLocalStorage && loadFromStorage()) || defaultState;
   }
+
   addScenario = (data: ScenariosState) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
@@ -112,16 +124,10 @@ class CreateState {
         updateMock: data.updateMock,
         resetMock: data.resetMock,
         openPageURL: data.openPageURL,
-        mockFn: data.mockFn,
+        createMockHandler: data.createMockHandler,
       };
     } else {
       this.state.mocks.push(data);
-    }
-
-    if (existingMock?.mockFn) {
-      console.warn(
-        `Looks like you initialized 2 createMock functions with the same mock title: '${existingMock.mockTitle}'. Please ensure the mockTitle option is unique across your mocks.`
-      );
     }
     saveToStorage(this.state, this.config);
   };
@@ -138,6 +144,7 @@ class CreateState {
   };
 
   resetMocks = () => {
+    console.log('reset');
     this.state.mocks.forEach(({ resetMock }) => {
       resetMock?.();
     });

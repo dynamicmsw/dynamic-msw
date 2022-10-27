@@ -1,10 +1,10 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { createMock } from './createMock/createMock';
-import type { State } from './state/state';
-import { dynamicMswStorageKey, state, saveToStorage } from './state/state';
-import { resetHandlers, stopWorker, initializeWorker } from './worker/worker';
+import type { State } from '../state/state';
+import { dynamicMswStorageKey, state, saveToStorage } from '../state/state';
+import { resetHandlers, stopWorker, initializeWorker } from '../worker/worker';
+import { createMock } from './createMock';
 
 const mockOptions = {
   success: {
@@ -14,7 +14,7 @@ const mockOptions = {
   optionTwo: 'hello',
 };
 
-const mockFn = (config) => {
+const createMockHandler = (config) => {
   return rest.get('http://localhost:1234/test', async (_req, res, ctx) => {
     return res(
       ctx.json({
@@ -30,7 +30,7 @@ export const exampleMock = createMock(
     openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
     mockOptions,
   },
-  mockFn
+  createMockHandler
 );
 
 describe('dynamicMsw', () => {
@@ -63,6 +63,7 @@ describe('dynamicMsw', () => {
   });
   it('works when resetMock is called', async () => {
     exampleMock.updateMock({ success: false });
+    console.log(JSON.stringify(state.getState(), null, 2));
     exampleMock.resetMock();
     const resetExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
@@ -95,7 +96,7 @@ describe('dynamicMsw', () => {
   });
 
   it('saves state to localStorage', () => {
-    const expectedState: State = {
+    const expectedState: Partial<State> = {
       mocks: [
         {
           mockTitle: 'example',
@@ -160,7 +161,7 @@ describe('dynamicMsw', () => {
               selectedValue: false,
             },
           },
-          mockFn,
+          createMockHandler,
         },
       ],
       scenarios: [],

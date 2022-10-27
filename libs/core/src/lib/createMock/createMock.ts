@@ -6,8 +6,8 @@ import type {
   Options,
   StateOptions,
   OpenPageFn,
-  CreateMockMockFn,
-  CreateMockFnReturnType,
+  HandlerArray,
+  CreateMockHandlerFn,
   OptionType,
   ConvertedStateOptions,
 } from './createMock.types';
@@ -24,11 +24,11 @@ export const getActiveOptions: ConvertMockOptionsFn = (options) =>
     {} as ConvertedStateOptions
   );
 
-export const initializeMocks: SetupMocksFn = (options, mockFn) => {
-  const mockFnReturnValue = mockFn(options);
-  const arrayOfMocks = Array.isArray(mockFnReturnValue)
-    ? mockFnReturnValue
-    : [mockFnReturnValue];
+export const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
+  const createMockHandlerReturnValue = createMockHandler(options);
+  const arrayOfMocks = Array.isArray(createMockHandlerReturnValue)
+    ? createMockHandlerReturnValue
+    : [createMockHandlerReturnValue];
   return arrayOfMocks;
 };
 
@@ -65,76 +65,113 @@ const convertMockOptionsToState = (options: Options): StateOptions =>
     };
   }, {});
 
-export const createMock = <T extends Options = Options>(
-  {
-    mockOptions,
-    openPageURL,
-    mockTitle,
-  }: {
-    mockTitle: string;
-    openPageURL?: string | OpenPageFn<ConvertedOptions<T>>;
-    mockOptions?: T;
-  },
-  mockFn: CreateMockMockFn<T>
-): CreateMockFnReturnType<T> => {
-  const intialMockState = state
-    .getState()
-    .mocks.find((stateData) => stateData.mockTitle === mockTitle);
+export class CreateMock<T extends Options = Options> {
+  public mockTitle: CreateMockArg<T>['mockTitle'];
+  private mockOptions: CreateMockArg<T>['mockOptions'];
+  private activeOptions: ConvertedStateOptions<StateOptions<OptionType>>;
+  private openPageURL: CreateMockArg<T>['openPageURL'];
+  private createMockHandler: CreateMockHandlerFn<T>;
+  private mockHandlers: HandlerArray;
 
-  const convertedMockOptionsToState = convertMockOptionsToState(mockOptions);
+  constructor(
+    options: CreateMockArg<T>,
+    createMockHandler: CreateMockHandlerFn<T>
+  ) {
+    this.mockTitle = options.mockTitle;
+    this.mockOptions = options.mockOptions;
+    this.openPageURL = options.openPageURL;
+    this.createMockHandler = createMockHandler;
+    this.initializeMock();
+  }
 
-  let activeOptions = getActiveOptions(
-    intialMockState?.mockOptions || convertedMockOptionsToState
-  );
+  private get convertedMockOptionsToState() {
+    return convertMockOptionsToState(this.mockOptions);
+  }
 
-  const returnValue: CreateMockFnReturnType<T> = {
-    mocks: initializeMocks(activeOptions, mockFn),
-    mockTitle,
-    updateMock: (updateObject) => {
-      activeOptions = { ...activeOptions, ...updateObject };
-      // TODO: is mutating an returned object an anti pattern? Something tells me it might be buggy
-      returnValue.mocks = initializeMocks(activeOptions, mockFn);
-      global.__mock_worker?.use(...returnValue.mocks);
+  private get initialMockState() {
+    return state
+      .getState()
+      .mocks.find(({ mockTitle }) => mockTitle === this.mockTitle);
+  }
 
-      state.updateMock({
-        mockTitle,
-        mockOptions: updateMockOptions(
-          convertedMockOptionsToState,
-          updateObject
-        ),
-        openPageURL: getPageURL(activeOptions, openPageURL),
-        updateMock: returnValue.updateMock,
-        resetMock: returnValue.resetMock,
-        mockFn,
-      });
-      return returnValue;
-    },
-    resetMock: () => {
-      activeOptions = getActiveOptions(convertedMockOptionsToState);
-      returnValue.mocks = initializeMocks(activeOptions, mockFn);
-      global.__mock_worker?.use(...returnValue.mocks);
-      state.updateMock({
-        mockTitle,
-        mockOptions: convertedMockOptionsToState,
-        openPageURL: getPageURL(activeOptions, openPageURL),
-        updateMock: returnValue.updateMock,
-        resetMock: returnValue.resetMock,
-        mockFn,
-      });
-      return returnValue;
-    },
+  private get initialActiveOptions() {
+    return getActiveOptions(
+      this.initialMockState?.mockOptions || this.convertedMockOptionsToState
+    );
+  }
+
+  private initializeMock = () => {
+    if (this.initialMockState?.resetMock) {
+      console.warn(
+        `Looks like you initialized 2 createMock functions with the same mock title: '${this.initialMockState.mockTitle}'. Please ensure the mockTitle option is unique across your mocks. Overwriting previous mock.`
+      );
+    }
+    this.activeOptions = this.initialActiveOptions;
+    this.mockHandlers = initializeMocks(
+      this.activeOptions,
+      this.createMockHandler
+    );
+    state.addMock({
+      mockTitle: this.mockTitle,
+      mockOptions: this.convertedMockOptionsToState,
+      openPageURL: getPageURL(this.activeOptions, this.openPageURL),
+      updateMock: this.updateMock,
+      resetMock: this.resetMock,
+      mockHandlers: this.mockHandlers,
+      createMockHandler: this.createMockHandler, // TODO: rename createMockHandler
+    });
   };
 
-  state.addMock({
-    mockTitle,
-    mockOptions: convertedMockOptionsToState,
-    openPageURL: getPageURL(activeOptions, openPageURL),
-    updateMock: returnValue.updateMock,
-    resetMock: returnValue.resetMock,
-    mockFn,
-  });
+  public updateMock = (updateObject: Partial<ConvertedOptions<T>>) => {
+    this.activeOptions = { ...this.initialActiveOptions, ...updateObject };
+    this.mockHandlers = initializeMocks(
+      this.activeOptions,
+      this.createMockHandler
+    );
+    global.__mock_worker?.use(...this.mockHandlers);
 
-  return returnValue;
-};
+    state.updateMock({
+      mockTitle: this.mockTitle,
+      mockOptions: updateMockOptions(
+        this.convertedMockOptionsToState,
+        updateObject
+      ),
+      openPageURL: getPageURL(this.activeOptions, this.openPageURL),
+      updateMock: this.updateMock,
+      resetMock: this.resetMock,
+      mockHandlers: this.mockHandlers,
+      createMockHandler: this.createMockHandler,
+    });
+  };
+
+  public resetMock = () => {
+    this.activeOptions = getActiveOptions(this.convertedMockOptionsToState);
+    this.mockHandlers = initializeMocks(
+      this.activeOptions,
+      this.createMockHandler
+    );
+    global.__mock_worker?.use(...this.mockHandlers);
+    state.updateMock({
+      mockTitle: this.mockTitle,
+      mockOptions: this.convertedMockOptionsToState,
+      openPageURL: getPageURL(this.activeOptions, this.openPageURL),
+      updateMock: this.updateMock,
+      resetMock: this.resetMock,
+      mockHandlers: this.mockHandlers,
+      createMockHandler: this.createMockHandler,
+    });
+  };
+}
+
+interface CreateMockArg<T extends Options> {
+  mockTitle: string;
+  openPageURL?: string | OpenPageFn<ConvertedOptions<T>>;
+  mockOptions?: T;
+}
+
+export const createMock = <T extends Options = Options>(
+  options: CreateMockArg<T>,
+  createMockHandler: CreateMockHandlerFn<T>
+) => new CreateMock(options, createMockHandler);
 
 export type CreateMockFn = typeof createMock;

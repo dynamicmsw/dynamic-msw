@@ -62,7 +62,7 @@ export type ConvertedOptions<T extends Options = Options> = {
     : T[Key];
 };
 
-export type CreateMockMockFn<T extends Options = Options> = (
+export type CreateMockHandlerFn<T extends Options = Options> = (
   config: ConvertedOptions<T>
 ) => RestHandler | GraphQLHandler | HandlerArray;
 
@@ -76,17 +76,7 @@ export type ConvertMockOptionsFn = (
 
 export type SetupMocksFn = (
   options: ConvertedStateOptions<StateOptions>,
-  mockFn: CreateMockMockFn
+  createMockHandler: CreateMockHandlerFn
 ) => HandlerArray;
-
-export interface CreateMockFnReturnType<T extends Options = Options> {
-  mocks: HandlerArray;
-  mockTitle: string;
-  updateMock: (
-    updateValues: Partial<ConvertedOptions<T>>,
-    skipSaveToState?: boolean
-  ) => CreateMockFnReturnType<T>;
-  resetMock: () => void;
-}
 
 export type HandlerArray = Array<RestHandler | GraphQLHandler>;
