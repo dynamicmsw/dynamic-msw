@@ -1,7 +1,12 @@
 import { state } from '../state/state';
+import {
+  getActiveOptions,
+  initializeMocks,
+  updateMockOptions,
+  getPageURL,
+  convertMockOptionsToState,
+} from './createMock.helpers';
 import type {
-  SetupMocksFn,
-  ConvertMockOptionsFn,
   ConvertedOptions,
   Options,
   StateOptions,
@@ -11,59 +16,6 @@ import type {
   OptionType,
   ConvertedStateOptions,
 } from './createMock.types';
-
-export const getActiveOptions: ConvertMockOptionsFn = (options) =>
-  Object.keys(options).reduce(
-    (prev, curr) => ({
-      ...prev,
-      [curr]:
-        typeof options[curr].selectedValue !== 'undefined'
-          ? options[curr].selectedValue
-          : options[curr].defaultValue,
-    }),
-    {} as ConvertedStateOptions
-  );
-
-export const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
-  const createMockHandlerReturnValue = createMockHandler(options);
-  const arrayOfMocks = Array.isArray(createMockHandlerReturnValue)
-    ? createMockHandlerReturnValue
-    : [createMockHandlerReturnValue];
-  return arrayOfMocks;
-};
-
-const updateMockOptions = (
-  options: StateOptions,
-  updateObject: ConvertedOptions
-): StateOptions =>
-  Object.keys(options).reduce(
-    (prev, optionKey) => ({
-      ...prev,
-      [optionKey]: {
-        ...options[optionKey],
-        // TODO: perhaps this type cast can be removed
-        selectedValue: updateObject[optionKey] as OptionType,
-      },
-    }),
-    options
-  );
-
-const getPageURL = (
-  config: ConvertedOptions,
-  openPageURL: string | OpenPageFn
-) => (typeof openPageURL === 'function' ? openPageURL(config) : openPageURL);
-
-const convertMockOptionsToState = (options: Options): StateOptions =>
-  (Object.keys(options) as Array<keyof Options>).reduce((prev, optionKey) => {
-    const option = options[optionKey];
-    return {
-      ...prev,
-      [optionKey]: {
-        ...(typeof option === 'object' ? option : {}),
-        defaultValue: typeof option === 'object' ? option.defaultValue : option,
-      },
-    };
-  }, {});
 
 export class CreateMock<T extends Options = Options> {
   public mockTitle: CreateMockArg<T>['mockTitle'];

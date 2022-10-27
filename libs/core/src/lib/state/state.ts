@@ -1,5 +1,3 @@
-import { stat } from 'fs';
-
 import type {
   StateOptions,
   ConvertedOptions,
