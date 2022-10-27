@@ -33,6 +33,7 @@ export type MockOptionsState = {
 export interface ScenariosState {
   scenarioTitle: string;
   mocks: MockOptionsState[];
+  mockHandlers?: HandlerArray;
   isActive?: boolean;
   openPageURL?: string;
   resetMocks?: () => void;
@@ -144,7 +145,6 @@ class CreateState {
   };
 
   resetMocks = () => {
-    console.log('reset');
     this.state.mocks.forEach(({ resetMock }) => {
       resetMock?.();
     });

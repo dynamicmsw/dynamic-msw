@@ -4,15 +4,13 @@ import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
 import type { CreateMock } from '../createMock/createMock';
 import type { HandlerArray } from '../createMock/createMock.types';
+import type { CreateScenario } from '../createScenario/createScenario';
 import type { StateConfig } from '../state/state';
 import { state } from '../state/state';
 
 interface GetDynamicMocksArg {
-  mocks: Array<CreateMock>;
-  scenarios?: {
-    scenarioTitle: string;
-    mocks: HandlerArray;
-  }[];
+  mocks: CreateMock[];
+  scenarios?: CreateScenario[];
   config?: StateConfig;
 }
 
@@ -20,13 +18,12 @@ export const getActiveScenarioHandlers = (
   scenarios: GetDynamicMocksArg['scenarios']
 ): HandlerArray => {
   const scenariosFromState = state.getState().scenarios;
-  const activeScenario = scenarios?.find((data) =>
-    scenariosFromState?.find(
-      ({ isActive, scenarioTitle }) =>
-        isActive && data.scenarioTitle === scenarioTitle
-    )
+  const scenarioTitles = scenarios.map(({ scenarioTitle }) => scenarioTitle);
+  const activeScenario = scenariosFromState?.find(
+    ({ isActive, scenarioTitle }) =>
+      isActive && scenarioTitles.includes(scenarioTitle)
   );
-  return activeScenario?.mocks || [];
+  return activeScenario?.mockHandlers || [];
 };
 
 export const getDynamicMockHandlers = (

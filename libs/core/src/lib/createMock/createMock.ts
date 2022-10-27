@@ -102,8 +102,8 @@ export class CreateMock<T extends Options = Options> {
 
   private initializeMock = () => {
     if (this.initialMockState?.resetMock) {
-      console.warn(
-        `Looks like you initialized 2 createMock functions with the same mock title: '${this.initialMockState.mockTitle}'. Please ensure the mockTitle option is unique across your mocks. Overwriting previous mock.`
+      throw Error(
+        `Looks like you initialized 2 createMock functions with the same mock title: '${this.initialMockState.mockTitle}'. This Please ensure the mockTitle option is unique across your mocks.`
       );
     }
     this.activeOptions = this.initialActiveOptions;
@@ -118,7 +118,7 @@ export class CreateMock<T extends Options = Options> {
       updateMock: this.updateMock,
       resetMock: this.resetMock,
       mockHandlers: this.mockHandlers,
-      createMockHandler: this.createMockHandler, // TODO: rename createMockHandler
+      createMockHandler: this.createMockHandler,
     });
   };
 
