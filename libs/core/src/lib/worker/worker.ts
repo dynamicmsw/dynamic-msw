@@ -18,7 +18,7 @@ export const getActiveScenarioHandlers = (
   scenarios: GetDynamicMocksArg['scenarios']
 ): HandlerArray => {
   const scenariosFromState = state.currentState.scenarios;
-  const scenarioTitles = scenarios.map(({ scenarioTitle }) => scenarioTitle);
+  const scenarioTitles = scenarios?.map(({ scenarioTitle }) => scenarioTitle);
   const activeScenario = scenariosFromState?.find(
     ({ isActive, scenarioTitle }) =>
       isActive && scenarioTitles.includes(scenarioTitle)
