@@ -130,6 +130,7 @@ class CreateState {
         resetMock: data.resetMock,
         openPageURL: data.openPageURL,
         createMockHandler: data.createMockHandler,
+        mockHandlers: data.mockHandlers,
       };
     } else {
       this.state.mocks.push(data);
