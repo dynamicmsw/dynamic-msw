@@ -6,7 +6,7 @@ import {
   ExpansionPanelContextProvider,
   Stack,
 } from '@stela-ui/react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { FC } from 'react';
 
 import {
@@ -110,63 +110,59 @@ export const Dashboard: FC<DashboardProps> = () => {
               )}
               {convertedScenarios.map(
                 ({ scenarioTitle, mocks, openPageURL }, index) => (
-                  <>
-                    <OptionsTableRow
-                      key={`${scenarioTitle}`}
-                      rowTitle={scenarioTitle}
-                      index={index + convertedMockConfig.length}
-                      hasMockOptions={Boolean(mocks.length >= 0)}
-                      openPageURL={openPageURL}
-                      bootstrapScenario={(e) => {
-                        e.preventDefault();
-                        const clonedState: State = JSON.parse(
-                          JSON.stringify(mockState)
-                        );
-                        clonedState.scenarios.map((data) => ({
-                          ...data,
-                          isActive: false,
-                        }));
-                        clonedState.scenarios[index].isActive = true;
-                        saveToStorage(clonedState);
-                        setMockState(clonedState);
+                  <OptionsTableRow
+                    key={`${scenarioTitle}`}
+                    rowTitle={scenarioTitle}
+                    index={index + convertedMockConfig.length}
+                    hasMockOptions={Boolean(mocks.length >= 0)}
+                    openPageURL={openPageURL}
+                    bootstrapScenario={(e) => {
+                      e.preventDefault();
+                      const clonedState: State = JSON.parse(
+                        JSON.stringify(mockState)
+                      );
+                      clonedState.scenarios.map((data) => ({
+                        ...data,
+                        isActive: false,
+                      }));
+                      clonedState.scenarios[index].isActive = true;
+                      saveToStorage(clonedState);
+                      setMockState(clonedState);
 
-                        if (openPageURL) {
-                          window.open(openPageURL, '_blank')?.focus();
-                        }
-                      }}
-                    >
-                      {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => (
-                        <>
-                          <h4 css={{ margin: 0 }}>{mockTitle}</h4>
-                          {mockOptions.map(({ selectedValue, title }) => {
-                            const inputType = getInputType(selectedValue);
-                            return (
-                              <MockOptionsInput
-                                key={`${scenarioTitle}-${mockTitle}-${title}`}
-                                id={`${scenarioTitle}-${mockTitle}-${title}`}
-                                title={title}
-                                selectedValue={selectedValue}
-                                onChange={(value) => {
-                                  updateScenarioOptions(
-                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                    mockState!,
-                                    index,
-                                    mocksIndex,
-                                    title,
-                                    inputType === 'number'
-                                      ? Number(value)
-                                      : value
-                                  );
-                                  setMockState(loadFromStorage());
-                                }}
-                                inputType={inputType}
-                              />
-                            );
-                          })}
-                        </>
-                      ))}
-                    </OptionsTableRow>
-                  </>
+                      if (openPageURL) {
+                        window.open(openPageURL, '_blank')?.focus();
+                      }
+                    }}
+                  >
+                    {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => (
+                      <React.Fragment key={`${scenarioTitle}-${mockTitle}`}>
+                        <h4 css={{ margin: 0 }}>{mockTitle}</h4>
+                        {mockOptions.map(({ selectedValue, title }) => {
+                          const inputType = getInputType(selectedValue);
+                          return (
+                            <MockOptionsInput
+                              key={`${scenarioTitle}-${mockTitle}-${title}`}
+                              id={`${scenarioTitle}-${mockTitle}-${title}`}
+                              title={title}
+                              selectedValue={selectedValue}
+                              onChange={(value) => {
+                                updateScenarioOptions(
+                                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                  mockState!,
+                                  index,
+                                  mocksIndex,
+                                  title,
+                                  inputType === 'number' ? Number(value) : value
+                                );
+                                setMockState(loadFromStorage());
+                              }}
+                              inputType={inputType}
+                            />
+                          );
+                        })}
+                      </React.Fragment>
+                    ))}
+                  </OptionsTableRow>
                 )
               )}
             </div>
