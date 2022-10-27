@@ -11,13 +11,13 @@ jobs:
     name: quality-assurance
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
       - name: Cache modules
         id: cache-modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-modules
         with:
@@ -28,7 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
       - name: Cache build
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: build-cache
         with:
