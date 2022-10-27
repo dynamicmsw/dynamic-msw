@@ -1,8 +1,9 @@
 import type {
   StateOptions,
   ConvertedOptions,
-  CreateMockMockFn,
+  CreateMockHandlerFn,
   OptionType,
+  HandlerArray,
 } from '../createMock/createMock.types';
 
 export interface StateConfig {
@@ -13,8 +14,8 @@ export interface MocksState {
   mockTitle: string;
   mockOptions: StateOptions;
   openPageURL?: string;
-  dashboardScenarioOnly?: boolean;
-  mockFn?: CreateMockMockFn;
+  mockHandlers?: HandlerArray;
+  createMockHandler?: CreateMockHandlerFn;
   resetMock?: () => void;
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
@@ -30,6 +31,7 @@ export type MockOptionsState = {
 export interface ScenariosState {
   scenarioTitle: string;
   mocks: MockOptionsState[];
+  mockHandlers?: HandlerArray;
   isActive?: boolean;
   openPageURL?: string;
   resetMocks?: () => void;
@@ -41,7 +43,7 @@ export interface State {
 }
 
 export const dynamicMswStorageKey = 'dynamic-msw-state';
-export const defaultState = { mocks: [], scenarios: [] };
+export const defaultState: State = { mocks: [], scenarios: [] };
 const defaultStateConfig = { saveToLocalStorage: true };
 
 export const saveToStorage = (
@@ -49,7 +51,16 @@ export const saveToStorage = (
   config: StateConfig = defaultStateConfig
 ) => {
   if (typeof sessionStorage !== 'undefined' && config.saveToLocalStorage) {
-    localStorage.setItem(dynamicMswStorageKey, JSON.stringify(state));
+    const cleanedState = {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      scenarios: state.scenarios.map(({ resetMocks, ...data }) => data),
+      mocks: state.mocks.map(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ({ mockHandlers, createMockHandler, updateMock, resetMock, ...data }) =>
+          data
+      ),
+    };
+    localStorage.setItem(dynamicMswStorageKey, JSON.stringify(cleanedState));
   }
 };
 
@@ -64,14 +75,20 @@ export const loadFromStorage = (): State => {
 };
 
 class CreateState {
-  state: State;
-  config: StateConfig;
+  private state: State;
+  private config: StateConfig;
+
   constructor() {
     this.config = defaultStateConfig;
     this.state =
       (this.config.saveToLocalStorage && loadFromStorage()) || defaultState;
   }
-  addScenario = (data: ScenariosState) => {
+
+  public get currentState() {
+    return this.state;
+  }
+
+  public addScenario = (data: ScenariosState) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
@@ -85,7 +102,7 @@ class CreateState {
     return data;
   };
 
-  updateScenario = (data: Partial<ScenariosState>) => {
+  public updateScenario = (data: Partial<ScenariosState>) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
@@ -101,7 +118,7 @@ class CreateState {
     return data;
   };
 
-  addMock = (data: MocksState) => {
+  public addMock = (data: MocksState) => {
     const existingMockIndex = this.state.mocks.findIndex(
       ({ mockTitle }) => mockTitle === data.mockTitle
     );
@@ -112,21 +129,16 @@ class CreateState {
         updateMock: data.updateMock,
         resetMock: data.resetMock,
         openPageURL: data.openPageURL,
-        mockFn: data.mockFn,
+        createMockHandler: data.createMockHandler,
+        mockHandlers: data.mockHandlers,
       };
     } else {
       this.state.mocks.push(data);
     }
-
-    if (existingMock?.mockFn) {
-      console.warn(
-        `Looks like you initialized 2 createMock functions with the same mock title: '${existingMock.mockTitle}'. Please ensure the mockTitle option is unique across your mocks.`
-      );
-    }
     saveToStorage(this.state, this.config);
   };
 
-  updateMock = (data: Partial<MocksState>) => {
+  public updateMock = (data: Partial<MocksState>) => {
     const existingMockIndex = this.state.mocks.findIndex(
       ({ mockTitle }) => mockTitle === data.mockTitle
     );
@@ -137,21 +149,17 @@ class CreateState {
     saveToStorage(this.state, this.config);
   };
 
-  resetMocks = () => {
+  public setConfig = (config: StateConfig) => {
+    this.config = { ...this.config, ...config };
+  };
+
+  public resetMocks = () => {
     this.state.mocks.forEach(({ resetMock }) => {
       resetMock?.();
     });
     this.state.scenarios.forEach(({ resetMocks }) => {
       resetMocks?.();
     });
-  };
-
-  getState = () => {
-    return this.state;
-  };
-
-  setConfig = (config: StateConfig) => {
-    this.config = { ...this.config, ...config };
   };
 }
 

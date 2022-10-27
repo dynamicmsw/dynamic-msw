@@ -1,161 +1,124 @@
-import { getActiveOptions } from '../createMock/createMock';
-import type {
-  CreateMockFnReturnType,
-  ConvertedOptions,
-  CreateMockMockFn,
-  HandlerArray,
-} from '../createMock/createMock.types';
-import type { MocksState, MockOptionsState } from '../state/state';
+import { getActiveOptions } from '../createMock/createMock.helpers';
 import { state } from '../state/state';
+import {
+  initializeManyMocks,
+  getMockOptionsAndTitleArray,
+  convertToStateMockOptions,
+  getOpenPageURL,
+} from './createScenario.helpers';
+import type {
+  OpenPageURL,
+  Mocks,
+  MockOptionsArg,
+  OptionsArg,
+  CreateMockOptions,
+} from './createScenario.types';
 
-type CreateMockOptions = {
-  mockOptions: ConvertedOptions;
-  mockTitle: string;
-};
+export class CreateScenario<T extends Mocks = Mocks> {
+  public scenarioTitle: string;
+  private openPageURL: OpenPageURL<T>;
+  private mocks: T;
+  private mockOptions: MockOptionsArg<T>;
 
-type ScenarioMock<T extends CreateMockFnReturnType[]> = {
-  [K in keyof T]: {
-    mock: T[K];
-    mockOptions: Parameters<T[K]['updateMock']>[0];
+  constructor(
+    optionsArg: OptionsArg<T>,
+    mocks: T,
+    mockOptions: MockOptionsArg<T>
+  ) {
+    const { scenarioTitle, openPageURL } =
+      typeof optionsArg === 'string'
+        ? { scenarioTitle: optionsArg, openPageURL: null }
+        : optionsArg;
+    this.scenarioTitle = scenarioTitle;
+    this.openPageURL = openPageURL;
+    this.mocks = mocks;
+    this.mockOptions = mockOptions;
+    this.initializeScenario();
+  }
+
+  private get getOpenPageURL() {
+    return getOpenPageURL(this.openPageURL, this.mockOptions);
+  }
+
+  private get initialScenarioState() {
+    const initialState = state.currentState;
+    return initialState.scenarios.find(
+      (scenario) => scenario.scenarioTitle === this.scenarioTitle
+    );
+  }
+
+  private get mappedOptionsToMocks() {
+    return Object.keys(this.mocks).map((key) => ({
+      mock: this.mocks[key],
+      mockOptions: this.mockOptions[key],
+    }));
+  }
+
+  private get mocksFromState() {
+    // Get mocks from state so that we can use it's default options
+    const initialState = state.currentState;
+    return this.mappedOptionsToMocks.map(({ mock }) =>
+      initialState.mocks.find(({ mockTitle }) => mockTitle === mock.mockTitle)
+    );
+  }
+
+  private get createMockOptions(): CreateMockOptions[] {
+    // TODO: perhaps we can simplify this
+    const defaultMockOptions = getMockOptionsAndTitleArray(
+      this.mappedOptionsToMocks
+    );
+
+    return (
+      this.initialScenarioState?.mocks.map(({ mockOptions, mockTitle }) => ({
+        mockOptions: getActiveOptions(mockOptions),
+        mockTitle,
+      })) || defaultMockOptions
+    );
+  }
+
+  private get initializedMocks() {
+    return initializeManyMocks({
+      mocksFromState: this.mocksFromState,
+      createMockOptions: this.createMockOptions,
+    });
+  }
+
+  private initializeScenario = () => {
+    state.addScenario({
+      ...(this.initialScenarioState || {}),
+      scenarioTitle: this.scenarioTitle,
+      openPageURL: this.getOpenPageURL,
+      mocks: convertToStateMockOptions(
+        this.createMockOptions,
+        this.mocksFromState
+      ),
+      resetMocks: this.resetMocks,
+      mockHandlers: this.initializedMocks,
+    });
   };
-};
 
-type Mocks = Record<string, CreateMockFnReturnType>;
+  public resetMocks = () => {
+    state.updateScenario({
+      ...(this.initialScenarioState || {}),
+      scenarioTitle: this.scenarioTitle,
+      mocks: convertToStateMockOptions(
+        this.createMockOptions,
+        this.mocksFromState
+      ),
+      resetMocks: this.resetMocks,
+      mockHandlers: this.initializedMocks,
+    });
+  };
 
-type SetupMocksFn = (
-  options: CreateMockOptions,
-  mockFn: CreateMockMockFn
-) => HandlerArray;
-
-type OpenPageFn<T> = (mockConfig: T) => string;
-
-const initializeMocks: SetupMocksFn = (options, mockFn) => {
-  const mockFnReturnValue = mockFn(options.mockOptions);
-  const arrayOfMocks = Array.isArray(mockFnReturnValue)
-    ? mockFnReturnValue
-    : [mockFnReturnValue];
-  return arrayOfMocks;
-};
-
-const initializeManyMocks = ({
-  mocksFromState,
-  createMockOptions,
-}: {
-  mocksFromState: MocksState[];
-  createMockOptions: CreateMockOptions[];
-}) =>
-  mocksFromState.flatMap(({ mockFn }, index) => {
-    const mockOptions = createMockOptions[index];
-    const initializedMocks = initializeMocks(mockOptions, mockFn);
-    return initializedMocks;
-  });
-
-const getMockOptionsAndTitleArray = (
-  mocks: ScenarioMock<CreateMockFnReturnType[]>
-) =>
-  mocks.map(({ mockOptions, mock }) => ({
-    mockTitle: mock.mockTitle,
-    mockOptions,
-  }));
-
-const convertToStateMockOptions = (
-  mockOptions: CreateMockOptions[],
-  mocksFromState: MocksState[]
-): MockOptionsState[] =>
-  mockOptions.map((mockOption, index) => ({
-    mockTitle: mocksFromState[index].mockTitle,
-    mockOptions: Object.keys(mockOption.mockOptions).reduce(
-      (prev, key) => ({
-        ...prev,
-        [key]: { defaultValue: mockOption.mockOptions[key] },
-      }),
-      {}
-    ),
-  }));
-
-const getOpenPageURL = (
-  openPageURL: string | OpenPageFn<unknown>,
-  mockOptions: unknown
-) =>
-  typeof openPageURL === 'function' ? openPageURL(mockOptions) : openPageURL;
+  public activateScenario = () => {
+    global.__mock_worker?.use(...this.initializedMocks);
+  };
+}
 
 export const createScenario = <T extends Mocks>(
-  optionsArg:
-    | {
-        scenarioTitle: string;
-        openPageURL?:
-          | string
-          | OpenPageFn<{ [K in keyof T]: Parameters<T[K]['updateMock']>[0] }>;
-      }
-    | string,
+  optionsArg: OptionsArg<T>,
   mocks: T,
-  mockOptions: { [K in keyof T]: Parameters<T[K]['updateMock']>[0] }
-) => {
-  const { scenarioTitle, ...restOptions } =
-    typeof optionsArg === 'string'
-      ? { scenarioTitle: optionsArg, openPageURL: null }
-      : optionsArg;
+  mockOptions: MockOptionsArg<T>
+) => new CreateScenario<T>(optionsArg, mocks, mockOptions);
 
-  const openPageURL = getOpenPageURL(restOptions.openPageURL, mockOptions);
-
-  const initialState = state.getState();
-  const initialScenarioStateIndex = initialState.scenarios.findIndex(
-    (scenario) => scenario.scenarioTitle === scenarioTitle
-  );
-  const initialScenarioState =
-    initialState.scenarios[initialScenarioStateIndex];
-
-  // Mapping mockOptions arg to passed mocks
-  const mappedOptionsToMocks = Object.keys(mocks).map((key) => ({
-    mock: mocks[key],
-    mockOptions: mockOptions[key],
-  }));
-
-  // Get mocks from state so that we can use it's default options
-  const mocksFromState = mappedOptionsToMocks.map(({ mock }) =>
-    initialState.mocks.find(({ mockTitle }) => mockTitle === mock.mockTitle)
-  );
-
-  // TODO: perhaps we can simplify this
-  // Get only the title and mocks handler array
-  const defaultMockOptions = getMockOptionsAndTitleArray(mappedOptionsToMocks);
-
-  const createMockOptions: CreateMockOptions[] =
-    initialScenarioState?.mocks.map(({ mockOptions, mockTitle }) => ({
-      mockOptions: getActiveOptions(mockOptions),
-      mockTitle,
-    })) || defaultMockOptions;
-
-  const initializedMocks = initializeManyMocks({
-    mocksFromState,
-    createMockOptions: createMockOptions,
-  });
-
-  const scenarioReturnValue = {
-    mocks: initializedMocks,
-    scenarioTitle,
-    resetMocks: () => {
-      scenarioReturnValue.mocks = initializeManyMocks({
-        mocksFromState,
-        createMockOptions: createMockOptions,
-      });
-      state.updateScenario({
-        ...(initialScenarioState || {}),
-        scenarioTitle,
-        mocks: convertToStateMockOptions(createMockOptions, mocksFromState),
-        resetMocks: scenarioReturnValue.resetMocks,
-      });
-    },
-    activateScenario: () => {
-      global.__mock_worker?.use(...scenarioReturnValue.mocks);
-    },
-  };
-  state.addScenario({
-    ...(initialScenarioState || {}),
-    scenarioTitle,
-    openPageURL,
-    mocks: convertToStateMockOptions(createMockOptions, mocksFromState),
-    resetMocks: scenarioReturnValue.resetMocks,
-  });
-  return scenarioReturnValue;
-};
+export type CreateScenarioFn = typeof createScenario;

@@ -7,7 +7,7 @@ import { convertOptionValue } from './Dashboard.helpers';
 
 interface MockSettingsProps extends ConvertedMockOptions {
   id: string;
-  inputType: OptionRenderType;
+  inputType: OptionRenderType | 'select';
   onChange: (value: string | number | boolean) => void;
 }
 

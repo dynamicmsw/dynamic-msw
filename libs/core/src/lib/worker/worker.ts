@@ -2,38 +2,40 @@ import { setupWorker } from 'msw';
 import type { RestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi, setupServer as setupServerMsw } from 'msw/node';
 
-import type {
-  CreateMockFnReturnType,
-  HandlerArray,
-} from '../createMock/createMock.types';
+import type { CreateMock } from '../createMock/createMock';
+import type { HandlerArray } from '../createMock/createMock.types';
+import type { CreateScenario } from '../createScenario/createScenario';
 import type { StateConfig } from '../state/state';
 import { state } from '../state/state';
 
 interface GetDynamicMocksArg {
-  mocks: Array<CreateMockFnReturnType>;
-  scenarios?: {
-    scenarioTitle: string;
-    mocks: HandlerArray;
-  }[];
+  mocks: CreateMock[];
+  scenarios?: CreateScenario[];
   config?: StateConfig;
 }
 
 export const getActiveScenarioHandlers = (
   scenarios: GetDynamicMocksArg['scenarios']
 ): HandlerArray => {
-  const scenariosFromState = state.getState().scenarios;
-  const activeScenario = scenarios?.find((data) =>
-    scenariosFromState?.find(
-      ({ isActive, scenarioTitle }) =>
-        isActive && data.scenarioTitle === scenarioTitle
-    )
+  const scenariosFromState = state.currentState.scenarios;
+  const scenarioTitles = scenarios?.map(({ scenarioTitle }) => scenarioTitle);
+  const activeScenario = scenariosFromState?.find(
+    ({ isActive, scenarioTitle }) =>
+      isActive && scenarioTitles.includes(scenarioTitle)
   );
-  return activeScenario?.mocks || [];
+  return activeScenario?.mockHandlers || [];
 };
 
 export const getDynamicMockHandlers = (
-  mocks: GetDynamicMocksArg['mocks']
-): HandlerArray => mocks.flatMap((mock) => mock.mocks);
+  createMocks: GetDynamicMocksArg['mocks']
+): HandlerArray => {
+  const { mocks } = state.currentState;
+  const mockTitles = createMocks.map(({ mockTitle }) => mockTitle);
+  const filteredMocks = mocks.filter(({ mockTitle }) =>
+    mockTitles.includes(mockTitle)
+  );
+  return filteredMocks.flatMap(({ mockHandlers }) => mockHandlers);
+};
 
 export const getDynamicMocks = ({
   mocks,
