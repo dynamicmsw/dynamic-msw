@@ -109,3 +109,5 @@ if (process.env.NODE_ENV === 'development') {
 ## Framework examples
 
 [Next.JS](https://github.com/dynamicmsw/dynamic-msw/tree/main/examples/next/)
+
+<!-- review change -->
