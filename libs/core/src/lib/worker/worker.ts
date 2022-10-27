@@ -17,7 +17,7 @@ interface GetDynamicMocksArg {
 export const getActiveScenarioHandlers = (
   scenarios: GetDynamicMocksArg['scenarios']
 ): HandlerArray => {
-  const scenariosFromState = state.getState().scenarios;
+  const scenariosFromState = state.currentState.scenarios;
   const scenarioTitles = scenarios.map(({ scenarioTitle }) => scenarioTitle);
   const activeScenario = scenariosFromState?.find(
     ({ isActive, scenarioTitle }) =>
@@ -29,7 +29,7 @@ export const getActiveScenarioHandlers = (
 export const getDynamicMockHandlers = (
   createMocks: GetDynamicMocksArg['mocks']
 ): HandlerArray => {
-  const { mocks } = state.getState();
+  const { mocks } = state.currentState;
   const mockTitles = createMocks.map(({ mockTitle }) => mockTitle);
   const filteredMocks = mocks.filter(({ mockTitle }) =>
     mockTitles.includes(mockTitle)

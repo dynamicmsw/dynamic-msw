@@ -89,9 +89,9 @@ export class CreateMock<T extends Options = Options> {
   }
 
   private get initialMockState() {
-    return state
-      .getState()
-      .mocks.find(({ mockTitle }) => mockTitle === this.mockTitle);
+    return state.currentState.mocks.find(
+      ({ mockTitle }) => mockTitle === this.mockTitle
+    );
   }
 
   private get initialActiveOptions() {

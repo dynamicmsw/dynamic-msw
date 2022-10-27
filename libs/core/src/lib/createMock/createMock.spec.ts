@@ -63,7 +63,7 @@ describe('dynamicMsw', () => {
   });
   it('works when resetMock is called', async () => {
     exampleMock.updateMock({ success: false });
-    console.log(JSON.stringify(state.getState(), null, 2));
+    console.log(JSON.stringify(state.currentState, null, 2));
     exampleMock.resetMock();
     const resetExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
@@ -83,16 +83,16 @@ describe('dynamicMsw', () => {
     });
   });
   it('returns proper page URL based on config', async () => {
-    expect(state.getState().mocks[0].openPageURL).toBe('yes-page');
+    expect(state.currentState.mocks[0].openPageURL).toBe('yes-page');
   });
   it('returns proper page URL when updating mock', async () => {
     exampleMock.updateMock({ success: false });
-    expect(state.getState().mocks[0].openPageURL).toBe('no-page');
+    expect(state.currentState.mocks[0].openPageURL).toBe('no-page');
   });
   it('resets createMock return value when calling resetHandlers()', async () => {
     exampleMock.updateMock({ success: false });
     resetHandlers();
-    expect(state.getState().mocks[0].openPageURL).toBe('yes-page');
+    expect(state.currentState.mocks[0].openPageURL).toBe('yes-page');
   });
 
   it('saves state to localStorage', () => {

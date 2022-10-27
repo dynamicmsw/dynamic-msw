@@ -76,15 +76,19 @@ export const loadFromStorage = (): State => {
 };
 
 class CreateState {
-  state: State;
-  config: StateConfig;
+  private state: State;
+  private config: StateConfig;
   constructor() {
     this.config = defaultStateConfig;
     this.state =
       (this.config.saveToLocalStorage && loadFromStorage()) || defaultState;
   }
 
-  addScenario = (data: ScenariosState) => {
+  public get currentState() {
+    return this.state;
+  }
+
+  public addScenario = (data: ScenariosState) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
@@ -98,7 +102,7 @@ class CreateState {
     return data;
   };
 
-  updateScenario = (data: Partial<ScenariosState>) => {
+  public updateScenario = (data: Partial<ScenariosState>) => {
     const existingScenarioIndex = this.state.scenarios.findIndex(
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
@@ -114,7 +118,7 @@ class CreateState {
     return data;
   };
 
-  addMock = (data: MocksState) => {
+  public addMock = (data: MocksState) => {
     const existingMockIndex = this.state.mocks.findIndex(
       ({ mockTitle }) => mockTitle === data.mockTitle
     );
@@ -133,7 +137,7 @@ class CreateState {
     saveToStorage(this.state, this.config);
   };
 
-  updateMock = (data: Partial<MocksState>) => {
+  public updateMock = (data: Partial<MocksState>) => {
     const existingMockIndex = this.state.mocks.findIndex(
       ({ mockTitle }) => mockTitle === data.mockTitle
     );
@@ -144,21 +148,17 @@ class CreateState {
     saveToStorage(this.state, this.config);
   };
 
-  resetMocks = () => {
+  public setConfig = (config: StateConfig) => {
+    this.config = { ...this.config, ...config };
+  };
+
+  public resetMocks = () => {
     this.state.mocks.forEach(({ resetMock }) => {
       resetMock?.();
     });
     this.state.scenarios.forEach(({ resetMocks }) => {
       resetMocks?.();
     });
-  };
-
-  getState = () => {
-    return this.state;
-  };
-
-  setConfig = (config: StateConfig) => {
-    this.config = { ...this.config, ...config };
   };
 }
 

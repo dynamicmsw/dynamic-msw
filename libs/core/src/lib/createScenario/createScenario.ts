@@ -120,7 +120,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
   }
 
   private get initialScenarioState() {
-    const initialState = state.getState();
+    const initialState = state.currentState;
     return initialState.scenarios.find(
       (scenario) => scenario.scenarioTitle === this.scenarioTitle
     );
@@ -135,7 +135,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
 
   private get mocksFromState() {
     // Get mocks from state so that we can use it's default options
-    const initialState = state.getState();
+    const initialState = state.currentState;
     return this.mappedOptionsToMocks.map(({ mock }) =>
       initialState.mocks.find(({ mockTitle }) => mockTitle === mock.mockTitle)
     );
