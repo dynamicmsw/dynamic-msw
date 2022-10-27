@@ -52,7 +52,8 @@ export const saveToStorage = (
 ) => {
   if (typeof sessionStorage !== 'undefined' && config.saveToLocalStorage) {
     const cleanedState = {
-      ...state,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      scenarios: state.scenarios.map(({ resetMocks, ...data }) => data),
       mocks: state.mocks.map(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ({ mockHandlers, createMockHandler, updateMock, resetMock, ...data }) =>
@@ -76,6 +77,7 @@ export const loadFromStorage = (): State => {
 class CreateState {
   private state: State;
   private config: StateConfig;
+
   constructor() {
     this.config = defaultStateConfig;
     this.state =
