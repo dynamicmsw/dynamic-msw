@@ -67,7 +67,7 @@ Adjust the URL's accordingly:
 {
   ...
   "scripts": {
-    "dev": "concurrently \"npm:startApp\" \"npm:startDashboard\"",
+    "dev": "concurrently \"npm:devApp\" \"npm:devDashboard\"",
     "devApp": "next dev",
     "devDashboard": "npm run devDashboard:waitOn && npm run devDashboard:openPage",
     "devDashboard:waitOn": "wait-on http://localhost:4200/mock-dashboard",
