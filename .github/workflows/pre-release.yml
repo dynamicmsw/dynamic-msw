@@ -26,7 +26,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PUSH_TOKEN }}
-      - run: git rebase origin/main
       - uses: nrwl/nx-set-shas@v3
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -52,7 +51,7 @@ jobs:
         run: |
           git config user.name "GitHub Bot"
           git config user.email "bramzijpcode@gmail.com"
-
+      - run: git rebase origin/main
       - run: yarn --frozen-lockfile
 
       - name: Check if everything builds with nx release cache
