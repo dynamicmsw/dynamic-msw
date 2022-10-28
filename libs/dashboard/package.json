@@ -1,7 +1,7 @@
 {
   "name": "@dynamic-msw/dashboard",
   "sideEffects": false,
-  "version": "0.0.8",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "User interface for adjusting mocks created with dynamic-msw (@dynamic-msw/core)",
   "keywords": [
