@@ -94,6 +94,8 @@ class CreateState {
     );
     if (existingScenarioIndex >= 0) {
       this.state.scenarios[existingScenarioIndex].resetMocks = data.resetMocks;
+      this.state.scenarios[existingScenarioIndex].mockHandlers =
+        data.mockHandlers;
     } else {
       this.state.scenarios.push(data);
       saveToStorage(this.state, this.config);
