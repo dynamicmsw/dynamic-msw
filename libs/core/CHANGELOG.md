@@ -2,6 +2,12 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+### [1.1.2](https://github.com/dynamicmsw/dynamic-msw/compare/v1.1.1...v1.1.2) (2022-10-28)
+
+### Bug Fixes
+
+- missing mock handlers in scenario state ([7270de5](https://github.com/dynamicmsw/dynamic-msw/commit/7270de58ea3bf587b4f0eacdf85647a20cd761b3))
+
 ### [1.1.1](https://github.com/dynamicmsw/dynamic-msw/compare/v1.1.0...v1.1.1) (2022-10-28)
 
 ## [1.0.0](https://github.com/dynamicmsw/dynamic-msw/compare/v0.0.8...v1.0.0) (2022-10-28)

@@ -23,6 +23,7 @@ export const getActiveScenarioHandlers = (
     ({ isActive, scenarioTitle }) =>
       isActive && scenarioTitles.includes(scenarioTitle)
   );
+  console.log(activeScenario);
   return activeScenario?.mockHandlers || [];
 };
 
