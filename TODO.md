@@ -7,7 +7,6 @@
 1. Add option to hide/disable mocks by default. Usefull for when one only wants to display/use it in an scenario. Reconsider.
 1. scan for project todos and filter important ones out
 1. add more tests
-1. remove semver hardcoded patch version from workflows
 
 # TODOS after releasing a stable/well tested version
 
