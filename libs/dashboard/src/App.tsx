@@ -1,6 +1,7 @@
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { theme } from '@stela-ui/css';
+import { GlobalStyles } from '@stela-ui/react';
 import type { FC, PropsWithChildren } from 'react';
 import { ThemeProvider } from 'theme-ui';
 
@@ -16,7 +17,10 @@ export const App: FC<Required<PropsWithChildren>> = ({ children }) => {
   const { shouldResetMocks } = useResetMocksQueryParam();
   return shouldResetMocks ? null : (
     <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles />
+        {children}
+      </ThemeProvider>
     </CacheProvider>
   );
 };
