@@ -19,7 +19,7 @@ Object containing
 | Object key         | Type                         | Description                       |
 | ------------------ | ---------------------------- | --------------------------------- |
 | `resetMocks`       | `() => void`                 |                                   |
-| `updateScenario`   | `(MOCK_OPTIONS_OBJ) => void` | Also activates scenario           |
+| `updateScenario`   | `(MOCK_OPTIONS_OBJ) => void` | Also activates the scenario       |
 | `activateScenario` | `() => void`                 | Scenarios are disabled by default |
 
 Example
@@ -81,7 +81,7 @@ Activate a scenario
 exampleScenario.activateScenario();
 ```
 
-Update a scenario (also activates it)
+Update a scenario (also activates the scenario)
 
 ```ts
 exampleScenario.updateScenario({
