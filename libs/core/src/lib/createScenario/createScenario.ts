@@ -14,6 +14,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
   private openPageURL: OpenPageURL<T>;
   private mocks: T;
   private mockOptions: MockOptionsArg<T>;
+  private initialMockOptions: MockOptionsArg<T>;
 
   constructor(
     optionsArg: OptionsArg<T>,
@@ -28,6 +29,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
     this.openPageURL = openPageURL;
     this.mocks = mocks;
     this.mockOptions = mockOptions;
+    this.initialMockOptions = mockOptions;
     this.initializeScenario();
   }
 
@@ -142,6 +144,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
   };
 
   public resetMocks = () => {
+    this.mockOptions = this.initialMockOptions;
     state.updateScenario({
       ...(this.initialScenarioState || {}),
       scenarioTitle: this.scenarioTitle,
@@ -149,6 +152,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
       resetMocks: this.resetMocks,
       mockHandlers: this.initializedMocks,
     });
+    this.activateScenario();
   };
 
   public activateScenario = () => {

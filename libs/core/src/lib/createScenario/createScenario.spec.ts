@@ -101,7 +101,6 @@ describe('createScenario', () => {
     exampleScenario.updateScenario({
       variatedExampleMock: { someNumberOption: 123123 },
     });
-    exampleScenario.activateScenario();
     exampleScenario.updateScenario({
       variatedExampleMock: { someNumberOption: 999 },
     });
@@ -109,5 +108,15 @@ describe('createScenario', () => {
       (res) => res.json()
     );
     expect(response.iAmNumber).toBe(999);
+  });
+  it('resets mock options properly', async () => {
+    exampleScenario.updateScenario({
+      variatedExampleMock: { someNumberOption: 123123 },
+    });
+    exampleScenario.resetMocks();
+    const response = await fetch('http://localhost:1234/i-am-relative').then(
+      (res) => res.json()
+    );
+    expect(response.iAmNumber).toBe(1111);
   });
 });
