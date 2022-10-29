@@ -16,11 +16,11 @@
 
 Object containing
 
-| Object key         | Type                         | Description                       |
-| ------------------ | ---------------------------- | --------------------------------- |
-| `resetMocks`       | `() => void`                 |                                   |
-| `updateScenario`   | `(MOCK_OPTIONS_OBJ) => void` | Also activates the scenario       |
-| `activateScenario` | `() => void`                 | Scenarios are disabled by default |
+| Object key         | Type                         | Description                                                                                                                                    |
+| ------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resetMocks`       | `() => void`                 |                                                                                                                                                |
+| `updateScenario`   | `(MOCK_OPTIONS_OBJ) => void` | Also activates the scenario                                                                                                                    |
+| `activateScenario` | `() => void`                 | Scenarios are disabled by default. Calling the `resetHandlers` function from MSW or @dynamic-msw/core will automatically deactivate the mocks. |
 
 Example
 
