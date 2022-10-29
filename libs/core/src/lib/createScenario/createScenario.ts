@@ -14,7 +14,6 @@ export class CreateScenario<T extends Mocks = Mocks> {
   private openPageURL: OpenPageURL<T>;
   private mocks: T;
   private mockOptions: MockOptionsArg<T>;
-  private isActive: boolean;
 
   constructor(
     optionsArg: OptionsArg<T>,
@@ -154,7 +153,6 @@ export class CreateScenario<T extends Mocks = Mocks> {
 
   public activateScenario = () => {
     global.__mock_worker?.use(...this.initializedMocks);
-    this.isActive = true;
   };
 }
 
