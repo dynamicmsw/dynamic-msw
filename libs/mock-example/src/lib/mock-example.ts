@@ -64,7 +64,7 @@ export const exampleScenario = createScenario(
   { exampleMock, variatedExampleMock },
   {
     exampleMock: { success: false },
-    variatedExampleMock: { someNumberOption: 123 },
+    variatedExampleMock: { someNumberOption: 345 },
   }
 );
 

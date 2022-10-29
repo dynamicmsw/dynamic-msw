@@ -2,7 +2,6 @@ import type {
   StateOptions,
   ConvertedOptions,
   CreateMockHandlerFn,
-  OptionType,
   HandlerArray,
 } from '../createMock/createMock.types';
 
@@ -22,10 +21,7 @@ export interface MocksState {
 
 export type MockOptionsState = {
   mockTitle: string;
-  mockOptions: Record<
-    string,
-    { defaultValue: OptionType; selectedValue?: OptionType }
-  >;
+  mockOptions: StateOptions;
 };
 
 export interface ScenariosState {

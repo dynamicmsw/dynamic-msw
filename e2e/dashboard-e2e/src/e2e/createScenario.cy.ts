@@ -13,6 +13,7 @@ describe('createScenario', () => {
     cy.getByTestId('configure-panel')
       .last()
       .findByTestId('scenario-config-input')
+      .first()
       .should('not.be.checked');
     cy.getByTestId('configure-panel')
       .last()
@@ -32,6 +33,7 @@ describe('createScenario', () => {
     cy.getByTestId('configure-panel')
       .last()
       .findByTestId('scenario-config-input')
+      .first()
       .should('not.be.checked');
     cy.getByTestId('configure-panel')
       .last()

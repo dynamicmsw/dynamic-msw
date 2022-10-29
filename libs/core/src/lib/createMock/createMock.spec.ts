@@ -63,7 +63,6 @@ describe('dynamicMsw', () => {
   });
   it('works when resetMock is called', async () => {
     exampleMock.updateMock({ success: false });
-    console.log(JSON.stringify(state.currentState, null, 2));
     exampleMock.resetMock();
     const resetExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()

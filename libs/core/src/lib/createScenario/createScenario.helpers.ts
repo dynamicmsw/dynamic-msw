@@ -1,9 +1,7 @@
-import type { CreateMock } from '../createMock/createMock';
-import type { MocksState, MockOptionsState } from '../state/state';
+import type { MocksState } from '../state/state';
 import type {
   SetupMocksFn,
   CreateMockOptions,
-  ScenarioMock,
   OpenPageFn,
 } from './createScenario.types';
 
@@ -28,31 +26,18 @@ export const initializeManyMocks = ({
     return initializedMocks;
   });
 
-export const getMockOptionsAndTitleArray = (
-  mocks: ScenarioMock<CreateMock[]>
-) =>
-  mocks.map(({ mockOptions, mock }) => ({
-    mockTitle: mock.mockTitle,
-    mockOptions,
-  }));
-
-export const convertToStateMockOptions = (
-  mockOptions: CreateMockOptions[],
-  mocksFromState: MocksState[]
-): MockOptionsState[] =>
-  mockOptions.map((mockOption, index) => ({
-    mockTitle: mocksFromState[index].mockTitle,
-    mockOptions: Object.keys(mockOption.mockOptions).reduce(
-      (prev, key) => ({
-        ...prev,
-        [key]: { defaultValue: mockOption.mockOptions[key] },
-      }),
-      {}
-    ),
-  }));
-
 export const getOpenPageURL = (
   openPageURL: string | OpenPageFn<unknown>,
-  mockOptions: unknown
+  mockOptions: CreateMockOptions[]
 ) =>
-  typeof openPageURL === 'function' ? openPageURL(mockOptions) : openPageURL;
+  typeof openPageURL === 'function'
+    ? openPageURL(
+        mockOptions.reduce(
+          (prev, { mockTitle, mockOptions }) => ({
+            ...prev,
+            [mockTitle]: mockOptions,
+          }),
+          {}
+        )
+      )
+    : openPageURL;
