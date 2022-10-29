@@ -56,7 +56,6 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         <Spacing
           pr={2}
           css={{
-            textAlign: 'right',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
