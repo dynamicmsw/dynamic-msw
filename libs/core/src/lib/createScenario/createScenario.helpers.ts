@@ -28,6 +28,16 @@ export const initializeManyMocks = ({
 
 export const getOpenPageURL = (
   openPageURL: string | OpenPageFn<unknown>,
-  mockOptions: unknown
+  mockOptions: CreateMockOptions[]
 ) =>
-  typeof openPageURL === 'function' ? openPageURL(mockOptions) : openPageURL;
+  typeof openPageURL === 'function'
+    ? openPageURL(
+        mockOptions.reduce(
+          (prev, { mockTitle, mockOptions }) => ({
+            ...prev,
+            [mockTitle]: mockOptions,
+          }),
+          {}
+        )
+      )
+    : openPageURL;

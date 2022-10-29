@@ -38,7 +38,8 @@ export const variatedExampleMock = createMock(
 export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',
-    openPageURL: '/iframe.html?id=development-examplemocks--primary',
+    openPageURL: (config) =>
+      `http://localhost:1234/${config.variatedExampleMock.someNumberOption}`,
   },
   { variatedExampleMock },
   {
@@ -79,6 +80,9 @@ describe('createScenario', () => {
         someNumberOption: { defaultValue: 1111 },
       },
     });
+    expect(state.currentState.scenarios[0].openPageURL).toEqual(
+      `http://localhost:1234/1111`
+    );
   });
   it('responds with correct data', async () => {
     exampleScenario.activateScenario();
