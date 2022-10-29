@@ -139,9 +139,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
       resetMocks: this.resetMocks,
       mockHandlers: this.initializedMocks,
     });
-    if (this.isActive) {
-      this.activateScenario();
-    }
+    this.activateScenario();
   };
 
   public resetMocks = () => {
