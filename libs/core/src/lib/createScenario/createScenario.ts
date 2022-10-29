@@ -1,17 +1,12 @@
 import { getActiveOptions } from '../createMock/createMock.helpers';
+import type { MockOptionsState } from '../state/state';
 import { state } from '../state/state';
-import {
-  initializeManyMocks,
-  getMockOptionsAndTitleArray,
-  convertToStateMockOptions,
-  getOpenPageURL,
-} from './createScenario.helpers';
+import { initializeManyMocks, getOpenPageURL } from './createScenario.helpers';
 import type {
   OpenPageURL,
   Mocks,
   MockOptionsArg,
   OptionsArg,
-  CreateMockOptions,
 } from './createScenario.types';
 
 export class CreateScenario<T extends Mocks = Mocks> {
@@ -37,7 +32,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
   }
 
   private get getOpenPageURL() {
-    return getOpenPageURL(this.openPageURL, this.mockOptions);
+    return getOpenPageURL(this.openPageURL, this.activeOptions);
   }
 
   private get initialScenarioState() {
@@ -47,39 +42,63 @@ export class CreateScenario<T extends Mocks = Mocks> {
     );
   }
 
-  private get mappedOptionsToMocks() {
-    return Object.keys(this.mocks).map((key) => ({
-      mock: this.mocks[key],
-      mockOptions: this.mockOptions[key],
-    }));
-  }
-
   private get mocksFromState() {
     // Get mocks from state so that we can use it's default options
     const initialState = state.currentState;
-    return this.mappedOptionsToMocks.map(({ mock }) =>
-      initialState.mocks.find(({ mockTitle }) => mockTitle === mock.mockTitle)
+    return Object.keys(this.mocks).map((key) =>
+      initialState.mocks.find(({ mockTitle }) => {
+        return mockTitle === this.mocks[key].mockTitle;
+      })
     );
   }
 
-  private get createMockOptions(): CreateMockOptions[] {
-    // TODO: perhaps we can simplify this
-    const defaultMockOptions = getMockOptionsAndTitleArray(
-      this.mappedOptionsToMocks
-    );
+  private getMockFromState(key: keyof T) {
+    return this.mocksFromState.find(({ mockTitle }) => mockTitle === key);
+  }
 
-    return (
-      this.initialScenarioState?.mocks.map(({ mockOptions, mockTitle }) => ({
-        mockOptions: getActiveOptions(mockOptions),
-        mockTitle,
-      })) || defaultMockOptions
-    );
+  private get mapScenarioMocksToState(): MockOptionsState[] {
+    return Object.keys(this.mocks).map((key) => {
+      const currentMockTitle = this.mocks[key].mockTitle;
+      const mockDataFromState = this.getMockFromState(currentMockTitle);
+      const initialScenarioMockState = this.initialScenarioState?.mocks.find(
+        ({ mockTitle }) => mockTitle === currentMockTitle
+      );
+
+      const mergeMockOptions = Object.keys(
+        mockDataFromState.mockOptions
+      ).reduce((prev, stateMockOptionKey) => {
+        const selectedValue =
+          initialScenarioMockState?.mockOptions[stateMockOptionKey]
+            .selectedValue;
+        const defaultValue = this.mockOptions[key][stateMockOptionKey];
+        return {
+          ...prev,
+          [stateMockOptionKey]: {
+            ...mockDataFromState.mockOptions[stateMockOptionKey],
+            ...(defaultValue ? { defaultValue } : {}),
+            ...(selectedValue ? { selectedValue } : {}),
+          },
+        };
+      }, {});
+
+      return {
+        mockTitle: key,
+        mockOptions: mergeMockOptions,
+      };
+    });
+  }
+
+  private get activeOptions() {
+    return this.mapScenarioMocksToState.map(({ mockTitle, mockOptions }) => ({
+      mockTitle,
+      mockOptions: getActiveOptions(mockOptions),
+    }));
   }
 
   private get initializedMocks() {
     return initializeManyMocks({
       mocksFromState: this.mocksFromState,
-      createMockOptions: this.createMockOptions,
+      createMockOptions: this.activeOptions,
     });
   }
 
@@ -88,10 +107,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
       ...(this.initialScenarioState || {}),
       scenarioTitle: this.scenarioTitle,
       openPageURL: this.getOpenPageURL,
-      mocks: convertToStateMockOptions(
-        this.createMockOptions,
-        this.mocksFromState
-      ),
+      mocks: this.mapScenarioMocksToState,
       resetMocks: this.resetMocks,
       mockHandlers: this.initializedMocks,
     });
@@ -101,10 +117,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
     state.updateScenario({
       ...(this.initialScenarioState || {}),
       scenarioTitle: this.scenarioTitle,
-      mocks: convertToStateMockOptions(
-        this.createMockOptions,
-        this.mocksFromState
-      ),
+      mocks: this.mapScenarioMocksToState,
       resetMocks: this.resetMocks,
       mockHandlers: this.initializedMocks,
     });

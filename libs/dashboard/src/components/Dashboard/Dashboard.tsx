@@ -41,7 +41,6 @@ export const Dashboard: FC<DashboardProps> = () => {
   const convertedScenarios = mockState
     ? convertScenarios(mockState?.scenarios)
     : [];
-
   return (
     <form>
       <Flex gap={4}>
@@ -168,8 +167,15 @@ export const Dashboard: FC<DashboardProps> = () => {
                               {mockTitle}
                             </h4>
                             {mockOptions.map(
-                              ({ selectedValue, title }, optionsIndex) => {
-                                const inputType = getInputType(selectedValue);
+                              (
+                                { selectedValue, options, type, title },
+                                optionsIndex
+                              ) => {
+                                const inputType = getInputType(
+                                  selectedValue,
+                                  options,
+                                  type
+                                );
                                 return (
                                   <MockOptionsInput
                                     key={`${scenarioTitle}-${mockTitle}-${title}`}
@@ -177,6 +183,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                     title={title}
                                     gridRow={rowBaseIndex + 1 + optionsIndex}
                                     selectedValue={selectedValue}
+                                    options={options}
                                     onChange={(value) => {
                                       updateScenarioOptions(
                                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

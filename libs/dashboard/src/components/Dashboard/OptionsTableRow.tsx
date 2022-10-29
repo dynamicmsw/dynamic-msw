@@ -4,7 +4,6 @@ import {
   ExpansionPanel,
   Button,
   Spacing,
-  Flex,
 } from '@stela-ui/react';
 import type { FC } from 'react';
 
