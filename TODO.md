@@ -1,5 +1,10 @@
 # TODOS
 
+1. add option to disable scenario in dashboard
+1. show active scenario state (or use the disable scenario button to make it clear)
+1. show altered options state
+1. The reset button should not reset properly after page reload (it uses storage state). Consider adding a second button to reinitialize state.
+1. For the above step, the mock server config initialize page url is pretty much required. Consider making this required.
 1. types: refactor namings and cleanup and export more. (createMock args are important type defs)
 1. add redirect to 404 page for production environments when accessing the dashboard.
 1. Add option to hide/disable mocks by default. Usefull for when one only wants to display/use it in an scenario. Reconsider.
