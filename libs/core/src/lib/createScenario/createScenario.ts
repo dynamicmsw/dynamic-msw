@@ -75,8 +75,8 @@ export class CreateScenario<T extends Mocks = Mocks> {
           ...prev,
           [stateMockOptionKey]: {
             ...mockDataFromState.mockOptions[stateMockOptionKey],
-            ...(defaultValue ? { defaultValue } : {}),
-            ...(selectedValue ? { selectedValue } : {}),
+            ...(typeof defaultValue !== 'undefined' ? { defaultValue } : {}),
+            ...(typeof selectedValue !== 'undefined' ? { selectedValue } : {}),
           },
         };
       }, {});
