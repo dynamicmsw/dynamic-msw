@@ -12,21 +12,24 @@
 | `mocksOptionsObject` | `Record<keyof mocksObject, MOCK_OPTIONS_OBJ>`                                        | Object containing the keys `mocksObject` with `MOCK_OPTIONS_OBJ` as value. Used to overwrite mock options as specified in the `createMock`'s.           |
 | `MOCK_OPTIONS_OBJ`   | `Record<keyof mockOptions, string number boolean>`                                   | Object containing the keys from `mockOptions` and their respective active value (`defaultValue` or an updated value after calling `updateOptions(...)`) |
 
-<!--
-TODO: considering you cannot update scenarios the return value is irrelevant
 #### Returns
 
 Object containing
 
-| Object key   | Type         |
-| ------------ | ------------ |
-| `resetMocks` | `() => void` | -->
+| Object key         | Type                         | Description                                                                                                                                    |
+| ------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resetMocks`       | `() => void`                 | Also activates the scenario                                                                                                                    |
+| `updateScenario`   | `(MOCK_OPTIONS_OBJ) => void` | Also activates the scenario                                                                                                                    |
+| `activateScenario` | `() => void`                 | Scenarios are disabled by default. Calling the `resetHandlers` function from MSW or @dynamic-msw/core will automatically deactivate the mocks. |
 
 Example
+
+Create some mocks
 
 ```ts
 import { createScenario, createMock } from '@dynamic-msw/core';
 
+// Used in subsequent examples
 export const loginMock = createMock(
   {
     mockTitle: 'login',
@@ -51,7 +54,12 @@ export const exampleMock = createMock(
   },
   ...
 );
+```
 
+Create a scenario
+
+```ts
+// Used in subsequent examples
 export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',
@@ -65,4 +73,19 @@ export const exampleScenario = createScenario(
     exampleMock: { countryCode: 'nl', success: false },
   }
 );
+```
+
+Activate a scenario
+
+```ts
+exampleScenario.activateScenario();
+```
+
+Update a scenario (also activates the scenario)
+
+```ts
+exampleScenario.updateScenario({
+  loginMock: { success: true },
+  exampleMock: { countryCode: 'en' },
+});
 ```

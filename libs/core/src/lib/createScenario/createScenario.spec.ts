@@ -97,4 +97,26 @@ describe('createScenario', () => {
     );
     expect(response.iAmNumber).toBe(456);
   });
+  it('updates mock options', async () => {
+    exampleScenario.updateScenario({
+      variatedExampleMock: { someNumberOption: 123123 },
+    });
+    exampleScenario.updateScenario({
+      variatedExampleMock: { someNumberOption: 999 },
+    });
+    const response = await fetch('http://localhost:1234/i-am-relative').then(
+      (res) => res.json()
+    );
+    expect(response.iAmNumber).toBe(999);
+  });
+  it('resets mock options properly', async () => {
+    exampleScenario.updateScenario({
+      variatedExampleMock: { someNumberOption: 123123 },
+    });
+    exampleScenario.resetMocks();
+    const response = await fetch('http://localhost:1234/i-am-relative').then(
+      (res) => res.json()
+    );
+    expect(response.iAmNumber).toBe(1111);
+  });
 });
