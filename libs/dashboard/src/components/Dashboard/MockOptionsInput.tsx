@@ -9,6 +9,7 @@ interface MockSettingsProps extends ConvertedMockOptions {
   id: string;
   inputType: OptionRenderType | 'select';
   onChange: (value: string | number | boolean) => void;
+  gridRow?: number;
 }
 
 export const MockOptionsInput: FC<MockSettingsProps> = ({
@@ -18,13 +19,17 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
   title,
   inputType,
   id,
+  gridRow,
 }) => {
+  const styles = { display: 'contents', '> *': { gridRow } };
   const defaultValue = convertOptionValue(selectedValue);
   switch (inputType) {
     case 'select':
       return (
         <SelectInput
+          css={styles}
           data-testid="scenario-config-input"
+          labelPosition="left"
           name={id}
           label={title}
           defaultValue={defaultValue}
@@ -40,7 +45,9 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
     case 'number':
       return (
         <TextInput
+          css={styles}
           data-testid="scenario-config-input"
+          labelPosition="left"
           label={title}
           type={inputType}
           defaultValue={defaultValue}
@@ -50,6 +57,7 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
     case 'boolean':
       return (
         <ToggleInput
+          css={styles}
           data-testid="scenario-config-input"
           label={title}
           defaultChecked={defaultValue === 'true'}

@@ -4,7 +4,8 @@ import {
   Table,
   Button,
   ExpansionPanelContextProvider,
-  Stack,
+  Flex,
+  Container,
 } from '@stela-ui/react';
 import React, { useState, useEffect } from 'react';
 import type { FC } from 'react';
@@ -43,30 +44,23 @@ export const Dashboard: FC<DashboardProps> = () => {
 
   return (
     <form>
-      <Stack gap={4}>
-        <h1>Dynamic MSW Dashboard</h1>
+      <Flex gap={4}>
+        <Container>
+          <h1>Dynamic MSW Dashboard</h1>
+        </Container>
         {isLoading && (
-          <h4 data-testid="dashboard-state">Loading mock config...</h4>
+          <Container>
+            <h4 data-testid="dashboard-state">Loading mock config...</h4>
+          </Container>
         )}
         {iFrameError && <h4 data-testid="dashboard-state">{iFrameError}</h4>}
-        <Table columns={3} css={{ width: '100%' }}>
-          <ExpansionPanelContextProvider>
-            <div
-              css={{
-                // TODO: fix this way of styling the table rows.
-                // TODO: This should be possible from the stela-ui lib for starters
-                display: 'contents',
-                '> * > *, summary': { display: 'flex', alignItems: 'center' },
-                '&:nth-child(odd) div, &:nth-child(odd) summary, &:nth-child(odd) details':
-                  {
-                    background: '#f9f9f9',
-                  },
-                '&:nth-child(even) div, &:nth-child(even) summary,  &:nth-child(even) details':
-                  {
-                    background: '#ededed',
-                  },
-              }}
-            >
+        <Container>
+          <Table
+            columns={3}
+            backgroundColorEven="magnolia"
+            backgroundColorOdd="alabaster"
+          >
+            <ExpansionPanelContextProvider>
               {convertedMockConfig.map(
                 ({ mockTitle, mockOptions, openPageURL }, index) => (
                   <OptionsTableRow
@@ -76,35 +70,46 @@ export const Dashboard: FC<DashboardProps> = () => {
                     hasMockOptions={mockOptions.length >= 0}
                     openPageURL={openPageURL}
                   >
-                    {mockOptions.map(
-                      ({ selectedValue, options, type, title }) => {
-                        const inputType = getInputType(
-                          selectedValue,
-                          options,
-                          type
-                        );
-                        return (
-                          <MockOptionsInput
-                            key={`${mockTitle}-${title}`}
-                            id={`${mockTitle}-${title}`}
-                            title={title}
-                            options={options}
-                            selectedValue={selectedValue}
-                            inputType={inputType}
-                            onChange={(value) => {
-                              updateMockOptions(
-                                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                mockState!,
-                                index,
-                                title,
-                                inputType === 'number' ? Number(value) : value
-                              );
-                              setMockState(loadFromStorage());
-                            }}
-                          />
-                        );
-                      }
-                    )}
+                    <Flex
+                      rowGap={3}
+                      flow="row"
+                      alignY="center"
+                      css={{
+                        display: 'grid',
+                        gridTemplateColumns: 'auto 1fr',
+                        '> div': { display: 'contents' },
+                      }}
+                    >
+                      {mockOptions.map(
+                        ({ selectedValue, options, type, title }) => {
+                          const inputType = getInputType(
+                            selectedValue,
+                            options,
+                            type
+                          );
+                          return (
+                            <MockOptionsInput
+                              key={`${mockTitle}-${title}`}
+                              id={`${mockTitle}-${title}`}
+                              title={title}
+                              options={options}
+                              selectedValue={selectedValue}
+                              inputType={inputType}
+                              onChange={(value) => {
+                                updateMockOptions(
+                                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                  mockState!,
+                                  index,
+                                  title,
+                                  inputType === 'number' ? Number(value) : value
+                                );
+                                setMockState(loadFromStorage());
+                              }}
+                            />
+                          );
+                        }
+                      )}
+                    </Flex>
                   </OptionsTableRow>
                 )
               )}
@@ -134,52 +139,86 @@ export const Dashboard: FC<DashboardProps> = () => {
                       }
                     }}
                   >
-                    {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => (
-                      <React.Fragment key={`${scenarioTitle}-${mockTitle}`}>
-                        <h4 css={{ margin: 0 }}>{mockTitle}</h4>
-                        {mockOptions.map(({ selectedValue, title }) => {
-                          const inputType = getInputType(selectedValue);
-                          return (
-                            <MockOptionsInput
-                              key={`${scenarioTitle}-${mockTitle}-${title}`}
-                              id={`${scenarioTitle}-${mockTitle}-${title}`}
-                              title={title}
-                              selectedValue={selectedValue}
-                              onChange={(value) => {
-                                updateScenarioOptions(
-                                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                  mockState!,
-                                  index,
-                                  mocksIndex,
-                                  title,
-                                  inputType === 'number' ? Number(value) : value
-                                );
-                                setMockState(loadFromStorage());
+                    <Flex
+                      rowGap={3}
+                      flow="row"
+                      alignY="center"
+                      css={{
+                        display: 'grid',
+                        gridTemplateColumns: 'auto 1fr',
+                        '> span > div': { display: 'contents' },
+                      }}
+                    >
+                      {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => {
+                        const rowBaseIndex =
+                          mocksIndex +
+                          1 +
+                          (mocks[mocksIndex - 1]?.mockOptions.length || 0);
+
+                        return (
+                          <React.Fragment key={`${scenarioTitle}-${mockTitle}`}>
+                            <h4
+                              css={{
+                                margin: 0,
+                                gridRow: rowBaseIndex,
+                                gridColumnStart: 1,
+                                gridColumnEnd: 3,
                               }}
-                              inputType={inputType}
-                            />
-                          );
-                        })}
-                      </React.Fragment>
-                    ))}
+                            >
+                              {mockTitle}
+                            </h4>
+                            {mockOptions.map(
+                              ({ selectedValue, title }, optionsIndex) => {
+                                const inputType = getInputType(selectedValue);
+                                return (
+                                  <MockOptionsInput
+                                    key={`${scenarioTitle}-${mockTitle}-${title}`}
+                                    id={`${scenarioTitle}-${mockTitle}-${title}`}
+                                    title={title}
+                                    gridRow={rowBaseIndex + 1 + optionsIndex}
+                                    selectedValue={selectedValue}
+                                    onChange={(value) => {
+                                      updateScenarioOptions(
+                                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                        mockState!,
+                                        index,
+                                        mocksIndex,
+                                        title,
+                                        inputType === 'number'
+                                          ? Number(value)
+                                          : value
+                                      );
+                                      setMockState(loadFromStorage());
+                                    }}
+                                    inputType={inputType}
+                                  />
+                                );
+                              }
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </Flex>
                   </OptionsTableRow>
                 )
               )}
-            </div>
-          </ExpansionPanelContextProvider>
-        </Table>
+            </ExpansionPanelContextProvider>
+          </Table>
+        </Container>
         {mockConfig && (
-          <Button
-            data-testid="reset-all-mocks-button"
-            type="reset"
-            onClick={() => {
-              setMockState(resetAll(mockConfig));
-            }}
-          >
-            Reset all mocks
-          </Button>
+          <Container>
+            <Button
+              data-testid="reset-all-mocks-button"
+              type="reset"
+              onClick={() => {
+                setMockState(resetAll(mockConfig));
+              }}
+            >
+              Reset all mocks
+            </Button>
+          </Container>
         )}
-      </Stack>
+      </Flex>
     </form>
   );
 };
