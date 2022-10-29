@@ -14,6 +14,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
   private openPageURL: OpenPageURL<T>;
   private mocks: T;
   private mockOptions: MockOptionsArg<T>;
+  private isActive: boolean;
 
   constructor(
     optionsArg: OptionsArg<T>,
@@ -113,6 +114,36 @@ export class CreateScenario<T extends Mocks = Mocks> {
     });
   };
 
+  private updateMockOptions = (updateOptions: MockOptionsArg<T>) => {
+    this.mockOptions = {
+      ...this.mockOptions,
+      ...Object.keys(updateOptions).reduce(
+        (prev, mockOptionKey) => ({
+          ...prev,
+          [mockOptionKey]: {
+            ...this.mockOptions[mockOptionKey],
+            ...updateOptions[mockOptionKey],
+          },
+        }),
+        {}
+      ),
+    };
+  };
+
+  public updateScenario = (updateOptions: MockOptionsArg<T>) => {
+    this.updateMockOptions(updateOptions);
+    state.updateScenario({
+      ...(this.initialScenarioState || {}),
+      scenarioTitle: this.scenarioTitle,
+      mocks: this.mapScenarioMocksToState,
+      resetMocks: this.resetMocks,
+      mockHandlers: this.initializedMocks,
+    });
+    if (this.isActive) {
+      this.activateScenario();
+    }
+  };
+
   public resetMocks = () => {
     state.updateScenario({
       ...(this.initialScenarioState || {}),
@@ -125,6 +156,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
 
   public activateScenario = () => {
     global.__mock_worker?.use(...this.initializedMocks);
+    this.isActive = true;
   };
 }
 

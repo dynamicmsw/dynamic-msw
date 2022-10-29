@@ -97,4 +97,17 @@ describe('createScenario', () => {
     );
     expect(response.iAmNumber).toBe(456);
   });
+  it('updates mock options', async () => {
+    exampleScenario.updateScenario({
+      variatedExampleMock: { someNumberOption: 123123 },
+    });
+    exampleScenario.activateScenario();
+    exampleScenario.updateScenario({
+      variatedExampleMock: { someNumberOption: 999 },
+    });
+    const response = await fetch('http://localhost:1234/i-am-relative').then(
+      (res) => res.json()
+    );
+    expect(response.iAmNumber).toBe(999);
+  });
 });
