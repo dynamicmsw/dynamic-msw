@@ -1,5 +1,5 @@
 import type { State, MocksState, ScenariosState } from '@dynamic-msw/core';
-import { saveToStorage, loadFromStorage } from '@dynamic-msw/core';
+import { saveToStorage } from '@dynamic-msw/core';
 import {
   Table,
   Button,
@@ -115,6 +115,7 @@ export const Dashboard: FC<DashboardProps> = () => {
               type="search"
               placeholder="Filter"
               name="search"
+              defaultValue={searchValue}
               onChange={(value) => {
                 setSearchValue(value.toString());
               }}
@@ -218,56 +219,63 @@ export const Dashboard: FC<DashboardProps> = () => {
                         '> div': { display: 'contents' },
                       }}
                     >
-                      {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => {
-                        return (
-                          <React.Fragment key={`${scenarioTitle}-${mockTitle}`}>
-                            <h4
-                              css={{
-                                margin: 0,
-                                gridColumnStart: 1,
-                                gridColumnEnd: 3,
-                                paddingLeft: '5px',
-                                marginTop: '10px',
-                              }}
+                      {mocks.map(
+                        (
+                          { mockTitle, originalMockTitle, mockOptions },
+                          mocksIndex
+                        ) => {
+                          return (
+                            <React.Fragment
+                              key={`${scenarioTitle}-${mockTitle}`}
                             >
-                              {mockTitle}
-                            </h4>
-                            {mockOptions.map(
-                              ({ selectedValue, options, type, title }) => {
-                                const inputType = getInputType(
-                                  selectedValue,
-                                  options,
-                                  type
-                                );
-                                return (
-                                  <MockOptionsInput
-                                    key={`${scenarioTitle}-${mockTitle}-${title}`}
-                                    id={`${scenarioTitle}-${mockTitle}-${title}`}
-                                    title={title}
-                                    selectedValue={selectedValue}
-                                    options={options}
-                                    onChange={(value) => {
-                                      const updatedState =
-                                        updateScenarioOptions(
-                                          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                          mockState!,
-                                          index,
-                                          mocksIndex,
-                                          title,
-                                          inputType === 'number'
-                                            ? Number(value)
-                                            : value
-                                        );
-                                      setMockState(updatedState);
-                                    }}
-                                    inputType={inputType}
-                                  />
-                                );
-                              }
-                            )}
-                          </React.Fragment>
-                        );
-                      })}
+                              <h4
+                                css={{
+                                  margin: 0,
+                                  gridColumnStart: 1,
+                                  gridColumnEnd: 3,
+                                  paddingLeft: '5px',
+                                  marginTop: '10px',
+                                }}
+                              >
+                                {originalMockTitle}
+                              </h4>
+                              {mockOptions.map(
+                                ({ selectedValue, options, type, title }) => {
+                                  const inputType = getInputType(
+                                    selectedValue,
+                                    options,
+                                    type
+                                  );
+                                  return (
+                                    <MockOptionsInput
+                                      key={`${scenarioTitle}-${mockTitle}-${title}`}
+                                      id={`${scenarioTitle}-${mockTitle}-${title}`}
+                                      title={title}
+                                      selectedValue={selectedValue}
+                                      options={options}
+                                      onChange={(value) => {
+                                        const updatedState =
+                                          updateScenarioOptions(
+                                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                            mockState!,
+                                            index,
+                                            mocksIndex,
+                                            title,
+                                            inputType === 'number'
+                                              ? Number(value)
+                                              : value
+                                          );
+                                        setMockState(updatedState);
+                                      }}
+                                      inputType={inputType}
+                                    />
+                                  );
+                                }
+                              )}
+                            </React.Fragment>
+                          );
+                        }
+                      )}
                     </Flex>
                   </OptionsTableRow>
                 )

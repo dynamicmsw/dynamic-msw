@@ -20,6 +20,7 @@ export interface MocksState {
 }
 
 export type MockOptionsState = {
+  originalMockTitle: string;
   mockTitle: string;
   mockOptions: StateOptions;
 };
@@ -89,9 +90,11 @@ class CreateState {
       ({ scenarioTitle }) => scenarioTitle === data.scenarioTitle
     );
     if (existingScenarioIndex >= 0) {
-      this.state.scenarios[existingScenarioIndex].resetMocks = data.resetMocks;
-      this.state.scenarios[existingScenarioIndex].mockHandlers =
-        data.mockHandlers;
+      this.state.scenarios[existingScenarioIndex] = {
+        ...this.state.scenarios[existingScenarioIndex],
+        resetMocks: data.resetMocks,
+        mockHandlers: data.mockHandlers,
+      };
     } else {
       this.state.scenarios.push(data);
       saveToStorage(this.state, this.config);

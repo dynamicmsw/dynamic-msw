@@ -2,7 +2,6 @@
 
 1. types: refactor namings and cleanup and export more. (createMock args are important type defs)
 1. smoke test all docs
-1. consider adding an title option to scenario mocks. Right now it uses the function name, which is likely something camelCased.
 1. add scenario search functionality (reorder footer buttons like reset all mocks to the top for until pagination is implemented)
 1. Add option to hide/disable mocks by default. Usefull for when one only wants to display/use it in an scenario. Reconsider.
 1. scan for project todos and filter important ones out

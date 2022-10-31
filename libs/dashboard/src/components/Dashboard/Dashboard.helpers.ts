@@ -45,9 +45,9 @@ export const convertScenarioMockConfig = (mocks: MockOptionsState[]) => {
   if (mocks.length < 0) {
     throw Error('No mocks found');
   }
-  return mocks.map(({ mockOptions, mockTitle }) => {
+  return mocks.map(({ mockOptions, ...rest }) => {
     return {
-      mockTitle,
+      ...rest,
       mockOptions: Object.keys(mockOptions).map((optionKey) => {
         const { selectedValue, defaultValue } = mockOptions[optionKey];
         return {
