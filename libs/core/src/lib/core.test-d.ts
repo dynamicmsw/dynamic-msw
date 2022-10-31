@@ -61,13 +61,11 @@ describe('createMock type definitions', () => {
           someNumberOption: 123,
           someUndefinedOption: {
             type: 'text',
-            // TODO: figure out why unknown object keys do not error
-            // // ❌
-            // // @ts-expect-error invalid property
-            // selectedValue: '1',
-            // // ❌
-            // // @ts-expect-error invalid property
-            // xss: '1',
+            // TODO: figure out why unknown object keys do not error. likely need to make type checking more strict
+            // ❌
+            selectedValue: '1',
+            // ❌
+            xss: '1',
           },
         },
         openPageURL: (options) => {
@@ -221,6 +219,9 @@ describe('createScenario type definitions', () => {
           // ❌ invalid value
           // @ts-expect-error invalid value as type is string
           someUndefinedOption: 1,
+          //TODO: expect error. likely need to make type checking more strict
+          // ❌ invalid property
+          x: 1,
         },
       }
     );

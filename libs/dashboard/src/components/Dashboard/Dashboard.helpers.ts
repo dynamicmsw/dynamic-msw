@@ -78,8 +78,9 @@ export const updateMockOptions = (
   const clonedConfig: State['mocks'] = JSON.parse(JSON.stringify(mocks));
   clonedConfig[index].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;
-
-  saveToStorage({ mocks: clonedConfig, scenarios });
+  const updatedState = { mocks: clonedConfig, scenarios };
+  saveToStorage(updatedState);
+  return updatedState;
 };
 
 export const updateScenarioOptions = (
@@ -95,8 +96,9 @@ export const updateScenarioOptions = (
   );
   clonedConfig[index].mocks[mocksIndex].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;
-
-  saveToStorage({ mocks, scenarios: clonedConfig });
+  const updatedState = { mocks, scenarios: clonedConfig };
+  saveToStorage(updatedState);
+  return updatedState;
 };
 
 const resetScenarioOptions = (state: State) => {
@@ -159,4 +161,14 @@ export const getInputType = (
   }
   if (options) return 'select';
   return typeof selectedValue as OptionRenderType;
+};
+
+export const isMockActive = (state: State, mockTitle: string) => {
+  const activeScenario = state.scenarios?.find(({ isActive }) => isActive);
+
+  return Boolean(
+    activeScenario
+      ? activeScenario.mocks.find((data) => mockTitle === data.mockTitle)
+      : true
+  );
 };

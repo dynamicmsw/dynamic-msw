@@ -14,6 +14,7 @@ interface OptionsTableRowProps {
   openPageURL?: string;
   bootstrapScenario?: React.MouseEventHandler<HTMLAnchorElement>;
   children: React.ReactNode | React.ReactNode[];
+  isActive?: boolean;
 }
 
 export const OptionsTableRow: FC<OptionsTableRowProps> = ({
@@ -23,6 +24,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
   openPageURL,
   bootstrapScenario,
   children,
+  isActive,
 }) => (
   <TableRow key={rowTitle}>
     <TableCell>
@@ -38,7 +40,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         data-testid="configure-panel"
         buttonProps={{ size: 's' }}
       >
-        <TableCell row={index + 2} columnStart={1} columnEnd={4}>
+        <TableCell row={index + 2} columnStart={1} columnEnd={5}>
           <Spacing px={2} pb={3}>
             {children}
           </Spacing>
@@ -50,33 +52,59 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
       </TableCell>
     )}
 
-    {openPageURL || bootstrapScenario ? (
-      <TableCell>
-        <Spacing
-          pr={2}
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            height: '100%',
-          }}
-        >
+    <TableCell>
+      <Spacing
+        pr={2}
+        css={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          height: '100%',
+        }}
+      >
+        <span
+          css={(theme) => ({
+            display: 'inline-block',
+            borderRadius: '100%',
+            width: '20px',
+            height: '20px',
+            border: 'solid 2px #d8d8d8',
+            background: isActive ? theme.colors.romance : theme.colors.warmPink,
+          })}
+        />
+      </Spacing>
+    </TableCell>
+
+    <TableCell>
+      <Spacing
+        pr={2}
+        css={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          height: '100%',
+        }}
+      >
+        {Boolean(openPageURL || bootstrapScenario) && (
           <a
             href={openPageURL}
             onClick={bootstrapScenario}
             target="_blank"
             rel="noreferrer"
           >
-            <Button variant="secondary" size="s">
-              {bootstrapScenario ? 'Bootstrap scenario' : 'Open page'}
+            <Button
+              variant={
+                (isActive && bootstrapScenario && 'primary') || 'secondary'
+              }
+              size="s"
+            >
+              {(isActive && bootstrapScenario && 'Stop scenario') ||
+                (bootstrapScenario && 'Bootstrap scenario') ||
+                'Open page'}
             </Button>
           </a>
-        </Spacing>
-      </TableCell>
-    ) : (
-      <TableCell>
-        <div />
-      </TableCell>
-    )}
+        )}
+      </Spacing>
+    </TableCell>
   </TableRow>
 );
