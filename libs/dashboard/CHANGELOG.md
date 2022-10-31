@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.3.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.2.0...v1.3.0) (2022-10-31)
+
+### Features
+
+- improve dashboard ux ([#93](https://github.com/dynamicmsw/dynamic-msw/issues/93)) ([a210f9f](https://github.com/dynamicmsw/dynamic-msw/commit/a210f9ffc05191dcef53e8e8140d79167bfb3766))
+
+### Bug Fixes
+
+- initialize scenario state ([#96](https://github.com/dynamicmsw/dynamic-msw/issues/96)) ([1ca4798](https://github.com/dynamicmsw/dynamic-msw/commit/1ca479818b2e473c5828bbd3ab1e47272f2e595e))
+
 ## [1.2.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.1.2...v1.2.0) (2022-10-29)
 
 ### Features
