@@ -2902,10 +2902,10 @@
   resolved "https://registry.yarnpkg.com/@stela-ui/css/-/css-1.1.5.tgz#7fd074fadb2b0cdd0f3a40b484a0e251a98d5b26"
   integrity sha512-ZVfTGtPJhjeJFGNg2/hDIEPX3/aPPoXJt/rHlKZnPAQ4cF8fCBjMMcFzUGvOPaFxWbAXN3E0jOoX49EdceReXQ==
 
-"@stela-ui/react@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@stela-ui/react/-/react-0.1.3.tgz#64a1d630daec4c8c3454436765f62144297d4236"
-  integrity sha512-OL1e8+7prEp/ZaY3OLmp5IpS/rilLABy9mYO+bayT/VDCExX697KVxv0knBn2ioGtDuvYZZsz7z4r3jxkzG3pA==
+"@stela-ui/react@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@stela-ui/react/-/react-0.1.4.tgz#a6ad0dcad0b0aba5bb89e19b9cee8e357482608a"
+  integrity sha512-ipwofmtj0gi/+IiJ58rK/173+UxYY6iboCD4f9G44Vk5CLGbS0QEjXJy68PqXbPVLZ/0JiqjcqEldZT8UKu2nQ==
 
 "@storybook/addon-actions@6.5.12":
   version "6.5.12"
@@ -9641,6 +9641,11 @@ functions-have-names@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
+
+fuse.js@^6.6.2:
+  version "6.6.2"
+  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-6.6.2.tgz#fe463fed4b98c0226ac3da2856a415576dc9a111"
+  integrity sha512-cJaJkxCCxC8qIIcPBF9yGxY0W/tVZS3uEISDxhYIdtk8OL93pe+6Zj7LjCqVV4dzbqcriOZ+kQ/NE4RXZHsIGA==
 
 gauge@^3.0.0:
   version "3.0.2"

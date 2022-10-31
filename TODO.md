@@ -9,8 +9,7 @@
 1. expose a bin script in the open-app-page module
 1. add more tests
 
-# TODOS after releasing a stable/well tested version
-
+1. Cleanup frontend
 1. show altered options state
 1. refactor core types and helpers
 1. make type checking more strict
