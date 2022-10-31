@@ -17,6 +17,7 @@ import {
   updateScenarioOptions,
   resetAll,
   getInputType,
+  isMockActive,
 } from './Dashboard.helpers';
 import { MockOptionsInput } from './MockOptionsInput';
 import { OptionsTableRow } from './OptionsTableRow';
@@ -42,10 +43,10 @@ export const Dashboard: FC<DashboardProps> = () => {
     ? convertScenarios(mockState?.scenarios)
     : [];
   return (
-    <form>
+    <form css={{ padding: '10px' }}>
       <Flex gap={4}>
         <Container>
-          <h1>Dynamic MSW Dashboard</h1>
+          <h1 css={{ margin: 0 }}>Dynamic MSW Dashboard</h1>
         </Container>
         {isLoading && (
           <Container>
@@ -53,10 +54,20 @@ export const Dashboard: FC<DashboardProps> = () => {
           </Container>
         )}
         {iFrameError && <h4 data-testid="dashboard-state">{iFrameError}</h4>}
-        <Container>
+        <Container
+          css={
+            mockState
+              ? {
+                  background: '#ebebeb',
+                  padding: '4px',
+                  borderRadius: '4px',
+                }
+              : {}
+          }
+        >
           <Table
             columns={3}
-            backgroundColorEven="magnolia"
+            backgroundColorEven="white"
             backgroundColorOdd="alabaster"
           >
             <ExpansionPanelContextProvider>
@@ -68,12 +79,14 @@ export const Dashboard: FC<DashboardProps> = () => {
                     index={index}
                     hasMockOptions={mockOptions.length >= 0}
                     openPageURL={openPageURL}
+                    isActive={isMockActive(mockState!, mockTitle)}
                   >
                     <Flex
                       rowGap={3}
                       flow="row"
                       alignY="center"
                       css={{
+                        paddingLeft: '10px',
                         display: 'grid',
                         gridTemplateColumns: 'auto 1fr',
                         '> div': { display: 'contents' },
@@ -117,23 +130,23 @@ export const Dashboard: FC<DashboardProps> = () => {
                   <OptionsTableRow
                     key={`${scenarioTitle}`}
                     rowTitle={scenarioTitle}
-                    index={index + convertedMockConfig.length}
+                    index={index + convertedMockConfig.length + 1}
                     hasMockOptions={Boolean(mocks.length >= 0)}
                     openPageURL={openPageURL}
+                    isActive={convertedScenarios[index].isActive}
                     bootstrapScenario={(e) => {
                       e.preventDefault();
                       const clonedState: State = JSON.parse(
                         JSON.stringify(mockState)
                       );
-                      clonedState.scenarios.map((data) => ({
-                        ...data,
-                        isActive: false,
-                      }));
-                      clonedState.scenarios[index].isActive = true;
+                      clonedState.scenarios[index].isActive =
+                        !clonedState.scenarios[index].isActive;
                       saveToStorage(clonedState);
                       setMockState(clonedState);
-
-                      if (openPageURL) {
+                      if (
+                        openPageURL &&
+                        clonedState.scenarios[index].isActive
+                      ) {
                         window.open(openPageURL, '_blank')?.focus();
                       }
                     }}
@@ -145,32 +158,25 @@ export const Dashboard: FC<DashboardProps> = () => {
                       css={{
                         display: 'grid',
                         gridTemplateColumns: 'auto 1fr',
-                        '> span > div': { display: 'contents' },
+                        '> div': { display: 'contents' },
                       }}
                     >
                       {mocks.map(({ mockTitle, mockOptions }, mocksIndex) => {
-                        const rowBaseIndex =
-                          mocksIndex +
-                          1 +
-                          (mocks[mocksIndex - 1]?.mockOptions.length || 0);
-
                         return (
                           <React.Fragment key={`${scenarioTitle}-${mockTitle}`}>
                             <h4
                               css={{
                                 margin: 0,
-                                gridRow: rowBaseIndex,
                                 gridColumnStart: 1,
                                 gridColumnEnd: 3,
+                                paddingLeft: '5px',
+                                marginTop: '10px',
                               }}
                             >
                               {mockTitle}
                             </h4>
                             {mockOptions.map(
-                              (
-                                { selectedValue, options, type, title },
-                                optionsIndex
-                              ) => {
+                              ({ selectedValue, options, type, title }) => {
                                 const inputType = getInputType(
                                   selectedValue,
                                   options,
@@ -181,10 +187,11 @@ export const Dashboard: FC<DashboardProps> = () => {
                                     key={`${scenarioTitle}-${mockTitle}-${title}`}
                                     id={`${scenarioTitle}-${mockTitle}-${title}`}
                                     title={title}
-                                    gridRow={rowBaseIndex + 1 + optionsIndex}
                                     selectedValue={selectedValue}
                                     options={options}
                                     onChange={(value) => {
+                                      console.log(value);
+
                                       updateScenarioOptions(
                                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                         mockState!,
@@ -218,7 +225,10 @@ export const Dashboard: FC<DashboardProps> = () => {
               data-testid="reset-all-mocks-button"
               type="reset"
               onClick={() => {
-                setMockState(resetAll(mockConfig));
+                // ? altering default values after the reset works.
+                setTimeout(() => {
+                  setMockState(resetAll(mockConfig));
+                }, 10);
               }}
             >
               Reset all mocks

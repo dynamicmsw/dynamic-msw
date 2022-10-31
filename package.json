@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@emotion/react": "11.10.4",
-    "@stela-ui/css": "0.0.1-beta.1",
-    "@stela-ui/react": "0.0.1-beta.1",
+    "@stela-ui/css": "^1.1.5",
+    "@stela-ui/react": "^0.1.3",
     "@theme-ui/preset-base": "^0.15.1",
     "msw": "^0.47.4",
     "next": "12.3.1",

@@ -160,3 +160,13 @@ export const getInputType = (
   if (options) return 'select';
   return typeof selectedValue as OptionRenderType;
 };
+
+export const isMockActive = (state: State, mockTitle: string) => {
+  const activeScenario = state.scenarios?.find(({ isActive }) => isActive);
+
+  return Boolean(
+    activeScenario
+      ? activeScenario.mocks.find((data) => mockTitle === data.mockTitle)
+      : true
+  );
+};

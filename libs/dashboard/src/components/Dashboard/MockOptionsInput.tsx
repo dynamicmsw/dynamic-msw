@@ -12,6 +12,8 @@ interface MockSettingsProps extends ConvertedMockOptions {
   gridRow?: number;
 }
 
+const styles = { '> *': { paddingLeft: '10px' } };
+
 export const MockOptionsInput: FC<MockSettingsProps> = ({
   onChange,
   selectedValue,
@@ -19,10 +21,9 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
   title,
   inputType,
   id,
-  gridRow,
 }) => {
-  const styles = { display: 'contents', '> *': { gridRow } };
   const defaultValue = convertOptionValue(selectedValue);
+
   switch (inputType) {
     case 'select':
       return (
