@@ -1,4 +1,4 @@
-import type { State } from '@dynamic-msw/core';
+import type { State, MocksState, ScenariosState } from '@dynamic-msw/core';
 import { saveToStorage, loadFromStorage } from '@dynamic-msw/core';
 import {
   Table,
@@ -6,8 +6,11 @@ import {
   ExpansionPanelContextProvider,
   Flex,
   Container,
+  TextInput,
+  Spacing,
 } from '@stela-ui/react';
-import React, { useState, useEffect } from 'react';
+import Fuse from 'fuse.js';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { FC } from 'react';
 
 import {
@@ -29,7 +32,40 @@ export interface DashboardProps {}
 export const Dashboard: FC<DashboardProps> = () => {
   const { mockConfig, isLoading, iFrameError } = useGetMockConfig();
   const [mockState, setMockState] = useState<State>();
+  const [searchValue, setSearchValue] = useState<string>();
+  const [filteredMockState, setFilteredMockState] = useState<State | null>();
+  const fuse = useMemo(
+    () =>
+      mockState
+        ? new Fuse([...mockState.mocks, ...mockState.scenarios], {
+            keys: ['mockTitle', 'scenarioTitle'],
+            threshold: 0.2,
+          })
+        : null,
+    [Boolean(mockState)]
+  );
 
+  // Update filtered collection when mockState or searchValue updates
+  useEffect(() => {
+    if (mockState && searchValue && fuse) {
+      fuse.setCollection([...mockState.mocks, ...mockState.scenarios]);
+
+      const foundItems = fuse.search(searchValue).map(({ item }) => item);
+
+      setFilteredMockState({
+        mocks: foundItems.filter(
+          (data) => (data as MocksState).mockTitle
+        ) as MocksState[],
+        scenarios: foundItems.filter(
+          (data) => (data as ScenariosState).scenarioTitle
+        ) as ScenariosState[],
+      });
+    } else if (!searchValue) {
+      setFilteredMockState(null);
+    }
+  }, [mockState, searchValue]);
+
+  // Set initial mockState
   useEffect(() => {
     if (!mockState && !isLoading && mockConfig) {
       setMockState(mockConfig);
@@ -37,13 +73,22 @@ export const Dashboard: FC<DashboardProps> = () => {
   }, [mockConfig, isLoading, mockState]);
 
   const convertedMockConfig = mockState
-    ? convertMockConfig(mockState.mocks)
+    ? convertMockConfig(
+        filteredMockState ? filteredMockState.mocks : mockState.mocks
+      )
     : [];
   const convertedScenarios = mockState
-    ? convertScenarios(mockState?.scenarios)
+    ? convertScenarios(
+        filteredMockState ? filteredMockState.scenarios : mockState?.scenarios
+      )
     : [];
   return (
-    <form css={{ padding: '10px' }}>
+    <form
+      css={{ padding: '10px' }}
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+    >
       <Flex gap={4}>
         <Container>
           <h1 css={{ margin: 0 }}>Dynamic MSW Dashboard</h1>
@@ -65,8 +110,20 @@ export const Dashboard: FC<DashboardProps> = () => {
               : {}
           }
         >
+          {fuse ? (
+            <TextInput
+              type="search"
+              placeholder="Filter"
+              name="search"
+              onChange={(value) => {
+                setSearchValue(value.toString());
+              }}
+            />
+          ) : null}
+          <Spacing mt={2} />
           <Table
-            columns={3}
+            columns={4}
+            css={{ gridTemplateColumns: '2fr auto 1fr 1fr' }}
             backgroundColorEven="white"
             backgroundColorOdd="alabaster"
           >
@@ -108,14 +165,14 @@ export const Dashboard: FC<DashboardProps> = () => {
                               selectedValue={selectedValue}
                               inputType={inputType}
                               onChange={(value) => {
-                                updateMockOptions(
+                                const updatedState = updateMockOptions(
                                   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                   mockState!,
                                   index,
                                   title,
                                   inputType === 'number' ? Number(value) : value
                                 );
-                                setMockState(loadFromStorage());
+                                setMockState(updatedState);
                               }}
                             />
                           );
@@ -190,19 +247,18 @@ export const Dashboard: FC<DashboardProps> = () => {
                                     selectedValue={selectedValue}
                                     options={options}
                                     onChange={(value) => {
-                                      console.log(value);
-
-                                      updateScenarioOptions(
-                                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                        mockState!,
-                                        index,
-                                        mocksIndex,
-                                        title,
-                                        inputType === 'number'
-                                          ? Number(value)
-                                          : value
-                                      );
-                                      setMockState(loadFromStorage());
+                                      const updatedState =
+                                        updateScenarioOptions(
+                                          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                          mockState!,
+                                          index,
+                                          mocksIndex,
+                                          title,
+                                          inputType === 'number'
+                                            ? Number(value)
+                                            : value
+                                        );
+                                      setMockState(updatedState);
                                     }}
                                     inputType={inputType}
                                   />

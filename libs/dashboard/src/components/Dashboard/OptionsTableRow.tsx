@@ -40,7 +40,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         data-testid="configure-panel"
         buttonProps={{ size: 's' }}
       >
-        <TableCell row={index + 2} columnStart={1} columnEnd={4}>
+        <TableCell row={index + 2} columnStart={1} columnEnd={5}>
           <Spacing px={2} pb={3}>
             {children}
           </Spacing>
@@ -58,7 +58,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         css={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
           height: '100%',
         }}
       >
@@ -72,6 +72,19 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
             background: isActive ? theme.colors.romance : theme.colors.warmPink,
           })}
         />
+      </Spacing>
+    </TableCell>
+
+    <TableCell>
+      <Spacing
+        pr={2}
+        css={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          height: '100%',
+        }}
+      >
         {Boolean(openPageURL || bootstrapScenario) && (
           <a
             href={openPageURL}
