@@ -124,7 +124,11 @@ export const Dashboard: FC<DashboardProps> = () => {
           <Spacing mt={2} />
           <Table
             columns={4}
-            css={{ gridTemplateColumns: '2fr auto 1fr 1fr' }}
+            css={{
+              gridTemplateColumns:
+                'auto minmax(200px, 1fr) minmax(100px, 200px) auto',
+              overflowX: 'auto',
+            }}
             backgroundColorEven="white"
             backgroundColorOdd="alabaster"
           >
