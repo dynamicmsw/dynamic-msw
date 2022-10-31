@@ -39,12 +39,18 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         }}
       >
         <span
+          title={
+            (bootstrapScenario && isActive && 'Active scenario.') ||
+            (bootstrapScenario && 'Inactive scenario.') ||
+            (isActive && 'Active mock.') ||
+            'Overwritten by active scenario.'
+          }
           css={(theme) => ({
             display: 'inline-block',
             borderRadius: '100%',
             width: '20px',
             height: '20px',
-            border: 'solid 2px #d8d8d8',
+            border: 'solid 2px #ebebeb',
             background: isActive ? theme.colors.romance : theme.colors.warmPink,
           })}
         />
@@ -87,39 +93,33 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         }}
       >
         <Spacing pl={2} />
-        {Boolean(openPageURL || bootstrapScenario) && (
-          <Flex flow="row" gap={2}>
-            <a
-              href={openPageURL}
+
+        <Flex flow="row" gap={2}>
+          {Boolean(bootstrapScenario) && (
+            <Button
               onClick={bootstrapScenario}
-              target="_blank"
-              rel="noreferrer"
+              variant={(isActive && 'primary') || 'secondary'}
+              size="s"
+              css={{ whiteSpace: 'nowrap' }}
             >
+              {(isActive && 'Stop scenario') || 'Bootstrap scenario'}
+            </Button>
+          )}
+          {Boolean(
+            (isActive && bootstrapScenario && openPageURL) ||
+              (!bootstrapScenario && openPageURL)
+          ) && (
+            <a href={openPageURL} target="_blank" rel="noreferrer">
               <Button
-                variant={
-                  (isActive && bootstrapScenario && 'primary') || 'secondary'
-                }
+                variant="secondary"
                 size="s"
                 css={{ whiteSpace: 'nowrap' }}
               >
-                {(isActive && bootstrapScenario && 'Stop scenario') ||
-                  (bootstrapScenario && 'Bootstrap scenario') ||
-                  'Open page'}
+                Open page
               </Button>
             </a>
-            {isActive && bootstrapScenario && (
-              <a href={openPageURL} target="_blank" rel="noreferrer">
-                <Button
-                  variant="secondary"
-                  size="s"
-                  css={{ whiteSpace: 'nowrap' }}
-                >
-                  Open page
-                </Button>
-              </a>
-            )}
-          </Flex>
-        )}
+          )}
+        </Flex>
       </Spacing>
     </TableCell>
   </TableRow>

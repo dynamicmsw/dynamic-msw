@@ -125,8 +125,7 @@ export const Dashboard: FC<DashboardProps> = () => {
           <Table
             columns={4}
             css={{
-              gridTemplateColumns:
-                'auto minmax(200px, 1fr) minmax(100px, 200px) auto',
+              gridTemplateColumns: `auto minmax(200px, 1fr) auto minmax(auto, 300px)`,
               overflowX: 'auto',
             }}
             backgroundColorEven="white"
@@ -192,7 +191,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                   <OptionsTableRow
                     key={`${scenarioTitle}`}
                     rowTitle={scenarioTitle}
-                    index={index + convertedMockConfig.length + 1}
+                    index={index + convertedMockConfig.length}
                     hasMockOptions={Boolean(mocks.length >= 0)}
                     openPageURL={openPageURL}
                     isActive={convertedScenarios[index].isActive}
@@ -201,16 +200,14 @@ export const Dashboard: FC<DashboardProps> = () => {
                       const clonedState: State = JSON.parse(
                         JSON.stringify(mockState)
                       );
-                      clonedState.scenarios[index].isActive =
-                        !clonedState.scenarios[index].isActive;
+                      clonedState.scenarios = clonedState.scenarios.map(
+                        (data, i) => ({
+                          ...data,
+                          isActive: i === index ? !data.isActive : false,
+                        })
+                      );
                       saveToStorage(clonedState);
                       setMockState(clonedState);
-                      if (
-                        openPageURL &&
-                        clonedState.scenarios[index].isActive
-                      ) {
-                        window.open(openPageURL, '_blank')?.focus();
-                      }
                     }}
                   >
                     <Flex
