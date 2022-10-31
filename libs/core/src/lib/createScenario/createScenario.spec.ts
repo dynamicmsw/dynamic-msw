@@ -39,11 +39,11 @@ export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',
     openPageURL: (config) =>
-      `http://localhost:1234/${config.variatedExampleMock.someNumberOption}`,
+      `http://localhost:1234/${config.exampleMock.someNumberOption}`,
   },
-  { variatedExampleMock },
+  { exampleMock: variatedExampleMock },
   {
-    variatedExampleMock: { someNumberOption: 1111 },
+    exampleMock: { someNumberOption: 1111 },
   }
 );
 
@@ -64,7 +64,8 @@ describe('createScenario', () => {
 
   it('saves proper mock config to state', () => {
     expect(state.currentState.scenarios[0].mocks[0]).toEqual({
-      mockTitle: 'variatedExampleMock',
+      mockTitle: 'exampleMock',
+      originalMockTitle: 'Variated mock options',
       mockOptions: {
         someTextOption: {
           defaultValue: 'some text',
@@ -99,10 +100,10 @@ describe('createScenario', () => {
   });
   it('updates mock options', async () => {
     exampleScenario.updateScenario({
-      variatedExampleMock: { someNumberOption: 123123 },
+      exampleMock: { someNumberOption: 123123 },
     });
     exampleScenario.updateScenario({
-      variatedExampleMock: { someNumberOption: 999 },
+      exampleMock: { someNumberOption: 999 },
     });
     const response = await fetch('http://localhost:1234/i-am-relative').then(
       (res) => res.json()
@@ -111,7 +112,7 @@ describe('createScenario', () => {
   });
   it('resets mock options properly', async () => {
     exampleScenario.updateScenario({
-      variatedExampleMock: { someNumberOption: 123123 },
+      exampleMock: { someNumberOption: 123123 },
     });
     exampleScenario.resetMocks();
     const response = await fetch('http://localhost:1234/i-am-relative').then(

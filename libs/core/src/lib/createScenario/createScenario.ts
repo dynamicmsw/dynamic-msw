@@ -63,7 +63,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
       const currentMockTitle = this.mocks[key].mockTitle;
       const mockDataFromState = this.getMockFromState(currentMockTitle);
       const initialScenarioMockState = this.initialScenarioState?.mocks.find(
-        ({ mockTitle }) => mockTitle === currentMockTitle
+        ({ mockTitle }) => mockTitle === key
       );
 
       const mergeMockOptions = Object.keys(
@@ -84,6 +84,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
       }, {});
 
       return {
+        originalMockTitle: mockDataFromState.mockTitle,
         mockTitle: key,
         mockOptions: mergeMockOptions,
       };
@@ -91,10 +92,12 @@ export class CreateScenario<T extends Mocks = Mocks> {
   }
 
   private get activeOptions() {
-    return this.mapScenarioMocksToState.map(({ mockTitle, mockOptions }) => ({
-      mockTitle,
-      mockOptions: getActiveOptions(mockOptions),
-    }));
+    return this.mapScenarioMocksToState.map(({ mockTitle, mockOptions }) => {
+      return {
+        mockTitle,
+        mockOptions: getActiveOptions(mockOptions),
+      };
+    });
   }
 
   private get initializedMocks() {
