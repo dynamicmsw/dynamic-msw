@@ -27,7 +27,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
   children,
   isActive,
 }) => (
-  <TableRow key={rowTitle}>
+  <TableRow>
     <TableCell>
       <Spacing
         pl={2}
@@ -67,7 +67,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
       <ExpansionPanel
         title="Configure"
         contextId={rowTitle}
-        data-testid="configure-panel"
+        data-testid={`${rowTitle.replace(/ /g, '-')}-configure`}
         buttonProps={{ size: 's' }}
       >
         <TableCell row={index + 2} columnStart={1} columnEnd={5}>
@@ -97,6 +97,7 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
         <Flex flow="row" gap={2}>
           {Boolean(bootstrapScenario) && (
             <Button
+              data-testid="bootstrap-scenario"
               onClick={bootstrapScenario}
               variant={(isActive && 'primary') || 'secondary'}
               size="s"

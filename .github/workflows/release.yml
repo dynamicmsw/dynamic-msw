@@ -36,7 +36,7 @@ jobs:
             ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
+            ${{ runner.os }}--_-_-------asdf-asdf-asdf----${{ env.cache-name }}-
       - name: Setup Git
         run: |
           git config user.name "GitHub Bot"

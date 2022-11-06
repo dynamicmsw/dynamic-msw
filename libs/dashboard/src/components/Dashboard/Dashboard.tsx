@@ -154,8 +154,15 @@ export const Dashboard: FC<DashboardProps> = () => {
                       }}
                     >
                       {mockOptions.map(
-                        ({ selectedValue, options, type, title }) => {
+                        ({
+                          selectedValue,
+                          defaultValue,
+                          options,
+                          type,
+                          title,
+                        }) => {
                           const inputType = getInputType(
+                            defaultValue,
                             selectedValue,
                             options,
                             type
@@ -172,7 +179,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                 const updatedState = updateMockOptions(
                                   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                   mockState!,
-                                  index,
+                                  mockTitle,
                                   title,
                                   inputType === 'number' ? Number(value) : value
                                 );
@@ -241,8 +248,15 @@ export const Dashboard: FC<DashboardProps> = () => {
                                 {originalMockTitle}
                               </h4>
                               {mockOptions.map(
-                                ({ selectedValue, options, type, title }) => {
+                                ({
+                                  selectedValue,
+                                  defaultValue,
+                                  options,
+                                  type,
+                                  title,
+                                }) => {
                                   const inputType = getInputType(
+                                    defaultValue,
                                     selectedValue,
                                     options,
                                     type
@@ -259,7 +273,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                           updateScenarioOptions(
                                             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                             mockState!,
-                                            index,
+                                            scenarioTitle,
                                             mocksIndex,
                                             title,
                                             inputType === 'number'
@@ -288,12 +302,8 @@ export const Dashboard: FC<DashboardProps> = () => {
           <Container>
             <Button
               data-testid="reset-all-mocks-button"
-              type="reset"
               onClick={() => {
-                // ? altering default values after the reset works.
-                setTimeout(() => {
-                  setMockState(resetAll(mockConfig));
-                }, 10);
+                setMockState(resetAll(mockConfig));
               }}
             >
               Reset all mocks

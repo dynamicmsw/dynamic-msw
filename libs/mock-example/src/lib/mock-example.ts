@@ -29,11 +29,23 @@ export const exampleMock = createMock(
   }
 );
 
+export const variatedExampleEndpoint =
+  'http://localhost:1234/variated-example-mock';
+
+export interface VariatedExampleResponse {
+  iAmBoolean: boolean;
+  iAmText: string;
+  iAmNumber: number;
+  iHaveNoDefault: string | undefined;
+  iAmSelectOption: string;
+}
+
 export const variatedExampleMock = createMock(
   {
     mockTitle: 'Variated mock options',
     openPageURL: '/iframe.html?id=development-examplemocks--primary',
     mockOptions: {
+      someBooleanOption: true,
       someTextOption: 'text value',
       someNumberOption: 123,
       someUndefinedOption: {
@@ -46,11 +58,14 @@ export const variatedExampleMock = createMock(
     },
   },
   (options) => {
-    const response = {
+    const response: VariatedExampleResponse = {
+      iAmBoolean: options.someBooleanOption,
       iAmText: options.someTextOption,
       iAmNumber: options.someNumberOption,
+      iHaveNoDefault: options.someUndefinedOption,
+      iAmSelectOption: options.someSelectOption,
     };
-    return rest.get('/i-am-relative', async (_req, res, ctx) => {
+    return rest.get(variatedExampleEndpoint, async (_req, res, ctx) => {
       return res(ctx.json(response));
     });
   }

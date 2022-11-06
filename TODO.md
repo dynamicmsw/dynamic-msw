@@ -7,6 +7,8 @@
 1. scan for project todos and filter important ones out
 1. expose a bin script in the open-app-page module
 1. add more tests
+1. set number option to 0 on blur when no value is selected
+1. add tests for search functionality
 
 # TODOS after releasing a stable/well tested version
 

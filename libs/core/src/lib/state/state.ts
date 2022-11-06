@@ -43,7 +43,7 @@ export const dynamicMswStorageKey = 'dynamic-msw-state';
 export const defaultState: State = { mocks: [], scenarios: [] };
 const defaultStateConfig = { saveToLocalStorage: true };
 
-export const saveToStorage = (
+export const saveToStorage = async (
   state: State,
   config: StateConfig = defaultStateConfig
 ) => {
