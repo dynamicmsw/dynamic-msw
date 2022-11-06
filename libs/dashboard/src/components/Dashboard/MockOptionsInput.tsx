@@ -22,18 +22,18 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
   inputType,
   id,
 }) => {
-  const defaultValue = convertOptionValue(selectedValue);
-
+  const value = convertOptionValue(selectedValue);
+  const testId = id.replace(/ /g, '-');
   switch (inputType) {
     case 'select':
       return (
         <SelectInput
           css={styles}
-          data-testid="scenario-config-input"
+          data-testid={testId}
           labelPosition="left"
           name={id}
           label={title}
-          defaultValue={defaultValue}
+          value={value || ''}
           onChange={onChange}
           options={
             options?.map((value) => ({
@@ -47,11 +47,11 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
       return (
         <TextInput
           css={styles}
-          data-testid="scenario-config-input"
+          data-testid={testId}
           labelPosition="left"
           label={title}
           type={inputType}
-          defaultValue={defaultValue}
+          value={value || undefined}
           onChange={onChange}
         />
       );
@@ -59,9 +59,9 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
       return (
         <ToggleInput
           css={styles}
-          data-testid="scenario-config-input"
+          data-testid={testId}
           label={title}
-          defaultChecked={defaultValue === 'true'}
+          checked={value === 'true'}
           onChange={onChange}
         />
       );

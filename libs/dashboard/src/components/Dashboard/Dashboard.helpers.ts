@@ -12,6 +12,7 @@ export interface ConvertedMockOptions {
   type?: OptionRenderType;
   options?: OptionType[];
   title: string;
+  defaultValue?: OptionType;
   selectedValue?: OptionType;
 }
 export interface ConvertMockConfigReturnType
@@ -70,33 +71,33 @@ export const convertScenarios = (scenarios: ScenariosState[]) => {
 
 export const updateMockOptions = (
   state: State,
-  index: number,
+  mockTitle: string,
   title: string,
   value: string | number | boolean
 ) => {
   const { mocks, scenarios } = state;
-  const clonedConfig: State['mocks'] = JSON.parse(JSON.stringify(mocks));
-  clonedConfig[index].mockOptions[title].selectedValue =
+  const findIndex = mocks.findIndex((data) => data.mockTitle === mockTitle);
+  mocks[findIndex].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;
-  const updatedState = { mocks: clonedConfig, scenarios };
+  const updatedState = { mocks, scenarios };
   saveToStorage(updatedState);
   return updatedState;
 };
 
 export const updateScenarioOptions = (
   state: State,
-  index: number,
+  scenarioTitle: string,
   mocksIndex: number,
   title: string,
   value: string | number | boolean
 ) => {
   const { mocks, scenarios } = state;
-  const clonedConfig: State['scenarios'] = JSON.parse(
-    JSON.stringify(scenarios)
+  const scenarioIndex = scenarios.findIndex(
+    (data) => data.scenarioTitle === scenarioTitle
   );
-  clonedConfig[index].mocks[mocksIndex].mockOptions[title].selectedValue =
+  scenarios[scenarioIndex].mocks[mocksIndex].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;
-  const updatedState = { mocks, scenarios: clonedConfig };
+  const updatedState = { mocks, scenarios };
   saveToStorage(updatedState);
   return updatedState;
 };
@@ -146,6 +147,7 @@ export const convertOptionValue = (value?: string | number | boolean) =>
   value === true || value === false ? value.toString() : value;
 
 export const getInputType = (
+  defaultValue?: OptionType,
   selectedValue?: OptionType,
   options?: OptionType[],
   type?: OptionRenderType
@@ -160,7 +162,9 @@ export const getInputType = (
     return 'boolean';
   }
   if (options) return 'select';
-  return typeof selectedValue as OptionRenderType;
+  return (
+    selectedValue ? typeof selectedValue : typeof defaultValue
+  ) as OptionRenderType;
 };
 
 export const isMockActive = (state: State, mockTitle: string) => {

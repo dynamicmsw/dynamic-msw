@@ -18,7 +18,7 @@
   "dependencies": {
     "@emotion/react": "11.10.4",
     "@stela-ui/css": "^1.1.5",
-    "@stela-ui/react": "^0.1.4",
+    "@stela-ui/react": "^0.2.0",
     "@theme-ui/preset-base": "^0.15.1",
     "fuse.js": "^6.6.2",
     "msw": "^0.47.4",
@@ -70,6 +70,7 @@
     "babel-loader": "8.2.5",
     "cpy-cli": "^4.2.0",
     "cypress": "^10.7.0",
+    "cypress-localstorage-commands": "^2.2.1",
     "eslint": "~8.25.0",
     "eslint-config-next": "12.3.1",
     "eslint-config-prettier": "8.1.0",

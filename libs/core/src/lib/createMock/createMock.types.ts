@@ -42,7 +42,7 @@ interface OptionRenderTypeMap {
 
 export type ConvertedStateOptions<T extends StateOptions = StateOptions> = {
   [Key in keyof T]: T[Key]['defaultValue'] extends OptionType
-    ? T[Key]['defaultValue'] extends true | false
+    ? T[Key]['defaultValue'] extends boolean
       ? boolean
       : T[Key]['defaultValue']
     : T[Key]['options'] extends OptionType[]
@@ -80,3 +80,9 @@ export type SetupMocksFn = (
 ) => HandlerArray;
 
 export type HandlerArray = Array<RestHandler | GraphQLHandler>;
+
+export interface CreateMockArg<T extends Options> {
+  mockTitle: string;
+  openPageURL?: string | OpenPageFn<ConvertedOptions<T>>;
+  mockOptions?: T;
+}

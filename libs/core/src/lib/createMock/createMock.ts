@@ -10,7 +10,7 @@ import type {
   ConvertedOptions,
   Options,
   StateOptions,
-  OpenPageFn,
+  CreateMockArg,
   HandlerArray,
   CreateMockHandlerFn,
   OptionType,
@@ -113,12 +113,6 @@ export class CreateMock<T extends Options = Options> {
       createMockHandler: this.createMockHandler,
     });
   };
-}
-
-interface CreateMockArg<T extends Options> {
-  mockTitle: string;
-  openPageURL?: string | OpenPageFn<ConvertedOptions<T>>;
-  mockOptions?: T;
 }
 
 export const createMock = <T extends Options = Options>(
