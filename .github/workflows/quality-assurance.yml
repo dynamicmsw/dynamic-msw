@@ -26,7 +26,7 @@ jobs:
             ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-----
+            ${{ runner.os }}-${{ env.cache-name }}-
       - name: Cache build
         uses: actions/cache@v3
         env:

@@ -9,6 +9,7 @@
 1. add more tests
 1. set number option to 0 on blur when no value is selected
 1. add tests for search functionality
+1. add optional option for mock options
 
 # TODOS after releasing a stable/well tested version
 
