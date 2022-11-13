@@ -4,6 +4,8 @@ The dashboard is an optional user interface for [@dynamic-msw/core](https://gith
 
 Dynamic Mock Service Worker (Dynamic MSW) is an extension for Mock Service Worker (MSW). It conveniently makes mocked endpoint responses dynamic and updatable.
 
+[Interactive demo](https://dynamicmsw.github.io/dynamic-msw/)
+
 ## Table of contents
 
 - [Setup](#setup)

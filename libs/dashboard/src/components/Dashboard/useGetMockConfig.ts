@@ -20,25 +20,16 @@ const useLoadConfig = () => {
       import(
         /* @vite-ignore */
         `${fullHostURL}${location.pathname.replace(
-          'index.html',
+          /[^/]+\.html$/,
           ''
-        )}/mock-server-settings.js`
+        )}mock-server-settings.js`
       )
         .then((imported) => {
           setMockServerSettings(imported.settings);
         })
-        .catch(() =>
-          import(
-            /* @vite-ignore */
-            `${fullHostURL}/mock-server-settings.js`
-          )
-            .then((imported) => {
-              setMockServerSettings(imported.settings);
-            })
-            .catch(() => {
-              setMockServerSettings('no-settings-found');
-            })
-        )
+        .catch(() => {
+          setMockServerSettings('no-settings-found');
+        })
         .finally(() => {
           setIsLoadingConfig(false);
         });

@@ -65,3 +65,58 @@ jobs:
         run: |
           git tag -f last-release
           git push origin last-release --force
+  deploy-gh-pages:
+    needs: release
+    environment: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
+      - name: Cache modules
+        id: cache-modules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-modules
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Bot"
+          git config user.email "bramzijpcode@gmail.com"
+      - run: yarn --frozen-lockfile
+      - name: Deploy dashboard storybook to GitHub pages
+        run: yarn nx run dashboard:build-storybook:ci
+        env:
+          STORYBOOK_PUBLIC_PATH: /dynamic-msw/
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./dist/storybook/dashboard
+  deploy-dashboard-storybook:
+    runs-on: ubuntu-latest
+    needs: build-dashboard-storybook
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

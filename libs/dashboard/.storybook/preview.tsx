@@ -10,6 +10,11 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  options: {
+    storySort: {
+      order: ['Dashboard', ['Primary']],
+    },
+  },
 };
 
 export const decorators = [

@@ -12,10 +12,11 @@ export interface ConvertedMockOptions {
   type?: OptionRenderType;
   options?: OptionType[];
   title: string;
-  optionKey: string;
+  key: string;
   defaultValue?: OptionType;
   selectedValue?: OptionType;
 }
+
 export interface ConvertMockConfigReturnType
   extends Omit<MocksState, 'mockOptions'> {
   mockOptions: ConvertedMockOptions[];
@@ -87,6 +88,7 @@ export const updateMockOptions = (
   value: string | number | boolean
 ) => {
   const { mocks, scenarios } = state;
+
   const findIndex = mocks.findIndex((data) => data.mockTitle === mockTitle);
   mocks[findIndex].mockOptions[title].selectedValue =
     value === 'true' ? true : value === 'false' ? false : value;

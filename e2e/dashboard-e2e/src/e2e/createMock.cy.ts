@@ -95,7 +95,7 @@ describe('createMock', () => {
       updatedValues.someSelectOption
     );
 
-    cy.visit('/iframe.html?id=development-examplemocks--primary');
+    cy.visit('/iframe.html?id=hidden-examplemocks--primary');
 
     cy.getByTestId('fetched-example-state', { timeout: 10000 })
       .invoke('text')

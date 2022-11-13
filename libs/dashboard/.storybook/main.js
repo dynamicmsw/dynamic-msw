@@ -21,6 +21,17 @@ module.exports = {
     if (rootMain.viteFinal) {
       config = await rootMain.viteFinal(config, { configType });
     }
+    config.define = {
+      'process.env': Object.keys(process.env).reduce(
+        (prev, key) =>
+          key.startsWith('STORYBOOK_')
+            ? { ...prev, [key]: process.env[key] }
+            : prev,
+        {}
+      ),
+    };
+
+    config.base = process.env.STORYBOOK_PUBLIC_PATH || '/';
 
     config.plugins = config.plugins.filter(
       (plugin) =>
@@ -38,5 +49,37 @@ module.exports = {
       '../../../node_modules/.cache/.dashboard-vite-storybook'
     );
     return config;
+  },
+  managerHead: (head) => {
+    const sharedHead = `
+      ${head}
+      <style>
+        [id^="hidden"]{display: none !important}
+      </style>
+    `;
+    if (process.env.STORYBOOK_PUBLIC_PATH) {
+      return `
+        ${sharedHead}
+        <base href="${process.env.STORYBOOK_PUBLIC_PATH}">
+      `;
+    } else {
+      return sharedHead;
+    }
+  },
+  previewHead: (head) => {
+    const sharedHead = `
+      <script>
+        window.global = window;
+      </script>
+    `;
+    return `
+        ${head}
+        ${
+          process.env.STORYBOOK_PUBLIC_PATH
+            ? `<base href="${process.env.STORYBOOK_PUBLIC_PATH}"/>`
+            : ''
+        }
+        ${sharedHead}
+      `;
   },
 };

@@ -21,7 +21,8 @@
           "publishCI",
           "versionCI",
           "build-storybook"
-        ]
+        ],
+        "runtimeCacheInputs": ["echo $STORYBOOK_PUBLIC_PATH"]
       }
     }
   },
