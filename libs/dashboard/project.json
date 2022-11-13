@@ -72,6 +72,12 @@
         }
       }
     },
+    "serve-storybook-build": {
+      "executor": "@nrwl/web:file-server",
+      "options": {
+        "buildTarget": "dashboard:build-storybook"
+      }
+    },
     "versionCI": {
       "executor": "@jscutlery/semver:version",
       "options": {
