@@ -1,5 +1,5 @@
 import type { State, MocksState, ScenariosState } from '@dynamic-msw/core';
-import { saveToStorage } from '@dynamic-msw/core';
+import { saveToStorage, defaultState } from '@dynamic-msw/core';
 import {
   Table,
   Button,
@@ -129,17 +129,31 @@ export const Dashboard: FC<DashboardProps> = () => {
                 }}
               />
             ) : null}
-            {mockConfig && (
-              <Button
-                size="s"
-                data-testid="reset-all-mocks-button"
-                onClick={() => {
-                  setMockState(resetAll(mockConfig));
-                }}
-              >
-                Reset all mocks
-              </Button>
-            )}
+            <Flex gap={2} flow="row">
+              {mockConfig && (
+                <Button
+                  size="s"
+                  data-testid="delete-stored-state"
+                  onClick={() => {
+                    saveToStorage(defaultState);
+                    window.location.reload();
+                  }}
+                >
+                  Delete stored state
+                </Button>
+              )}
+              {mockConfig && (
+                <Button
+                  size="s"
+                  data-testid="reset-all-mocks-button"
+                  onClick={() => {
+                    setMockState(resetAll(mockConfig));
+                  }}
+                >
+                  Reset all mocks
+                </Button>
+              )}
+            </Flex>
           </Flex>
           <Spacing mt={2} />
           <Table
@@ -180,6 +194,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                           options,
                           type,
                           title,
+                          key,
                         }) => {
                           const inputType = getInputType(
                             defaultValue,
@@ -189,8 +204,8 @@ export const Dashboard: FC<DashboardProps> = () => {
                           );
                           return (
                             <MockOptionsInput
-                              key={`${mockTitle}-${title}`}
-                              id={`${mockTitle}-${title}`}
+                              key={`${mockTitle}-${key}`}
+                              id={`${mockTitle}-${key}`}
                               title={title}
                               options={options}
                               selectedValue={selectedValue}
@@ -200,7 +215,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                   mockState!,
                                   mockTitle,
-                                  title,
+                                  key,
                                   inputType === 'number' ? Number(value) : value
                                 );
                                 setMockState(updatedState);
@@ -274,6 +289,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                   options,
                                   type,
                                   title,
+                                  key,
                                 }) => {
                                   const inputType = getInputType(
                                     defaultValue,
@@ -283,8 +299,8 @@ export const Dashboard: FC<DashboardProps> = () => {
                                   );
                                   return (
                                     <MockOptionsInput
-                                      key={`${scenarioTitle}-${mockTitle}-${title}`}
-                                      id={`${scenarioTitle}-${mockTitle}-${title}`}
+                                      key={`${scenarioTitle}-${mockTitle}-${key}`}
+                                      id={`${scenarioTitle}-${mockTitle}-${key}`}
                                       title={title}
                                       selectedValue={selectedValue}
                                       options={options}
@@ -295,7 +311,7 @@ export const Dashboard: FC<DashboardProps> = () => {
                                             mockState!,
                                             scenarioTitle,
                                             mocksIndex,
-                                            title,
+                                            key,
                                             inputType === 'number'
                                               ? Number(value)
                                               : value

@@ -12,6 +12,7 @@ export interface ConvertedMockOptions {
   type?: OptionRenderType;
   options?: OptionType[];
   title: string;
+  optionKey: string;
   defaultValue?: OptionType;
   selectedValue?: OptionType;
 }
@@ -32,10 +33,12 @@ export const convertMockConfig = (
       return {
         ...rest,
         mockOptions: Object.keys(mockOptions).map((optionKey) => {
-          const { selectedValue, defaultValue } = mockOptions[optionKey];
+          const { selectedValue, defaultValue, optionTitle } =
+            mockOptions[optionKey];
           return {
             ...mockOptions[optionKey],
-            title: optionKey,
+            key: optionKey,
+            title: optionTitle || optionKey,
             selectedValue:
               typeof selectedValue === 'undefined'
                 ? defaultValue
@@ -56,10 +59,12 @@ export const convertScenarioMockConfig = (
     return {
       ...rest,
       mockOptions: Object.keys(mockOptions).map((optionKey) => {
-        const { selectedValue, defaultValue } = mockOptions[optionKey];
+        const { selectedValue, defaultValue, optionTitle } =
+          mockOptions[optionKey];
         return {
           ...mockOptions[optionKey],
-          title: optionKey,
+          key: optionKey,
+          title: optionTitle || optionKey,
           selectedValue:
             typeof selectedValue === 'undefined' ? defaultValue : selectedValue,
         };
