@@ -43,7 +43,7 @@ export interface VariatedExampleResponse {
 export const variatedExampleMock = createMock(
   {
     mockTitle: 'Variated mock options',
-    openPageURL: '/iframe.html?id=development-examplemocks--primary',
+    openPageURL: './iframe.html?id=hidden-examplemocks--primary',
     mockOptions: {
       someBooleanOption: true,
       someTextOption: 'text value',
@@ -92,7 +92,7 @@ export const unusedMock = createMock(
 export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',
-    openPageURL: '/iframe.html?id=development-examplemocks--primary',
+    openPageURL: './iframe.html?id=hidden-examplemocks--primary',
   },
   { exampleMock, variatedExampleMock },
   {
@@ -106,7 +106,18 @@ export const setup = (setupServer?: typeof setupServerMsw) => {
     mocks: [exampleMock, variatedExampleMock],
     scenarios: [exampleScenario],
     setupServer,
-    startFnArg: { onUnhandledRequest: 'bypass' },
+    startFnArg: {
+      onUnhandledRequest: 'bypass',
+      ...(setupServer
+        ? {}
+        : {
+            serviceWorker: {
+              url: `${
+                process.env.STORYBOOK_PUBLIC_PATH || '/'
+              }mockServiceWorker.js`,
+            },
+          }),
+    },
   });
 
   return mockWorker;

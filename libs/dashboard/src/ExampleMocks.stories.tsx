@@ -41,7 +41,7 @@ const Template: FC = () => {
 
 const Story: ComponentMeta<typeof Template> = {
   component: Template,
-  title: 'Development/ExampleMocks',
+  title: 'hidden/ExampleMocks',
 };
 
 export default Story;

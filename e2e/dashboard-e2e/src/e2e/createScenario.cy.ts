@@ -80,7 +80,7 @@ const testScenarioValueChanges = () => {
 
   cy.getByTestId('bootstrap-scenario').click();
 
-  cy.visit('/iframe.html?id=development-examplemocks--primary');
+  cy.visit('/iframe.html?id=hidden-examplemocks--primary');
 
   cy.getByTestId('fetched-example-state', { timeout: 10000 })
     .invoke('text')
@@ -141,7 +141,7 @@ describe('createScenario', () => {
   });
 
   it('should not use scenario mocks when scenario is inactive', () => {
-    cy.visit('/iframe.html?id=development-examplemocks--primary');
+    cy.visit('/iframe.html?id=hidden-examplemocks--primary');
     cy.getByTestId('fetched-example-state', { timeout: 10000 })
       .invoke('text')
       .then((text) => {

@@ -74,8 +74,12 @@ interface SetupWorkerArgs {
   startFnArg?: Parameters<SetupWorkerApi['start']>[0];
 }
 
-type SetupWorkerArg = GetDynamicMocksArg &
-  (SetupServerArgs | SetupWorkerArgs) & {
+type SetupWorkerArg<
+  T extends SetupServerArgs | SetupWorkerArgs =
+    | SetupServerArgs
+    | SetupWorkerArgs
+> = GetDynamicMocksArg &
+  (T extends SetupServerArgs ? SetupServerArgs : SetupWorkerArgs) & {
     nonDynamicMocks?: RestHandler[];
   };
 
