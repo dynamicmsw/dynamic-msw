@@ -2,6 +2,12 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.3.2...v1.4.0) (2022-11-13)
+
+### Features
+
+- add mock option display title and reset stored state button ([#102](https://github.com/dynamicmsw/dynamic-msw/issues/102)) ([6793b6d](https://github.com/dynamicmsw/dynamic-msw/commit/6793b6d0b7289e3c41e4e613f9a7bc7684d210d5))
+
 ### [1.3.2](https://github.com/dynamicmsw/dynamic-msw/compare/v1.3.1...v1.3.2) (2022-11-06)
 
 ### Bug Fixes
