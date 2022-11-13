@@ -8,6 +8,7 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/release')
     uses: ./.github/workflows/quality-assurance.yml
   release:
+    name: release
     if: startsWith(github.ref, 'refs/heads/release')
     environment: release
     runs-on: ubuntu-latest
@@ -65,7 +66,8 @@ jobs:
         run: |
           git tag -f last-release
           git push origin last-release --force
-  deploy-gh-pages:
+  build-dashboard-storybook:
+    name: build-dashboard-storybook
     needs: release
     environment: release
     runs-on: ubuntu-latest
