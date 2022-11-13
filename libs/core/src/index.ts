@@ -11,5 +11,5 @@ export type {
   MocksState,
   ScenariosState,
   State,
-  MockOptionsState,
+  ScenarioMockOptionsState,
 } from './lib/state/state';

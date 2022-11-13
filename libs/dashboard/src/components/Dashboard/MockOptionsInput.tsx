@@ -51,7 +51,7 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
           labelPosition="left"
           label={title}
           type={inputType}
-          value={value || undefined}
+          value={value || ''}
           onChange={onChange}
         />
       );

@@ -10,6 +10,7 @@ export interface StateConfig {
 }
 
 export interface MocksState {
+  isUsedInSetup: boolean;
   mockTitle: string;
   mockOptions: StateOptions;
   openPageURL?: string;
@@ -19,7 +20,7 @@ export interface MocksState {
   updateMock?: (updateValues: Partial<ConvertedOptions>) => void;
 }
 
-export type MockOptionsState = {
+export type ScenarioMockOptionsState = {
   originalMockTitle: string;
   mockTitle: string;
   mockOptions: StateOptions;
@@ -27,7 +28,7 @@ export type MockOptionsState = {
 
 export interface ScenariosState {
   scenarioTitle: string;
-  mocks: MockOptionsState[];
+  mocks: ScenarioMockOptionsState[];
   mockHandlers?: HandlerArray;
   isActive?: boolean;
   openPageURL?: string;
@@ -127,6 +128,7 @@ class CreateState {
     if (existingMock) {
       this.state.mocks[existingMockIndex] = {
         ...existingMock,
+        isUsedInSetup: false,
         updateMock: data.updateMock,
         resetMock: data.resetMock,
         openPageURL: data.openPageURL,

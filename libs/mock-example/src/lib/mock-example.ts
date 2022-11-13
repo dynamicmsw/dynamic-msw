@@ -71,6 +71,23 @@ export const variatedExampleMock = createMock(
   }
 );
 
+export const unusedMock = createMock(
+  {
+    mockTitle: 'unused-example',
+    mockOptions: {
+      success: true,
+    },
+  },
+  (options) => {
+    const response: ExampleResponse = {
+      success: options.success === true ? 'yes' : 'no',
+    };
+    return rest.get('unused-example', async (_req, res, ctx) => {
+      return res(ctx.json(response));
+    });
+  }
+);
+
 export const exampleScenario = createScenario(
   {
     scenarioTitle: 'example scenario',

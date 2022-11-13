@@ -14,28 +14,47 @@ const mockOptions = {
   optionTwo: 'hello',
 };
 
-const createMockHandler = (config) => {
-  return rest.get('http://localhost:1234/test', async (_req, res, ctx) => {
-    return res(
-      ctx.json({
-        success: config.success === true ? 'yes' : 'no',
-      })
-    );
-  });
-};
-
 export const exampleMock = createMock(
   {
     mockTitle: 'example',
     openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
     mockOptions,
   },
-  createMockHandler
+  (config) => {
+    return rest.get('http://localhost:1234/test', async (_req, res, ctx) => {
+      return res(
+        ctx.json({
+          success: config.success === true ? 'yes' : 'no',
+        })
+      );
+    });
+  }
+);
+
+export const unusedMock = createMock(
+  {
+    mockTitle: 'unused-example',
+    mockOptions: {
+      success: true,
+    },
+  },
+  (options) => {
+    return rest.get(
+      'http://localhost:1234/unused-example',
+      async (_req, res, ctx) => {
+        return res(ctx.json(options));
+      }
+    );
+  }
 );
 
 describe('dynamicMsw', () => {
   beforeAll(() => {
-    initializeWorker({ mocks: [exampleMock], setupServer });
+    initializeWorker({
+      mocks: [exampleMock],
+      setupServer,
+      startFnArg: { onUnhandledRequest: 'bypass' },
+    });
   });
   afterEach(() => {
     resetHandlers();
@@ -50,6 +69,12 @@ describe('dynamicMsw', () => {
     );
     expect(exampleFetch).toEqual({
       success: 'yes',
+    });
+  });
+  it('does not resolve unused mocks', async () => {
+    expect.assertions(1);
+    await fetch('http://localhost:1234/unused-example').catch((err) => {
+      expect(err).toBeInstanceOf(Error);
     });
   });
   it('works when updateMock is called', async () => {
@@ -98,6 +123,7 @@ describe('dynamicMsw', () => {
     const expectedState: Partial<State> = {
       mocks: [
         {
+          isUsedInSetup: true,
           mockTitle: 'example',
           mockOptions: {
             success: {
@@ -107,6 +133,15 @@ describe('dynamicMsw', () => {
             optionTwo: { defaultValue: 'hello' },
           },
           openPageURL: 'yes-page',
+        },
+        {
+          isUsedInSetup: false,
+          mockOptions: {
+            success: {
+              defaultValue: true,
+            },
+          },
+          mockTitle: 'unused-example',
         },
       ],
       scenarios: [],
@@ -120,6 +155,7 @@ describe('dynamicMsw', () => {
     const expectedState: State = {
       mocks: [
         {
+          isUsedInSetup: true,
           mockTitle: 'example',
           mockOptions: {
             success: { ...mockOptions.success, selectedValue: false },
@@ -128,6 +164,15 @@ describe('dynamicMsw', () => {
             },
           },
           openPageURL: 'no-page',
+        },
+        {
+          isUsedInSetup: false,
+          mockOptions: {
+            success: {
+              defaultValue: true,
+            },
+          },
+          mockTitle: 'unused-example',
         },
       ],
       scenarios: [],
@@ -152,6 +197,7 @@ describe('dynamicMsw', () => {
     saveToStorage({
       mocks: [
         {
+          isUsedInSetup: true,
           mockTitle: 'example',
           mockOptions: {
             success: {
@@ -160,7 +206,15 @@ describe('dynamicMsw', () => {
               selectedValue: false,
             },
           },
-          createMockHandler,
+        },
+        {
+          isUsedInSetup: false,
+          mockOptions: {
+            success: {
+              defaultValue: true,
+            },
+          },
+          mockTitle: 'unused-example',
         },
       ],
       scenarios: [],

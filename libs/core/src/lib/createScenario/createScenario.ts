@@ -1,5 +1,5 @@
 import { getActiveOptions } from '../createMock/createMock.helpers';
-import type { MockOptionsState } from '../state/state';
+import type { ScenarioMockOptionsState } from '../state/state';
 import { state } from '../state/state';
 import { initializeManyMocks, getOpenPageURL } from './createScenario.helpers';
 import type {
@@ -58,7 +58,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
     return this.mocksFromState.find(({ mockTitle }) => mockTitle === key);
   }
 
-  private get mapScenarioMocksToState(): MockOptionsState[] {
+  private get mapScenarioMocksToState(): ScenarioMockOptionsState[] {
     return Object.keys(this.mocks).map((key) => {
       const currentMockTitle = this.mocks[key].mockTitle;
       const mockDataFromState = this.getMockFromState(currentMockTitle);

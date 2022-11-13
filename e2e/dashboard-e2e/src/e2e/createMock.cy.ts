@@ -145,4 +145,7 @@ describe('createMock', () => {
       initialValues.someSelectOption
     );
   });
+  it('should only render mocks used in setupServer', () => {
+    cy.getByTestId('unused-example-success').should('not.exist');
+  });
 });

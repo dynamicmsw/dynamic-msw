@@ -31,9 +31,13 @@ export const getDynamicMockHandlers = (
 ): HandlerArray => {
   const { mocks } = state.currentState;
   const mockTitles = createMocks.map(({ mockTitle }) => mockTitle);
-  const filteredMocks = mocks.filter(({ mockTitle }) =>
-    mockTitles.includes(mockTitle)
-  );
+  const filteredMocks = mocks.filter(({ mockTitle }) => {
+    const isIncluded = mockTitles.includes(mockTitle);
+    if (isIncluded) {
+      state.updateMock({ mockTitle, isUsedInSetup: true });
+    }
+    return isIncluded;
+  });
   return filteredMocks.flatMap(({ mockHandlers }) => mockHandlers);
 };
 

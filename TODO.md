@@ -2,8 +2,6 @@
 
 1. types: refactor namings and cleanup and export more. (createMock args are important type defs)
 1. smoke test all docs
-1. add scenario search functionality (reorder footer buttons like reset all mocks to the top for until pagination is implemented)
-1. Add option to hide/disable mocks by default. Usefull for when one only wants to display/use it in an scenario. Reconsider.
 1. scan for project todos and filter important ones out
 1. expose a bin script in the open-app-page module
 1. add more tests
