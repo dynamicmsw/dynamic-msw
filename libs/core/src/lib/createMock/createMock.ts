@@ -64,6 +64,7 @@ export class CreateMock<T extends Options = Options> {
       this.createMockHandler
     );
     state.addMock({
+      isUsedInSetup: false,
       mockTitle: this.mockTitle,
       mockOptions: this.convertedMockOptionsToState,
       openPageURL: getPageURL(this.activeOptions, this.openPageURL),

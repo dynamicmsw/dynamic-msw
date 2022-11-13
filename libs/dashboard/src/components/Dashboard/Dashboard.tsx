@@ -110,17 +110,37 @@ export const Dashboard: FC<DashboardProps> = () => {
               : {}
           }
         >
-          {fuse ? (
-            <TextInput
-              type="search"
-              placeholder="Filter"
-              name="search"
-              defaultValue={searchValue}
-              onChange={(value) => {
-                setSearchValue(value.toString());
-              }}
-            />
-          ) : null}
+          {/* TODO: add all flex types to align props */}
+          <Flex
+            gap={2}
+            flow="row"
+            alignY="center"
+            css={{ justifyContent: 'space-between' }}
+          >
+            {fuse ? (
+              <TextInput
+                data-testid="search-input"
+                type="search"
+                placeholder="Filter"
+                name="search"
+                defaultValue={searchValue}
+                onChange={(value) => {
+                  setSearchValue(value.toString());
+                }}
+              />
+            ) : null}
+            {mockConfig && (
+              <Button
+                size="s"
+                data-testid="reset-all-mocks-button"
+                onClick={() => {
+                  setMockState(resetAll(mockConfig));
+                }}
+              >
+                Reset all mocks
+              </Button>
+            )}
+          </Flex>
           <Spacing mt={2} />
           <Table
             columns={4}
@@ -298,18 +318,6 @@ export const Dashboard: FC<DashboardProps> = () => {
             </ExpansionPanelContextProvider>
           </Table>
         </Container>
-        {mockConfig && (
-          <Container>
-            <Button
-              data-testid="reset-all-mocks-button"
-              onClick={() => {
-                setMockState(resetAll(mockConfig));
-              }}
-            >
-              Reset all mocks
-            </Button>
-          </Container>
-        )}
       </Flex>
     </form>
   );

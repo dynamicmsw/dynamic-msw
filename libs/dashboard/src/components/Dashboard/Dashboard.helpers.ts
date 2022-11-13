@@ -4,7 +4,7 @@ import type {
   OptionType,
   OptionRenderType,
   ScenariosState,
-  MockOptionsState,
+  ScenarioMockOptionsState,
 } from '@dynamic-msw/core';
 import { saveToStorage } from '@dynamic-msw/core';
 
@@ -26,23 +26,29 @@ export const convertMockConfig = (
   if (mocks.length < 0) {
     throw Error('No mocks found');
   }
-  return mocks.map(({ mockOptions, ...rest }) => {
-    return {
-      ...rest,
-      mockOptions: Object.keys(mockOptions).map((optionKey) => {
-        const { selectedValue, defaultValue } = mockOptions[optionKey];
-        return {
-          ...mockOptions[optionKey],
-          title: optionKey,
-          selectedValue:
-            typeof selectedValue === 'undefined' ? defaultValue : selectedValue,
-        };
-      }),
-    };
-  });
+  return mocks
+    .filter(({ isUsedInSetup }) => isUsedInSetup)
+    .map(({ mockOptions, ...rest }) => {
+      return {
+        ...rest,
+        mockOptions: Object.keys(mockOptions).map((optionKey) => {
+          const { selectedValue, defaultValue } = mockOptions[optionKey];
+          return {
+            ...mockOptions[optionKey],
+            title: optionKey,
+            selectedValue:
+              typeof selectedValue === 'undefined'
+                ? defaultValue
+                : selectedValue,
+          };
+        }),
+      };
+    });
 };
 
-export const convertScenarioMockConfig = (mocks: MockOptionsState[]) => {
+export const convertScenarioMockConfig = (
+  mocks: ScenarioMockOptionsState[]
+) => {
   if (mocks.length < 0) {
     throw Error('No mocks found');
   }
