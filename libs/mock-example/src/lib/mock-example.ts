@@ -49,6 +49,7 @@ export const variatedExampleMock = createMock(
       someTextOption: 'text value',
       someNumberOption: 123,
       someUndefinedOption: {
+        optionTitle: 'some undefined option',
         type: 'text',
       },
       someSelectOption: {

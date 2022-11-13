@@ -10,6 +10,7 @@ export type OptionRenderType = 'text' | 'number' | 'boolean';
 export type StateOptions<T extends OptionType = OptionType> = Record<
   string,
   {
+    optionTitle?: string;
     options?: T[];
     selectedValue?: T;
     type?: OptionRenderType;
