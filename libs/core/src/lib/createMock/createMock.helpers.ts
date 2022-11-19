@@ -50,14 +50,22 @@ export const getPageURL = (
   openPageURL: string | OpenPageFn
 ) => (typeof openPageURL === 'function' ? openPageURL(config) : openPageURL);
 
-export const convertMockOptionsToState = (options: Options): StateOptions =>
+export const convertMockOptionsToState = (
+  options: Options,
+  activeOptoins: ConvertedOptions
+): StateOptions =>
   (Object.keys(options) as Array<keyof Options>).reduce((prev, optionKey) => {
     const option = options[optionKey];
+    const isObject = typeof option === 'object';
+    const defaultValue = isObject ? option.defaultValue : option;
+    const selectedValue = activeOptoins?.[optionKey];
     return {
       ...prev,
       [optionKey]: {
-        ...(typeof option === 'object' ? option : {}),
-        defaultValue: typeof option === 'object' ? option.defaultValue : option,
+        ...(isObject ? option : {}),
+        defaultValue,
+        selectedValue:
+          selectedValue === defaultValue ? undefined : selectedValue,
       },
     };
   }, {});

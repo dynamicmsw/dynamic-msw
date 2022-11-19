@@ -1,6 +1,6 @@
 import { getActiveOptions } from '../createMock/createMock.helpers';
-import type { ScenarioMockOptionsState } from '../state/state';
-import { state } from '../state/state';
+import type { StateConfig } from '../storageState/storageState';
+import { loadFromStorage } from '../storageState/storageState';
 import { initializeManyMocks, getOpenPageURL } from './createScenario.helpers';
 import type {
   OpenPageURL,
@@ -8,6 +8,8 @@ import type {
   MockOptionsArg,
   OptionsArg,
 } from './createScenario.types';
+import type { ScenarioMockOptionsState } from './scenariosStorage';
+import { addScenario, updateScenario } from './scenariosStorage';
 
 export class CreateScenario<T extends Mocks = Mocks> {
   public scenarioTitle: string;
@@ -15,6 +17,7 @@ export class CreateScenario<T extends Mocks = Mocks> {
   private mocks: T;
   private mockOptions: MockOptionsArg<T>;
   private initialMockOptions: MockOptionsArg<T>;
+  private shouldSaveToStorage = true;
 
   constructor(
     optionsArg: OptionsArg<T>,
@@ -30,7 +33,10 @@ export class CreateScenario<T extends Mocks = Mocks> {
     this.mocks = mocks;
     this.mockOptions = mockOptions;
     this.initialMockOptions = mockOptions;
-    this.initializeScenario();
+  }
+
+  private get stateFromStorage() {
+    return loadFromStorage();
   }
 
   private get getOpenPageURL() {
@@ -38,20 +44,27 @@ export class CreateScenario<T extends Mocks = Mocks> {
   }
 
   private get initialScenarioState() {
-    const initialState = state.currentState;
-    return initialState.scenarios.find(
+    return this.stateFromStorage.scenarios.find(
       (scenario) => scenario.scenarioTitle === this.scenarioTitle
     );
   }
 
   private get mocksFromState() {
     // Get mocks from state so that we can use it's default options
-    const initialState = state.currentState;
+    const initialState = this.stateFromStorage.mocks;
     return Object.keys(this.mocks).map((key) =>
-      initialState.mocks.find(({ mockTitle }) => {
+      initialState.find(({ mockTitle }) => {
         return mockTitle === this.mocks[key].mockTitle;
       })
     );
+  }
+
+  public set PRIVATE_setConfig(config: StateConfig) {
+    this.shouldSaveToStorage =
+      typeof config?.saveToLocalStorage !== 'undefined'
+        ? config?.saveToLocalStorage
+        : true;
+    this.initializeScenario();
   }
 
   private getMockFromState(key: keyof T) {
@@ -62,23 +75,22 @@ export class CreateScenario<T extends Mocks = Mocks> {
     return Object.keys(this.mocks).map((key) => {
       const currentMockTitle = this.mocks[key].mockTitle;
       const mockDataFromState = this.getMockFromState(currentMockTitle);
-      const initialScenarioMockState = this.initialScenarioState?.mocks.find(
+      const initialScenarioMocksState = this.initialScenarioState?.mocks.find(
         ({ mockTitle }) => mockTitle === key
       );
-
       const mergeMockOptions = Object.keys(
         mockDataFromState.mockOptions
       ).reduce((prev, stateMockOptionKey) => {
         const selectedValue =
-          initialScenarioMockState?.mockOptions[stateMockOptionKey]
+          initialScenarioMocksState?.mockOptions[stateMockOptionKey]
             .selectedValue;
-        const defaultValue = this.mockOptions[key][stateMockOptionKey];
+        const defaultValue = this.mockOptions?.[key][stateMockOptionKey];
         return {
           ...prev,
           [stateMockOptionKey]: {
             ...mockDataFromState.mockOptions[stateMockOptionKey],
             ...(typeof defaultValue !== 'undefined' ? { defaultValue } : {}),
-            ...(typeof selectedValue !== 'undefined' ? { selectedValue } : {}),
+            selectedValue,
           },
         };
       }, {});
@@ -100,22 +112,22 @@ export class CreateScenario<T extends Mocks = Mocks> {
     });
   }
 
-  private get initializedMocks() {
+  public get mockHandlers() {
     return initializeManyMocks({
-      mocksFromState: this.mocksFromState,
+      mocks: this.mocks,
       createMockOptions: this.activeOptions,
     });
   }
 
   private initializeScenario = () => {
-    state.addScenario({
-      ...(this.initialScenarioState || {}),
-      scenarioTitle: this.scenarioTitle,
-      openPageURL: this.getOpenPageURL,
-      mocks: this.mapScenarioMocksToState,
-      resetMocks: this.resetMocks,
-      mockHandlers: this.initializedMocks,
-    });
+    if (this.shouldSaveToStorage) {
+      addScenario({
+        ...(this.initialScenarioState || {}),
+        scenarioTitle: this.scenarioTitle,
+        openPageURL: this.getOpenPageURL,
+        mocks: this.mapScenarioMocksToState,
+      });
+    }
   };
 
   private updateMockOptions = (updateOptions: MockOptionsArg<T>) => {
@@ -136,37 +148,37 @@ export class CreateScenario<T extends Mocks = Mocks> {
 
   public updateScenario = (updateOptions: MockOptionsArg<T>) => {
     this.updateMockOptions(updateOptions);
-    state.updateScenario({
-      ...(this.initialScenarioState || {}),
-      scenarioTitle: this.scenarioTitle,
-      mocks: this.mapScenarioMocksToState,
-      resetMocks: this.resetMocks,
-      mockHandlers: this.initializedMocks,
-    });
     this.activateScenario();
+    if (this.shouldSaveToStorage) {
+      updateScenario({
+        ...(this.initialScenarioState || {}),
+        scenarioTitle: this.scenarioTitle,
+        mocks: this.mapScenarioMocksToState,
+      });
+    }
   };
 
   public resetMocks = () => {
     this.mockOptions = this.initialMockOptions;
-    state.updateScenario({
-      ...(this.initialScenarioState || {}),
-      scenarioTitle: this.scenarioTitle,
-      mocks: this.mapScenarioMocksToState,
-      resetMocks: this.resetMocks,
-      mockHandlers: this.initializedMocks,
-    });
     this.activateScenario();
+    if (this.shouldSaveToStorage) {
+      updateScenario({
+        ...(this.initialScenarioState || {}),
+        scenarioTitle: this.scenarioTitle,
+        mocks: this.mapScenarioMocksToState,
+      });
+    }
   };
 
   public activateScenario = () => {
-    global.__mock_worker?.use(...this.initializedMocks);
+    global.__mock_worker?.use(...this.mockHandlers);
   };
 }
 
 export const createScenario = <T extends Mocks>(
   optionsArg: OptionsArg<T>,
   mocks: T,
-  mockOptions: MockOptionsArg<T>
+  mockOptions?: MockOptionsArg<T>
 ) => new CreateScenario<T>(optionsArg, mocks, mockOptions);
 
 export type CreateScenarioFn = typeof createScenario;

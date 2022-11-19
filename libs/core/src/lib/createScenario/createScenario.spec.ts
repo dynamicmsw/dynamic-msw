@@ -2,7 +2,7 @@ import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
 import { createMock } from '../createMock/createMock';
-import { state } from '../state/state';
+import { loadFromStorage } from '../storageState/storageState';
 import { resetHandlers, stopWorker, initializeWorker } from '../worker/worker';
 import { createScenario } from './createScenario';
 
@@ -63,7 +63,7 @@ describe('createScenario', () => {
   });
 
   it('saves proper mock config to state', () => {
-    expect(state.currentState.scenarios[0].mocks[0]).toEqual({
+    expect(loadFromStorage().scenarios[0].mocks[0]).toEqual({
       mockTitle: 'exampleMock',
       originalMockTitle: 'Variated mock options',
       mockOptions: {
@@ -81,7 +81,7 @@ describe('createScenario', () => {
         someNumberOption: { defaultValue: 1111 },
       },
     });
-    expect(state.currentState.scenarios[0].openPageURL).toEqual(
+    expect(loadFromStorage().scenarios[0].openPageURL).toEqual(
       `http://localhost:1234/1111`
     );
   });
