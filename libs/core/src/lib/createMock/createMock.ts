@@ -21,7 +21,7 @@ import { addMock, updateMock } from './mocksStorage';
 
 export class CreateMock<T extends Options = Options> {
   public mockTitle: CreateMockArg<T>['mockTitle'];
-  private mockOptions: CreateMockArg<T>['mockOptions'];
+  public mockOptions: CreateMockArg<T>['mockOptions'];
   private activeOptions: ConvertedStateOptions<StateOptions<OptionType>>;
   private openPageURL: CreateMockArg<T>['openPageURL'];
   public createMockHandler: CreateMockHandlerFn<T>;

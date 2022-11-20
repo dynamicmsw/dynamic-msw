@@ -39,7 +39,9 @@ export const convertMockConfig = (
           key: optionKey,
           title: optionTitle || optionKey,
           selectedValue:
-            typeof selectedValue === 'undefined' ? defaultValue : selectedValue,
+            'selectedValue' in mockOptions[optionKey]
+              ? selectedValue
+              : defaultValue,
         };
       }),
     };
@@ -63,7 +65,9 @@ export const convertScenarioMockConfig = (
           key: optionKey,
           title: optionTitle || optionKey,
           selectedValue:
-            typeof selectedValue === 'undefined' ? defaultValue : selectedValue,
+            'selectedValue' in mockOptions[optionKey]
+              ? selectedValue
+              : defaultValue,
         };
       }),
     };
@@ -81,7 +85,7 @@ export const updateMockOptions = (
   state: State,
   mockTitle: string,
   title: string,
-  value: string | number | boolean
+  value: string | number | boolean | undefined
 ) => {
   const { mocks, scenarios } = state;
 
@@ -98,7 +102,7 @@ export const updateScenarioOptions = (
   scenarioTitle: string,
   mocksIndex: number,
   title: string,
-  value: string | number | boolean
+  value: string | number | boolean | undefined
 ) => {
   const { mocks, scenarios } = state;
   const scenarioIndex = scenarios.findIndex(
@@ -172,7 +176,9 @@ export const getInputType = (
   }
   if (options) return 'select';
   return (
-    selectedValue ? typeof selectedValue : typeof defaultValue
+    typeof selectedValue !== 'undefined'
+      ? typeof selectedValue
+      : typeof defaultValue
   ) as OptionRenderType;
 };
 
