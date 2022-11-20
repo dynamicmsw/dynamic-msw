@@ -2,6 +2,21 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.5.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.4.0...v1.5.0) (2022-11-20)
+
+
+### Features
+
+* setup example dashboard ([76811e6](https://github.com/dynamicmsw/dynamic-msw/commit/76811e6b03c545df7085f8394f332aa40f252034))
+
+
+### Bug Fixes
+
+* **dashboard:** invalid active mock active state ([488100f](https://github.com/dynamicmsw/dynamic-msw/commit/488100f0eef570fcbbf2057ea1d1d135d2ba4308))
+* dependency vulnerabilities ([#111](https://github.com/dynamicmsw/dynamic-msw/issues/111)) ([ada7c73](https://github.com/dynamicmsw/dynamic-msw/commit/ada7c73f1f0ea5c4c5617246a8b3f4c810dbebfa))
+* dependency vulnerabilities ([#112](https://github.com/dynamicmsw/dynamic-msw/issues/112)) ([522bde5](https://github.com/dynamicmsw/dynamic-msw/commit/522bde5a522c3474267c04732813c15e2d7f6b42)), closes [#111](https://github.com/dynamicmsw/dynamic-msw/issues/111)
+* multiple scenario storage state and undefined selected value dashboard changes ([9c9e343](https://github.com/dynamicmsw/dynamic-msw/commit/9c9e343f7b72b3f3e1d6a5a669e4681e4cee475a))
+
 ## [1.4.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.3.2...v1.4.0) (2022-11-13)
 
 ### Features

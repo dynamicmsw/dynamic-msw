@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.5.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.4.0...v1.5.0) (2022-11-20)
+
+
+### Bug Fixes
+
+* multiple scenario storage state and undefined selected value dashboard changes ([9c9e343](https://github.com/dynamicmsw/dynamic-msw/commit/9c9e343f7b72b3f3e1d6a5a669e4681e4cee475a))
+
 ## [1.4.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.3.2...v1.4.0) (2022-11-13)
 
 ### Features

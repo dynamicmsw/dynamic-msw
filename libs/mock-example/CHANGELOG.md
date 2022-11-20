@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.5.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.4.0...v1.5.0) (2022-11-20)
+
+
+### Features
+
+* setup example dashboard ([76811e6](https://github.com/dynamicmsw/dynamic-msw/commit/76811e6b03c545df7085f8394f332aa40f252034))
+
 ## [1.4.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.3.2...v1.4.0) (2022-11-13)
 
 ### Features
