@@ -55,7 +55,7 @@ jobs:
           git config user.name "GitHub Bot"
           git config user.email "bramzijpcode@gmail.com"
       - run: git rebase origin/main
-      - run: yarn --frozen-lockfile
+      - run: yarn --immutable
 
       - name: Check if everything builds with nx release cache
         run: yarn nx affected:build --parallel=3

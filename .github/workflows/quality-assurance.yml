@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
-      - run: yarn --frozen-lockfile
+      - run: yarn --immutable
 
       - run: yarn nx workspace-lint
       - run: yarn nx format:check
