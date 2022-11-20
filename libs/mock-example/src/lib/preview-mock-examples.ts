@@ -8,7 +8,7 @@ import { rest } from 'msw';
 export const loginMock = createMock(
   {
     mockTitle: 'Login',
-    openPageURL: 'https://localhost:3000/login/',
+    openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
     mockOptions: {
       userRole: {
         options: ['ADMIN', 'MODERATOR', 'DEFAULT'],
@@ -169,7 +169,7 @@ export const exampleForAllOptionTypes = createMock(
 export const defaultProductScenario = createScenario(
   {
     scenarioTitle: 'Default product scenario',
-    openPageURL: 'http://localhost:3000/products/example-product/',
+    openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
   },
   { productDataMock, productReviewsMock, featureFlagsMock }
 );
@@ -177,7 +177,7 @@ export const defaultProductScenario = createScenario(
 export const unhappyProductScenario = createScenario(
   {
     scenarioTitle: 'Unhappy product scenario',
-    openPageURL: 'http://localhost:3000/products/example-product/',
+    openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
   },
   { productDataMock, productReviewsMock, featureFlagsMock },
   {
