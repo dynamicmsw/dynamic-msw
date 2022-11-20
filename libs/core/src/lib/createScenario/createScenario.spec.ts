@@ -47,11 +47,23 @@ export const exampleScenario = createScenario(
   }
 );
 
+export const exampleScenario2 = createScenario(
+  {
+    scenarioTitle: 'example scenario 2',
+    openPageURL: (config) =>
+      `http://localhost:1234/${config.exampleMock.someNumberOption}`,
+  },
+  { exampleMock: variatedExampleMock },
+  {
+    exampleMock: { someNumberOption: 1111 },
+  }
+);
+
 describe('createScenario', () => {
   beforeAll(() => {
     initializeWorker({
       mocks: [variatedExampleMock],
-      scenarios: [exampleScenario],
+      scenarios: [exampleScenario, exampleScenario2],
       setupServer,
     });
   });

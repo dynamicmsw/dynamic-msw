@@ -49,16 +49,6 @@ export class CreateScenario<T extends Mocks = Mocks> {
     );
   }
 
-  private get mocksFromState() {
-    // Get mocks from state so that we can use it's default options
-    const initialState = this.stateFromStorage.mocks;
-    return Object.keys(this.mocks).map((key) =>
-      initialState.find(({ mockTitle }) => {
-        return mockTitle === this.mocks[key].mockTitle;
-      })
-    );
-  }
-
   public set PRIVATE_setConfig(config: StateConfig) {
     this.shouldSaveToStorage =
       typeof config?.saveToLocalStorage !== 'undefined'
@@ -67,36 +57,41 @@ export class CreateScenario<T extends Mocks = Mocks> {
     this.initializeScenario();
   }
 
-  private getMockFromState(key: keyof T) {
-    return this.mocksFromState.find(({ mockTitle }) => mockTitle === key);
-  }
-
   private get mapScenarioMocksToState(): ScenarioMockOptionsState[] {
     return Object.keys(this.mocks).map((key) => {
-      const currentMockTitle = this.mocks[key].mockTitle;
-      const mockDataFromState = this.getMockFromState(currentMockTitle);
+      const currentMock = this.mocks[key];
+      const currentMockTitle = currentMock.mockTitle;
       const initialScenarioMocksState = this.initialScenarioState?.mocks.find(
         ({ mockTitle }) => mockTitle === key
       );
-      const mergeMockOptions = Object.keys(
-        mockDataFromState.mockOptions
-      ).reduce((prev, stateMockOptionKey) => {
-        const selectedValue =
-          initialScenarioMocksState?.mockOptions[stateMockOptionKey]
-            .selectedValue;
-        const defaultValue = this.mockOptions?.[key][stateMockOptionKey];
-        return {
-          ...prev,
-          [stateMockOptionKey]: {
-            ...mockDataFromState.mockOptions[stateMockOptionKey],
-            ...(typeof defaultValue !== 'undefined' ? { defaultValue } : {}),
-            selectedValue,
-          },
-        };
-      }, {});
+      const mergeMockOptions = Object.keys(currentMock.mockOptions).reduce(
+        (prev, stateMockOptionKey) => {
+          const selectedValue =
+            initialScenarioMocksState?.mockOptions[stateMockOptionKey]
+              .selectedValue;
+          const defaultValue = this.mockOptions?.[key][stateMockOptionKey];
+          const sourceMockOption = currentMock.mockOptions[stateMockOptionKey];
+          const sourceMockOptionIsObject = typeof sourceMockOption === 'object';
+          return {
+            ...prev,
+            [stateMockOptionKey]: {
+              ...(sourceMockOptionIsObject ? sourceMockOption : {}),
+              ...(typeof defaultValue !== 'undefined'
+                ? { defaultValue }
+                : {
+                    defaultValue: sourceMockOptionIsObject
+                      ? sourceMockOption.defaultValue
+                      : sourceMockOption,
+                  }),
+              selectedValue,
+            },
+          };
+        },
+        {}
+      );
 
       return {
-        originalMockTitle: mockDataFromState.mockTitle,
+        originalMockTitle: currentMockTitle,
         mockTitle: key,
         mockOptions: mergeMockOptions,
       };

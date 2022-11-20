@@ -34,6 +34,8 @@ jobs:
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
+      - name: Enable corepack
+        run: corepack enable
       - name: Cache modules
         id: cache-modules
         uses: actions/cache@v3
@@ -42,6 +44,7 @@ jobs:
         with:
           path: |
             node_modules
+            .yarn
             ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
@@ -52,7 +55,7 @@ jobs:
           git config user.name "GitHub Bot"
           git config user.email "bramzijpcode@gmail.com"
       - run: git rebase origin/main
-      - run: yarn --frozen-lockfile
+      - run: yarn --immutable
 
       - name: Check if everything builds with nx release cache
         run: yarn nx affected:build --parallel=3

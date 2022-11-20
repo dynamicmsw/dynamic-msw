@@ -12,7 +12,7 @@
         "testingType": "e2e"
       },
       "configurations": {
-        "ci": {
+        "build": {
           "devServerTarget": "dashboard:serve-storybook-build"
         }
       }

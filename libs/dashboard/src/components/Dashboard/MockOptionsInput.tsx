@@ -8,7 +8,7 @@ import { convertOptionValue } from './Dashboard.helpers';
 interface MockSettingsProps extends ConvertedMockOptions {
   id: string;
   inputType: OptionRenderType | 'select';
-  onChange: (value: string | number | boolean) => void;
+  onChange: (value: string | number | boolean | undefined) => void;
   gridRow?: number;
 }
 
@@ -34,12 +34,19 @@ export const MockOptionsInput: FC<MockSettingsProps> = ({
           name={id}
           label={title}
           value={value || ''}
-          onChange={onChange}
-          options={
-            options?.map((value) => ({
+          onChange={(value) => {
+            if (value === 'Select a value') {
+              onChange(undefined);
+            } else {
+              onChange(value);
+            }
+          }}
+          options={[
+            { value: 'Select a value' },
+            ...(options?.map((value) => ({
               value: convertOptionValue(value) || 'value not specified',
-            })) || []
-          }
+            })) || []),
+          ]}
         />
       );
     case 'text':

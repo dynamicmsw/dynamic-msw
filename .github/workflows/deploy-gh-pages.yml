@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
+      - name: Enable corepack
+        run: corepack enable
       - name: Cache modules
         id: cache-modules
         uses: actions/cache@v3
@@ -26,6 +28,7 @@ jobs:
         with:
           path: |
             node_modules
+            .yarn
             ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
@@ -34,10 +37,11 @@ jobs:
         run: |
           git config user.name "GitHub Bot"
           git config user.email "bramzijpcode@gmail.com"
-      - run: yarn --frozen-lockfile
+      - run: yarn --immutable
       - name: Build dashboard storybook
         run: yarn nx run dashboard:build-storybook:ci
         env:
+          STORYBOOK_PREVIEW: true
           STORYBOOK_PUBLIC_PATH: /dynamic-msw/
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload artifact
