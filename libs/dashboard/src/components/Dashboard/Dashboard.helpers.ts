@@ -28,26 +28,22 @@ export const convertMockConfig = (
   if (mocks.length < 0) {
     throw Error('No mocks found');
   }
-  return mocks
-    .filter(({ isUsedInSetup }) => isUsedInSetup)
-    .map(({ mockOptions, ...rest }) => {
-      return {
-        ...rest,
-        mockOptions: Object.keys(mockOptions).map((optionKey) => {
-          const { selectedValue, defaultValue, optionTitle } =
-            mockOptions[optionKey];
-          return {
-            ...mockOptions[optionKey],
-            key: optionKey,
-            title: optionTitle || optionKey,
-            selectedValue:
-              typeof selectedValue === 'undefined'
-                ? defaultValue
-                : selectedValue,
-          };
-        }),
-      };
-    });
+  return mocks.map(({ mockOptions, ...rest }) => {
+    return {
+      ...rest,
+      mockOptions: Object.keys(mockOptions).map((optionKey) => {
+        const { selectedValue, defaultValue, optionTitle } =
+          mockOptions[optionKey];
+        return {
+          ...mockOptions[optionKey],
+          key: optionKey,
+          title: optionTitle || optionKey,
+          selectedValue:
+            typeof selectedValue === 'undefined' ? defaultValue : selectedValue,
+        };
+      }),
+    };
+  });
 };
 
 export const convertScenarioMockConfig = (

@@ -1,4 +1,5 @@
-import { state } from '../state/state';
+import type { StateConfig } from '../storageState/storageState';
+import { loadFromStorage } from '../storageState/storageState';
 import {
   getActiveOptions,
   initializeMocks,
@@ -16,14 +17,16 @@ import type {
   OptionType,
   ConvertedStateOptions,
 } from './createMock.types';
+import { addMock, updateMock } from './mocksStorage';
 
 export class CreateMock<T extends Options = Options> {
   public mockTitle: CreateMockArg<T>['mockTitle'];
   private mockOptions: CreateMockArg<T>['mockOptions'];
   private activeOptions: ConvertedStateOptions<StateOptions<OptionType>>;
   private openPageURL: CreateMockArg<T>['openPageURL'];
-  private createMockHandler: CreateMockHandlerFn<T>;
-  private mockHandlers: HandlerArray;
+  public createMockHandler: CreateMockHandlerFn<T>;
+  public mockHandlers: HandlerArray;
+  private shouldSaveToStorage = true;
 
   constructor(
     options: CreateMockArg<T>,
@@ -33,46 +36,51 @@ export class CreateMock<T extends Options = Options> {
     this.mockOptions = options.mockOptions;
     this.openPageURL = options.openPageURL;
     this.createMockHandler = createMockHandler;
-    this.initializeMock();
   }
-
+  private get stateFromStorage() {
+    return loadFromStorage();
+  }
   private get convertedMockOptionsToState() {
-    return convertMockOptionsToState(this.mockOptions);
+    return convertMockOptionsToState(this.mockOptions, this.activeOptions);
   }
 
-  private get initialMockState() {
-    return state.currentState.mocks.find(
+  private get initialMocksState() {
+    return this.stateFromStorage.mocks.find(
       ({ mockTitle }) => mockTitle === this.mockTitle
     );
   }
 
   private get initialActiveOptions() {
     return getActiveOptions(
-      this.initialMockState?.mockOptions || this.convertedMockOptionsToState
+      this.initialMocksState?.mockOptions || this.convertedMockOptionsToState
     );
   }
 
+  public set PRIVATE_setConfig(config: StateConfig) {
+    this.shouldSaveToStorage =
+      typeof config?.saveToLocalStorage !== 'undefined'
+        ? config?.saveToLocalStorage
+        : true;
+    this.initializeMock();
+  }
+
   private initializeMock = () => {
-    if (this.initialMockState?.resetMock) {
-      throw Error(
-        `Looks like you initialized 2 createMock functions with the same mock title: '${this.initialMockState.mockTitle}'. This Please ensure the mockTitle option is unique across your mocks.`
-      );
-    }
+    const existingMock = this.stateFromStorage.mocks.find(
+      ({ mockTitle }) => mockTitle === this.mockTitle
+    );
     this.activeOptions = this.initialActiveOptions;
     this.mockHandlers = initializeMocks(
       this.activeOptions,
       this.createMockHandler
     );
-    state.addMock({
-      isUsedInSetup: false,
-      mockTitle: this.mockTitle,
-      mockOptions: this.convertedMockOptionsToState,
-      openPageURL: getPageURL(this.activeOptions, this.openPageURL),
-      updateMock: this.updateMock,
-      resetMock: this.resetMock,
-      mockHandlers: this.mockHandlers,
-      createMockHandler: this.createMockHandler,
-    });
+    if (this.shouldSaveToStorage) {
+      addMock({
+        ...existingMock,
+        mockTitle: this.mockTitle,
+        mockOptions: this.convertedMockOptionsToState,
+        openPageURL: getPageURL(this.activeOptions, this.openPageURL),
+      });
+    }
   };
 
   public updateMock = (updateObject: Partial<ConvertedOptions<T>>) => {
@@ -82,37 +90,34 @@ export class CreateMock<T extends Options = Options> {
       this.createMockHandler
     );
     global.__mock_worker?.use(...this.mockHandlers);
-
-    state.updateMock({
-      mockTitle: this.mockTitle,
-      mockOptions: updateMockOptions(
-        this.convertedMockOptionsToState,
-        updateObject
-      ),
-      openPageURL: getPageURL(this.activeOptions, this.openPageURL),
-      updateMock: this.updateMock,
-      resetMock: this.resetMock,
-      mockHandlers: this.mockHandlers,
-      createMockHandler: this.createMockHandler,
-    });
+    if (this.shouldSaveToStorage) {
+      updateMock({
+        mockTitle: this.mockTitle,
+        mockOptions: updateMockOptions(
+          this.convertedMockOptionsToState,
+          updateObject
+        ),
+        openPageURL: getPageURL(this.activeOptions, this.openPageURL),
+      });
+    }
   };
 
   public resetMock = () => {
-    this.activeOptions = getActiveOptions(this.convertedMockOptionsToState);
+    this.activeOptions = getActiveOptions(
+      convertMockOptionsToState(this.mockOptions, {})
+    );
     this.mockHandlers = initializeMocks(
       this.activeOptions,
       this.createMockHandler
     );
     global.__mock_worker?.use(...this.mockHandlers);
-    state.updateMock({
-      mockTitle: this.mockTitle,
-      mockOptions: this.convertedMockOptionsToState,
-      openPageURL: getPageURL(this.activeOptions, this.openPageURL),
-      updateMock: this.updateMock,
-      resetMock: this.resetMock,
-      mockHandlers: this.mockHandlers,
-      createMockHandler: this.createMockHandler,
-    });
+    if (this.shouldSaveToStorage) {
+      updateMock({
+        mockTitle: this.mockTitle,
+        mockOptions: this.convertedMockOptionsToState,
+        openPageURL: getPageURL(this.activeOptions, this.openPageURL),
+      });
+    }
   };
 }
 

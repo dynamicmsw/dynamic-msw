@@ -1,8 +1,8 @@
-import type { MocksState } from '../state/state';
 import type {
   SetupMocksFn,
   CreateMockOptions,
   OpenPageFn,
+  Mocks,
 } from './createScenario.types';
 
 const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
@@ -14,15 +14,16 @@ const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
 };
 
 export const initializeManyMocks = ({
-  mocksFromState,
+  mocks,
   createMockOptions,
 }: {
-  mocksFromState: MocksState[];
+  mocks: Mocks;
   createMockOptions: CreateMockOptions[];
 }) =>
-  mocksFromState.flatMap(({ createMockHandler }, index) => {
+  Object.keys(mocks).flatMap((mockKey, index) => {
+    const mockHandler = mocks[mockKey].createMockHandler;
     const mockOptions = createMockOptions[index];
-    const initializedMocks = initializeMocks(mockOptions, createMockHandler);
+    const initializedMocks = initializeMocks(mockOptions, mockHandler);
     return initializedMocks;
   });
 

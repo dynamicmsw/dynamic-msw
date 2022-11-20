@@ -6,10 +6,10 @@ export {
   loadFromStorage,
   saveToStorage,
   defaultState,
-} from './lib/state/state';
+} from './lib/storageState/storageState';
+export type { State } from './lib/storageState/storageState';
+export type { MocksState } from './lib/createMock/mocksStorage';
 export type {
-  MocksState,
   ScenariosState,
-  State,
   ScenarioMockOptionsState,
-} from './lib/state/state';
+} from './lib/createScenario/scenariosStorage';

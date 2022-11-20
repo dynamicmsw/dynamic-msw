@@ -1,8 +1,11 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
-import type { State } from '../state/state';
-import { dynamicMswStorageKey, state, saveToStorage } from '../state/state';
+import type { State } from '../storageState/storageState';
+import {
+  loadFromStorage,
+  dynamicMswStorageKey,
+} from '../storageState/storageState';
 import { resetHandlers, stopWorker, initializeWorker } from '../worker/worker';
 import { createMock } from './createMock';
 
@@ -48,7 +51,7 @@ export const unusedMock = createMock(
   }
 );
 
-describe('dynamicMsw', () => {
+describe('createMock', () => {
   beforeAll(() => {
     initializeWorker({
       mocks: [exampleMock],
@@ -105,25 +108,13 @@ describe('dynamicMsw', () => {
     expect(exampleFetch).toEqual({
       success: 'yes',
     });
-  });
-  it('returns proper page URL based on config', async () => {
-    expect(state.currentState.mocks[0].openPageURL).toBe('yes-page');
-  });
-  it('returns proper page URL when updating mock', async () => {
-    exampleMock.updateMock({ success: false });
-    expect(state.currentState.mocks[0].openPageURL).toBe('no-page');
-  });
-  it('resets createMock return value when calling resetHandlers()', async () => {
-    exampleMock.updateMock({ success: false });
-    resetHandlers();
-    expect(state.currentState.mocks[0].openPageURL).toBe('yes-page');
+    expect(loadFromStorage().mocks[0].openPageURL).toBe('yes-page');
   });
 
   it('saves state to localStorage', () => {
     const expectedState: Partial<State> = {
       mocks: [
         {
-          isUsedInSetup: true,
           mockTitle: 'example',
           mockOptions: {
             success: {
@@ -133,15 +124,6 @@ describe('dynamicMsw', () => {
             optionTwo: { defaultValue: 'hello' },
           },
           openPageURL: 'yes-page',
-        },
-        {
-          isUsedInSetup: false,
-          mockOptions: {
-            success: {
-              defaultValue: true,
-            },
-          },
-          mockTitle: 'unused-example',
         },
       ],
       scenarios: [],
@@ -155,7 +137,6 @@ describe('dynamicMsw', () => {
     const expectedState: State = {
       mocks: [
         {
-          isUsedInSetup: true,
           mockTitle: 'example',
           mockOptions: {
             success: { ...mockOptions.success, selectedValue: false },
@@ -164,15 +145,6 @@ describe('dynamicMsw', () => {
             },
           },
           openPageURL: 'no-page',
-        },
-        {
-          isUsedInSetup: false,
-          mockOptions: {
-            success: {
-              defaultValue: true,
-            },
-          },
-          mockTitle: 'unused-example',
         },
       ],
       scenarios: [],
@@ -192,40 +164,77 @@ describe('dynamicMsw', () => {
       success: 'no',
     });
   });
+});
 
-  it('initializes with storage state', async () => {
-    saveToStorage({
-      mocks: [
-        {
-          isUsedInSetup: true,
-          mockTitle: 'example',
-          mockOptions: {
-            success: {
-              options: [true, false],
-              defaultValue: true,
-              selectedValue: false,
-            },
-          },
-        },
-        {
-          isUsedInSetup: false,
-          mockOptions: {
-            success: {
-              defaultValue: true,
-            },
-          },
-          mockTitle: 'unused-example',
-        },
-      ],
-      scenarios: [],
+describe('createMock -> without saving to local storage', () => {
+  beforeAll(() => {
+    localStorage.removeItem(dynamicMswStorageKey);
+    initializeWorker({
+      mocks: [exampleMock],
+      setupServer,
+      config: { saveToLocalStorage: false },
+      startFnArg: { onUnhandledRequest: 'bypass' },
     });
-
-    initializeWorker({ mocks: [exampleMock], setupServer });
+  });
+  afterEach(() => {
+    resetHandlers();
+  });
+  afterAll(() => {
+    stopWorker();
+  });
+  it('should not save to local storage', async () => {
+    const storageSpy = jest.spyOn(localStorage, 'setItem');
+    initializeWorker({
+      mocks: [exampleMock],
+      setupServer,
+      config: { saveToLocalStorage: false },
+      startFnArg: { onUnhandledRequest: 'bypass' },
+    });
+    exampleMock.updateMock({ success: false });
+    resetHandlers();
+    expect(storageSpy).not.toBeCalled();
+  });
+  it('works when initilized', async () => {
+    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
+      res.json()
+    );
+    expect(exampleFetch).toEqual({
+      success: 'yes',
+    });
+  });
+  it('does not resolve unused mocks', async () => {
+    expect.assertions(1);
+    await fetch('http://localhost:1234/unused-example').catch((err) => {
+      expect(err).toBeInstanceOf(Error);
+    });
+  });
+  it('works when updateMock is called', async () => {
+    exampleMock.updateMock({ success: false });
     const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
       (res) => res.json()
     );
     expect(updatedExampleFetch).toEqual({
       success: 'no',
+    });
+  });
+  it('works when resetMock is called', async () => {
+    exampleMock.updateMock({ success: false });
+    exampleMock.resetMock();
+    const resetExampleFetch = await fetch('http://localhost:1234/test').then(
+      (res) => res.json()
+    );
+    expect(resetExampleFetch).toEqual({
+      success: 'yes',
+    });
+  });
+  it('should reset when resetHandlers is called', async () => {
+    exampleMock.updateMock({ success: false });
+    resetHandlers();
+    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
+      res.json()
+    );
+    expect(exampleFetch).toEqual({
+      success: 'yes',
     });
   });
 });
