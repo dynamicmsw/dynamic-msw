@@ -184,10 +184,11 @@ export const getInputType = (
 
 export const isMockActive = (state: State, mockTitle: string) => {
   const activeScenario = state.scenarios?.find(({ isActive }) => isActive);
-
-  return Boolean(
-    activeScenario
-      ? activeScenario.mocks.find((data) => mockTitle === data.mockTitle)
-      : true
-  );
+  if (activeScenario) {
+    const foundTitle = activeScenario.mocks.find(
+      (data) => mockTitle === data.originalMockTitle
+    );
+    return typeof foundTitle === 'undefined' ? true : false;
+  }
+  return true;
 };
