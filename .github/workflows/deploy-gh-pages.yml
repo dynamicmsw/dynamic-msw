@@ -38,6 +38,7 @@ jobs:
       - name: Build dashboard storybook
         run: yarn nx run dashboard:build-storybook:ci
         env:
+          STORYBOOK_PREVIEW: true
           STORYBOOK_PUBLIC_PATH: /dynamic-msw/
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload artifact
