@@ -8,6 +8,8 @@ jobs:
   build-dashboard-storybook:
     name: build-dashboard-storybook
     runs-on: ubuntu-latest
+    outputs:
+      dashboardUpdated: ${{ steps.buildDashboard.outputs.dashboardUpdated }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -39,16 +41,19 @@ jobs:
           git config user.email "bramzijpcode@gmail.com"
       - run: yarn --immutable
       - name: Build dashboard storybook
-        run: yarn nx run dashboard:build-storybook:ci
+        id: buildDashboard
+        run: yarn nx affected --target=build-storybook --configuration=ci | grep -q 'Successfully ran target build-storybook for 0 projects' && echo "dashboardUpdated=\"false\"" >> $GITHUB_OUTPUT || echo "dashboardUpdated=\"true\"" >> $GITHUB_OUTPUT
         env:
           STORYBOOK_PREVIEW: true
           STORYBOOK_PUBLIC_PATH: /dynamic-msw/
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - name: Upload artifact
+        if: ${{ steps.buildDashboard.outputs.dashboard == "true" }}
         uses: actions/upload-pages-artifact@v1
         with:
           path: ./dist/storybook/dashboard
   deploy-dashboard-storybook:
+    if: ${{ needs.build-dashboard-storybook.outputs.dashboardUpdated == 'true' }}
     runs-on: ubuntu-latest
     needs: build-dashboard-storybook
     permissions:
