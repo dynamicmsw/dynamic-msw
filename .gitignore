@@ -9,6 +9,15 @@
 node_modules
 package-lock.json
 
+# yarn berry
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # IDEs and editors
 /.idea
 .project

@@ -34,6 +34,8 @@ jobs:
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
+      - name: Enable corepack
+        run: corepack enable
       - name: Cache modules
         id: cache-modules
         uses: actions/cache@v3
@@ -42,6 +44,7 @@ jobs:
         with:
           path: |
             node_modules
+            .yarn
             ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
           restore-keys: |
