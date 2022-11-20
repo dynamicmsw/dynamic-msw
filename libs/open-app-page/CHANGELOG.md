@@ -2,6 +2,8 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.5.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.4.0...v1.5.0) (2022-11-20)
+
 ## [1.4.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.3.2...v1.4.0) (2022-11-13)
 
 ### [1.3.2](https://github.com/dynamicmsw/dynamic-msw/compare/v1.3.1...v1.3.2) (2022-11-06)
