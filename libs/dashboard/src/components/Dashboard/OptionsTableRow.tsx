@@ -46,14 +46,22 @@ export const OptionsTableRow: FC<OptionsTableRowProps> = ({
             'Overwritten by active scenario.'
           }
           css={(theme) => ({
-            display: 'inline-block',
+            display: 'inline-flex',
             borderRadius: '100%',
             width: '20px',
             height: '20px',
             border: 'solid 2px #ebebeb',
             background: isActive ? theme.colors.romance : theme.colors.warmPink,
+            fontSize: '10px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#fbfbfb',
+            fontWeight: 'bold',
+            fontFamily: 'monospace',
           })}
-        />
+        >
+          {bootstrapScenario ? 'S' : 'M'}
+        </span>
       </Spacing>
     </TableCell>
 
