@@ -11,7 +11,7 @@ import { createMock } from './createMock';
 
 const mockOptions = {
   success: {
-    options: [true, false],
+    options: [true, false] as const,
     defaultValue: true,
   },
   optionTwo: 'hello',
@@ -118,7 +118,7 @@ describe('createMock', () => {
           mockTitle: 'example',
           mockOptions: {
             success: {
-              options: [true, false],
+              options: [true, false] as const,
               defaultValue: true,
             },
             optionTwo: { defaultValue: 'hello' },

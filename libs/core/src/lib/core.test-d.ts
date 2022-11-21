@@ -9,7 +9,7 @@ export const exampleMock = createMock(
     mockTitle: 'example',
     mockOptions: {
       success: {
-        options: [true, false],
+        options: [true, false] as const,
         defaultValue: true,
       },
     },
@@ -27,8 +27,9 @@ export const variatedExampleMock = createMock(
     openPageURL: '#',
     mockOptions: {
       success: {
-        options: ['true', 'false'],
+        options: ['true', 'false', 0] as const,
       },
+      alternativeOptions: ['true', 'false', 0] as const,
       someTextOption: 'text value',
       someNumberOption: 123,
       someUndefinedOption: {
@@ -54,7 +55,7 @@ describe('createMock type definitions', () => {
         mockTitle: 'example',
         mockOptions: {
           success: {
-            options: [true, false],
+            options: [true, false] as const,
             defaultValue: true,
           },
           someTextOption: 'text value',
@@ -166,6 +167,10 @@ describe('createMock type definitions', () => {
     });
     // ✅
     variatedExampleMock.updateMock({
+      alternativeOptions: 'true',
+    });
+    // ✅
+    variatedExampleMock.updateMock({
       someNumberOption: 123,
     });
     // ❌
@@ -198,6 +203,7 @@ describe('createScenario type definitions', () => {
       {
         variatedExampleMock: {
           someTextOption: 'someTextOption',
+          alternativeOptions: 'true',
         },
       }
     );
@@ -216,6 +222,9 @@ describe('createScenario type definitions', () => {
           // ❌ invalid value
           // @ts-expect-error invalid value as type is number
           someNumberOption: 'asdf',
+          // ❌ invalid value
+          // @ts-expect-error invalid value as type is 0 | "true" | "false"
+          alternativeOptions: 'asdf',
           // ❌ invalid value
           // @ts-expect-error invalid value as type is string
           someUndefinedOption: 1,

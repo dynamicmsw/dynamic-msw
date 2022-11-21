@@ -1,5 +1,10 @@
 # TODOS
 
+1. refactor types
+1. create server side function that can sync storage data for server side rendering. See if this is possible with Next.js
+1. disable storage saving by default.
+1. add required option to select/text/number mock options
+1. add option to make scenario dashboard config expandable. reconsider
 1. test selected value undefined logics in dashboard
 1. types: refactor namings and cleanup and export more. (createMock args are important type defs)
 1. smoke test all docs

@@ -11,7 +11,7 @@ export type StateOptions<T extends OptionType = OptionType> = Record<
   string,
   {
     optionTitle?: string;
-    options?: T[];
+    options?: ReadonlyArray<T>;
     selectedValue?: T;
     type?: OptionRenderType;
     defaultValue?: T;
@@ -19,7 +19,7 @@ export type StateOptions<T extends OptionType = OptionType> = Record<
 >;
 
 export type SelectOptionsType<T extends OptionType = OptionType> = {
-  options: T[];
+  options: ReadonlyArray<T>;
   defaultValue?: T;
   type?: never;
 };
@@ -32,7 +32,7 @@ type NoDefaultOptionsType = {
 
 export type Options<T extends OptionType = OptionType> = Record<
   string,
-  SelectOptionsType<T> | NoDefaultOptionsType | T
+  SelectOptionsType<T> | NoDefaultOptionsType | T | ReadonlyArray<T>
 >;
 
 interface OptionRenderTypeMap {
@@ -46,8 +46,10 @@ export type ConvertedStateOptions<T extends StateOptions = StateOptions> = {
     ? T[Key]['defaultValue'] extends boolean
       ? boolean
       : T[Key]['defaultValue']
-    : T[Key]['options'] extends OptionType[]
+    : T[Key]['options'] extends ReadonlyArray<OptionType>
     ? ArrayElementType<T[Key]['options']>
+    : T[Key] extends ReadonlyArray<OptionType>
+    ? ArrayElementType<T[Key]>
     : OptionRenderTypeMap[T[Key]['type']];
 };
 
@@ -60,6 +62,8 @@ export type ConvertedOptions<T extends Options = Options> = {
       : never
     : T[Key] extends true | false
     ? boolean
+    : T[Key] extends ReadonlyArray<OptionType>
+    ? ArrayElementType<T[Key]>
     : T[Key];
 };
 

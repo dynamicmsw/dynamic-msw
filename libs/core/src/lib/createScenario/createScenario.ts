@@ -71,16 +71,22 @@ export class CreateScenario<T extends Mocks = Mocks> {
               .selectedValue;
           const defaultValue = this.mockOptions?.[key][stateMockOptionKey];
           const sourceMockOption = currentMock.mockOptions[stateMockOptionKey];
-          const sourceMockOptionIsObject = typeof sourceMockOption === 'object';
+          const isArray = Array.isArray(sourceMockOption);
+          const sourceMockOptionIsObject =
+            typeof sourceMockOption === 'object' &&
+            !Array.isArray(sourceMockOption);
           return {
             ...prev,
             [stateMockOptionKey]: {
               ...(sourceMockOptionIsObject ? sourceMockOption : {}),
+              ...(isArray ? { options: sourceMockOption } : {}),
               ...(typeof defaultValue !== 'undefined'
                 ? { defaultValue }
                 : {
                     defaultValue: sourceMockOptionIsObject
-                      ? sourceMockOption.defaultValue
+                      ? //TODO: type defs got nasty so it needs some refactoring
+                        (sourceMockOption as { defaultValue?: unknown })
+                          .defaultValue
                       : sourceMockOption,
                   }),
               selectedValue,

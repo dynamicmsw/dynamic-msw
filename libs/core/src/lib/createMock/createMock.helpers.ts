@@ -56,13 +56,19 @@ export const convertMockOptionsToState = (
 ): StateOptions =>
   (Object.keys(options) as Array<keyof Options>).reduce((prev, optionKey) => {
     const option = options[optionKey];
-    const isObject = typeof option === 'object';
-    const defaultValue = isObject ? option.defaultValue : option;
+    const isObject = typeof option === 'object' && !Array.isArray(option);
+    const defaultValue = isObject
+      ? //TODO: type defs got nasty so it needs some refactoring
+        (option as { defaultValue?: unknown }).defaultValue
+      : Array.isArray(option)
+      ? undefined
+      : option;
     const selectedValue = activeOptoins?.[optionKey];
     return {
       ...prev,
       [optionKey]: {
         ...(isObject ? option : {}),
+        ...(Array.isArray(option) ? { options: option } : {}),
         defaultValue,
         selectedValue:
           selectedValue === defaultValue ? undefined : selectedValue,
