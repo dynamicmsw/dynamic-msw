@@ -166,20 +166,20 @@ export const getInputType = (
   type?: OptionRenderType
 ): OptionRenderType | 'select' => {
   if (type) return type;
-  if (
-    options &&
-    options.length >= 0 &&
-    options.filter((option) => option === true || option === false).length ===
-      options.length
-  ) {
-    return 'boolean';
-  }
   if (options) return 'select';
-  return (
+  const detectedType =
     typeof selectedValue !== 'undefined'
       ? typeof selectedValue
-      : typeof defaultValue
-  ) as OptionRenderType;
+      : typeof defaultValue;
+  switch (detectedType) {
+    case 'string':
+      return 'text';
+    case 'boolean':
+    case 'number':
+      return detectedType;
+    default:
+      throw Error(`Invalid input type: ${detectedType}`);
+  }
 };
 
 export const isMockActive = (state: State, mockTitle: string) => {
