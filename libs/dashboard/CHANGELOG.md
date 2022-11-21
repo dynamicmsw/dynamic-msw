@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+### [1.5.1](https://github.com/dynamicmsw/dynamic-msw/compare/v1.5.0...v1.5.1) (2022-11-21)
+
+
+### Bug Fixes
+
+* **dashboard:** text input type not rendering ([138865b](https://github.com/dynamicmsw/dynamic-msw/commit/138865bb693e0796b4aab0cd1da1c65920c48e5a))
+
 ## [1.5.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.4.0...v1.5.0) (2022-11-20)
 
 
