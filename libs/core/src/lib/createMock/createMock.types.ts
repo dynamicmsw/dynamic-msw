@@ -48,6 +48,8 @@ export type ConvertedStateOptions<T extends StateOptions = StateOptions> = {
       : T[Key]['defaultValue']
     : T[Key]['options'] extends OptionType[]
     ? ArrayElementType<T[Key]['options']>
+    : T[Key] extends unknown[]
+    ? ArrayElementType<T[Key]>
     : OptionRenderTypeMap[T[Key]['type']];
 };
 
@@ -60,6 +62,8 @@ export type ConvertedOptions<T extends Options = Options> = {
       : never
     : T[Key] extends true | false
     ? boolean
+    : T[Key] extends unknown[]
+    ? ArrayElementType<T[Key]>
     : T[Key];
 };
 
