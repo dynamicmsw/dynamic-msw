@@ -106,8 +106,11 @@ export const Dashboard: FC<DashboardProps> = () => {
                   background: '#ebebeb',
                   padding: '4px',
                   borderRadius: '4px',
+                  overflowX: 'auto',
                 }
-              : {}
+              : {
+                  overflowX: 'auto',
+                }
           }
         >
           {/* TODO: add all flex types to align props */}
@@ -160,7 +163,6 @@ export const Dashboard: FC<DashboardProps> = () => {
             columns={4}
             css={{
               gridTemplateColumns: `auto minmax(200px, 1fr) auto minmax(auto, 300px)`,
-              overflowX: 'auto',
             }}
             backgroundColorEven="white"
             backgroundColorOdd="alabaster"
