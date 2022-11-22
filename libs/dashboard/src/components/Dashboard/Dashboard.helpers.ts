@@ -10,7 +10,7 @@ import { saveToStorage } from '@dynamic-msw/core';
 
 export interface ConvertedMockOptions {
   type?: OptionRenderType;
-  options?: OptionType[];
+  options?: ReadonlyArray<OptionType>;
   title: string;
   key: string;
   defaultValue?: OptionType;
@@ -162,7 +162,7 @@ export const convertOptionValue = (value?: string | number | boolean) =>
 export const getInputType = (
   defaultValue?: OptionType,
   selectedValue?: OptionType,
-  options?: OptionType[],
+  options?: ReadonlyArray<OptionType>,
   type?: OptionRenderType
 ): OptionRenderType | 'select' => {
   if (type) return type;

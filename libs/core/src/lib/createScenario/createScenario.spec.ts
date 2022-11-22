@@ -16,7 +16,7 @@ export const variatedExampleMock = createMock(
         type: 'text',
       },
       someSelectOption: {
-        options: ['nl', 'en'],
+        options: ['nl', 'en'] as const,
         defaultValue: 'nl',
       },
     },
@@ -87,7 +87,7 @@ describe('createScenario', () => {
           defaultValue: undefined,
         },
         someSelectOption: {
-          options: ['nl', 'en'],
+          options: ['nl', 'en'] as const,
           defaultValue: 'nl',
         },
         someNumberOption: { defaultValue: 1111 },

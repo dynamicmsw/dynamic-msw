@@ -11,7 +11,7 @@ export const loginMock = createMock(
     openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
     mockOptions: {
       userRole: {
-        options: ['ADMIN', 'MODERATOR', 'DEFAULT'],
+        options: ['ADMIN', 'MODERATOR', 'DEFAULT'] as const,
         defaultValue: 'ADMIN',
       },
       loginSuccess: true,
@@ -40,7 +40,7 @@ export const featureFlagsMock = createMock(
   {
     mockTitle: 'Feature flags',
     mockOptions: {
-      invoiceDashboardVersion: { options: ['v1', 'v2', 'v3'] },
+      invoiceDashboardVersion: ['v1', 'v2', 'v3'] as const,
       financeFlowIsEnabled: true,
       buyFlowIsEnabled: true,
       leaseFlowIsEnabled: false,
@@ -63,7 +63,7 @@ export const productDataMock = createMock(
       multipleColorOptions: true,
       isInStock: true,
       deliveryTime: {
-        options: ['Next day', '3 days', '1 week', '3 weeks'],
+        options: ['Next day', '3 days', '1 week', '3 weeks'] as const,
       },
       hasFAQSection: false,
     },
@@ -147,10 +147,11 @@ export const exampleForAllOptionTypes = createMock(
   {
     mockTitle: 'Example with all option types',
     mockOptions: {
-      selectOptions: {
-        options: ['Option 1', 'Option 2', 1337, false],
+      selectOption: {
+        options: ['Option 1', 'Option 2', 1337, false] as const,
         defaultValue: false,
       },
+      selectOptionWithoutDefault: ['no', 'default'] as const,
       booleanOption: true,
       numberOption: 1337,
       textOption: 'Mock Service Worker is awesome!',

@@ -53,9 +53,10 @@ export const variatedExampleMock = createMock(
         type: 'text',
       },
       someSelectOption: {
-        options: ['nl', 'en'],
+        options: ['nl', 'en'] as const,
         defaultValue: 'nl',
       },
+      someSelectOptionWithoutDefault: ['no', 'default'] as const,
     },
   },
   (options) => {
