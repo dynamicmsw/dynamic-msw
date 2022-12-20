@@ -3,6 +3,7 @@ import type {
   ConvertedOptions,
   CreateMockHandlerFn,
   HandlerArray,
+  MockData,
 } from '../createMock/createMock.types';
 
 export interface CreateMockOptions {
@@ -21,7 +22,9 @@ export type Mocks = Record<string, CreateMock>;
 
 export type SetupMocksFn = (
   options: CreateMockOptions,
-  createMockHandler: CreateMockHandlerFn
+  createMockHandler: CreateMockHandlerFn,
+  mockData: MockData,
+  context: { updateMockData(data: MockData): void }
 ) => HandlerArray;
 
 export type OpenPageFn<T> = (mockConfig: T) => string;

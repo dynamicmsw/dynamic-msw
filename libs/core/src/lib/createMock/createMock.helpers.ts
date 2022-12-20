@@ -21,8 +21,17 @@ export const getActiveOptions: ConvertMockOptionsFn = (options) =>
     {} as ConvertedStateOptions
   );
 
-export const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
-  const createMockHandlerReturnValue = createMockHandler(options);
+export const initializeMocks: SetupMocksFn = (
+  options,
+  createMockHandler,
+  context,
+  mockData = {}
+) => {
+  const createMockHandlerReturnValue = createMockHandler(
+    options,
+    mockData || {},
+    context
+  );
   const arrayOfMocks = Array.isArray(createMockHandlerReturnValue)
     ? createMockHandlerReturnValue
     : [createMockHandlerReturnValue];

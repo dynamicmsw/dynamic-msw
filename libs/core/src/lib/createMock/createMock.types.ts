@@ -67,8 +67,13 @@ export type ConvertedOptions<T extends Options = Options> = {
     : T[Key];
 };
 
-export type CreateMockHandlerFn<T extends Options = Options> = (
-  config: ConvertedOptions<T>
+export type CreateMockHandlerFn<
+  T extends Options = Options,
+  D extends MockData = MockData
+> = (
+  config: ConvertedOptions<T>,
+  mockData: D,
+  context: { updateMockData(updateData: Partial<D>): void }
 ) => RestHandler | GraphQLHandler | HandlerArray;
 
 export type OpenPageFn<T extends Options = Options> = (
@@ -81,13 +86,17 @@ export type ConvertMockOptionsFn = (
 
 export type SetupMocksFn = (
   options: ConvertedStateOptions<StateOptions>,
-  createMockHandler: CreateMockHandlerFn
+  createMockHandler: CreateMockHandlerFn,
+  context: { updateMockData(data: Partial<MockData>): void },
+  mockData: MockData
 ) => HandlerArray;
 
 export type HandlerArray = Array<RestHandler | GraphQLHandler>;
+export type MockData = Record<string, Record<symbol, unknown> | unknown[]>;
 
-export interface CreateMockArg<T extends Options> {
+export interface CreateMockArg<O extends Options, M extends MockData> {
   mockTitle: string;
-  openPageURL?: string | OpenPageFn<ConvertedOptions<T>>;
-  mockOptions?: T;
+  openPageURL?: string | OpenPageFn<ConvertedOptions<O>>;
+  mockOptions?: O;
+  mockData?: M;
 }

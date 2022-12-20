@@ -34,6 +34,30 @@ export const exampleMock = createMock(
   }
 );
 
+const exampleWithData = createMock(
+  {
+    mockTitle: 'example with data',
+    openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
+    mockOptions,
+    mockData: {
+      testObj: { some: 'key' },
+      testArr: [{ some: 'key' }],
+    } as {
+      testObj: { some: string | number };
+      testArr: { some: string | number }[];
+    },
+  },
+  (_config, mockData, { updateMockData }) => {
+    return rest.get(
+      'http://localhost:1234/test-data',
+      async (_req, res, ctx) => {
+        updateMockData({ testObj: { some: 1 }, testArr: [{ some: 'thing' }] });
+        return res(ctx.json(mockData));
+      }
+    );
+  }
+);
+
 export const unusedMock = createMock(
   {
     mockTitle: 'unused-example',
@@ -164,6 +188,7 @@ describe('createMock', () => {
       success: 'no',
     });
   });
+  // });
 });
 
 describe('createMock -> without saving to local storage', () => {
@@ -235,6 +260,50 @@ describe('createMock -> without saving to local storage', () => {
     );
     expect(exampleFetch).toEqual({
       success: 'yes',
+    });
+  });
+});
+
+describe('createMock -> mockData', () => {
+  beforeAll(() => {
+    initializeWorker({
+      mocks: [exampleWithData],
+      setupServer,
+      startFnArg: { onUnhandledRequest: 'bypass' },
+    });
+  });
+  afterEach(() => {
+    resetHandlers();
+  });
+  afterAll(() => {
+    stopWorker();
+  });
+
+  it('updates mockData', async () => {
+    const exampleDataFetch = await fetch(
+      'http://localhost:1234/test-data'
+    ).then((res) => res.json());
+
+    expect(exampleDataFetch).toEqual({
+      testObj: { some: 'key' },
+      testArr: [{ some: 'key' }],
+    });
+    const exampleDataFetch2 = await fetch(
+      'http://localhost:1234/test-data'
+    ).then((res) => res.json());
+    expect(exampleDataFetch2).toEqual({
+      testObj: { some: 1 },
+      testArr: [{ some: 'thing' }],
+    });
+    exampleWithData.updateMockData({
+      testObj: { some: 'things never change' },
+    });
+    const exampleDataFetch3 = await fetch(
+      'http://localhost:1234/test-data'
+    ).then((res) => res.json());
+    expect(exampleDataFetch3).toEqual({
+      testObj: { some: 'things never change' },
+      testArr: [{ some: 'thing' }],
     });
   });
 });
