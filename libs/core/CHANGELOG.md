@@ -2,6 +2,14 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.6.0-rc.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.5.1...v1.6.0-rc.0) (2022-12-20)
+
+
+### Features
+
+* **core:** add updateable mock data option ([5155dc2](https://github.com/dynamicmsw/dynamic-msw/commit/5155dc215fc84e51f6af744e4b8bd8417c2693da))
+* **core:** allow for non object select options ([#117](https://github.com/dynamicmsw/dynamic-msw/issues/117)) ([a97ec2a](https://github.com/dynamicmsw/dynamic-msw/commit/a97ec2a986f6aac9cf49e74b0707eb673ff03d8e))
+
 ### [1.5.1](https://github.com/dynamicmsw/dynamic-msw/compare/v1.5.0...v1.5.1) (2022-11-21)
 
 ## [1.5.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.4.0...v1.5.0) (2022-11-20)
