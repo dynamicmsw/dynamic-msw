@@ -16,25 +16,33 @@ import type {
   CreateMockHandlerFn,
   OptionType,
   ConvertedStateOptions,
+  MockData,
 } from './createMock.types';
 import { addMock, updateMock } from './mocksStorage';
 
-export class CreateMock<T extends Options = Options> {
-  public mockTitle: CreateMockArg<T>['mockTitle'];
-  public mockOptions: CreateMockArg<T>['mockOptions'];
+export class CreateMock<
+  O extends Options = Options,
+  D extends MockData = MockData
+> {
+  public mockTitle: CreateMockArg<O, D>['mockTitle'];
+  public mockOptions: CreateMockArg<O, D>['mockOptions'];
+  public mockData: CreateMockArg<O, D>['mockData'];
+  private activeMockData: CreateMockArg<O, D>['mockData'];
   private activeOptions: ConvertedStateOptions<StateOptions<OptionType>>;
-  private openPageURL: CreateMockArg<T>['openPageURL'];
-  public createMockHandler: CreateMockHandlerFn<T>;
+  private openPageURL: CreateMockArg<O, D>['openPageURL'];
+  public createMockHandler: CreateMockHandlerFn<O, D>;
   public mockHandlers: HandlerArray;
   private shouldSaveToStorage = true;
 
   constructor(
-    options: CreateMockArg<T>,
-    createMockHandler: CreateMockHandlerFn<T>
+    options: CreateMockArg<O, D>,
+    createMockHandler: CreateMockHandlerFn<O, D>
   ) {
     this.mockTitle = options.mockTitle;
     this.mockOptions = options.mockOptions;
     this.openPageURL = options.openPageURL;
+    this.mockData = options.mockData;
+    this.activeMockData = options.mockData;
     this.createMockHandler = createMockHandler;
   }
   private get stateFromStorage() {
@@ -71,7 +79,9 @@ export class CreateMock<T extends Options = Options> {
     this.activeOptions = this.initialActiveOptions;
     this.mockHandlers = initializeMocks(
       this.activeOptions,
-      this.createMockHandler
+      this.createMockHandler,
+      { updateMockData: this.updateMockData },
+      this.activeMockData
     );
     if (this.shouldSaveToStorage) {
       addMock({
@@ -83,11 +93,13 @@ export class CreateMock<T extends Options = Options> {
     }
   };
 
-  public updateMock = (updateObject: Partial<ConvertedOptions<T>>) => {
+  public updateMockOptions = (updateObject: Partial<ConvertedOptions<O>>) => {
     this.activeOptions = { ...this.initialActiveOptions, ...updateObject };
     this.mockHandlers = initializeMocks(
       this.activeOptions,
-      this.createMockHandler
+      this.createMockHandler,
+      { updateMockData: this.updateMockData },
+      this.activeMockData
     );
     global.__mock_worker?.use(...this.mockHandlers);
     if (this.shouldSaveToStorage) {
@@ -102,13 +114,29 @@ export class CreateMock<T extends Options = Options> {
     }
   };
 
+  public updateMock = this.updateMockOptions;
+
+  public updateMockData = (updateData: Partial<D>) => {
+    this.activeMockData = { ...this.activeMockData, ...updateData };
+    this.mockHandlers = initializeMocks(
+      this.activeOptions,
+      this.createMockHandler,
+      { updateMockData: this.updateMockData },
+      this.activeMockData
+    );
+    global.__mock_worker?.use(...this.mockHandlers);
+  };
+
   public resetMock = () => {
     this.activeOptions = getActiveOptions(
       convertMockOptionsToState(this.mockOptions, {})
     );
+    this.activeMockData = this.mockData;
     this.mockHandlers = initializeMocks(
       this.activeOptions,
-      this.createMockHandler
+      this.createMockHandler,
+      { updateMockData: this.updateMockData },
+      this.activeMockData
     );
     global.__mock_worker?.use(...this.mockHandlers);
     if (this.shouldSaveToStorage) {
@@ -121,9 +149,12 @@ export class CreateMock<T extends Options = Options> {
   };
 }
 
-export const createMock = <T extends Options = Options>(
-  options: CreateMockArg<T>,
-  createMockHandler: CreateMockHandlerFn<T>
+export const createMock = <
+  O extends Options = Options,
+  D extends MockData = MockData
+>(
+  options: CreateMockArg<O, D>,
+  createMockHandler: CreateMockHandlerFn<O, D>
 ) => new CreateMock(options, createMockHandler);
 
 export type CreateMockFn = typeof createMock;

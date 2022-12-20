@@ -5,8 +5,17 @@ import type {
   Mocks,
 } from './createScenario.types';
 
-const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
-  const createMockHandlerReturnValue = createMockHandler(options.mockOptions);
+const initializeMocks: SetupMocksFn = (
+  options,
+  createMockHandler,
+  mockData,
+  context
+) => {
+  const createMockHandlerReturnValue = createMockHandler(
+    options.mockOptions,
+    mockData,
+    context
+  );
   const arrayOfMocks = Array.isArray(createMockHandlerReturnValue)
     ? createMockHandlerReturnValue
     : [createMockHandlerReturnValue];
@@ -22,8 +31,15 @@ export const initializeManyMocks = ({
 }) =>
   Object.keys(mocks).flatMap((mockKey, index) => {
     const mockHandler = mocks[mockKey].createMockHandler;
+    const mockData = mocks[mockKey].mockData;
+    const updateMockData = mocks[mockKey].updateMockData;
     const mockOptions = createMockOptions[index];
-    const initializedMocks = initializeMocks(mockOptions, mockHandler);
+    const initializedMocks = initializeMocks(
+      mockOptions,
+      mockHandler,
+      mockData,
+      { updateMockData }
+    );
     return initializedMocks;
   });
 
