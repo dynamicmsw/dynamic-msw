@@ -11,6 +11,14 @@ on:
           - alpha
           - beta
           - rc
+      releaseAs:
+        type: choice
+        description: Pre ID
+        required: true
+        options:
+          - prepatch
+          - preminor
+          - premajor
 
 jobs:
   quality-assurance:
@@ -63,7 +71,7 @@ jobs:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 
       - name: Version
-        run: yarn nx run dashboard:versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }} --skip-nx-cache
+        run: yarn nx run dashboard:versionCI --releaseAs=${{ github.event.inputs.releaseAs }} --preid=${{ github.event.inputs.preid }} --skip-nx-cache
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 
