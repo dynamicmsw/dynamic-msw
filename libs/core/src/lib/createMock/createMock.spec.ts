@@ -1,240 +1,217 @@
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-
-import type { State } from '../storageState/storageState';
-import {
-  loadFromStorage,
-  dynamicMswStorageKey,
-} from '../storageState/storageState';
-import { resetHandlers, stopWorker, initializeWorker } from '../worker/worker';
+import type { CreateMockPrivateReturnType } from './createMock';
 import { createMock } from './createMock';
+import { createStorageKey } from './createMock.helpers';
+import type {
+  ConvertedMockOptions,
+  MockData,
+  MockOptions,
+  OpenPageUrlFn,
+  StoredMockState,
+} from './createMock.types';
+
+const mockTitle = 'test mock title';
 
 const mockOptions = {
-  success: {
-    options: [true, false] as const,
-    defaultValue: true,
+  string: 'tanga',
+  number: 1337,
+  boolean: true,
+  options: ['tanga', 'alpha', 'beta'] as const,
+  variableOptions: ['tanga', 0, true] as const,
+  objOptions: { options: ['tanga', 0, true] as const },
+  objOptionsWithDefaultValue: {
+    options: ['tanga', 0, true] as const,
+    defaultValue: 'tanga',
   },
-  optionTwo: 'hello',
-};
-
-export const exampleMock = createMock(
-  {
-    mockTitle: 'example',
-    openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
-    mockOptions,
+  objTypeString: { inputType: 'string' },
+  objTypeNumber: { inputType: 'number' },
+  objTypeBoolean: { inputType: 'boolean' },
+  objTypeOptions: {
+    inputType: 'string',
+    options: ['tanga', 0, true] as const,
   },
-  (config) => {
-    return rest.get('http://localhost:1234/test', async (_req, res, ctx) => {
-      return res(
-        ctx.json({
-          success: config.success === true ? 'yes' : 'no',
-        })
-      );
-    });
-  }
-);
+  objTypeStringDefaultValue: {
+    inputType: 'string',
+    defaultValue: 'asdf',
+  },
+} satisfies MockOptions;
 
-export const unusedMock = createMock(
-  {
-    mockTitle: 'unused-example',
-    mockOptions: {
-      success: true,
+export const convertedMockOptions = {
+  string: 'tanga',
+  number: 1337,
+  boolean: true,
+  options: undefined,
+  variableOptions: undefined,
+  objOptions: undefined,
+  objOptionsWithDefaultValue: 'tanga',
+  objTypeString: undefined,
+  objTypeNumber: undefined,
+  objTypeBoolean: undefined,
+  objTypeOptions: undefined,
+  objTypeStringDefaultValue: 'asdf',
+} satisfies ConvertedMockOptions<typeof mockOptions>;
+
+const openPageURLFn: OpenPageUrlFn<typeof mockOptions> = (x) => `${x.string}`;
+
+const storedMockData = {
+  mockTitle: mockTitle,
+  openPageURL: openPageURLFn.toString(),
+  mockOptions: {
+    string: { inputType: 'string', defaultValue: 'tanga' },
+    number: { inputType: 'number', defaultValue: 1337 },
+    boolean: { inputType: 'boolean', defaultValue: true },
+    options: {
+      inputType: 'select',
+      options: ['tanga', 'alpha', 'beta'] as const,
+    },
+    variableOptions: {
+      inputType: 'select',
+      options: ['tanga', 0, true] as const,
+    },
+    objOptions: { inputType: 'select', options: ['tanga', 0, true] as const },
+    objOptionsWithDefaultValue: {
+      inputType: 'select',
+      options: ['tanga', 0, true] as const,
+      defaultValue: 'tanga',
+    },
+    objTypeString: { inputType: 'string' },
+    objTypeNumber: { inputType: 'number' },
+    objTypeBoolean: { inputType: 'boolean' },
+    objTypeOptions: {
+      inputType: 'select',
+      options: ['tanga', 0, true] as const,
+    },
+    objTypeStringDefaultValue: {
+      inputType: 'string',
+      defaultValue: 'asdf',
     },
   },
-  (options) => {
-    return rest.get(
-      'http://localhost:1234/unused-example',
-      async (_req, res, ctx) => {
-        return res(ctx.json(options));
-      }
-    );
-  }
+  data: undefined,
+} satisfies StoredMockState<typeof mockOptions, MockData>;
+
+const createMockOptions = {
+  mockTitle,
+  mockOptions,
+  openPageURL: openPageURLFn,
+};
+
+const mockKey = createStorageKey(mockTitle);
+
+export const mockHandlerFnMock = jest.fn();
+mockHandlerFnMock.mockReturnValue(['test']);
+
+export const testMock = createMock(createMockOptions, mockHandlerFnMock);
+
+const workerMock = { use: jest.fn(), resetHandlers: jest.fn() };
+
+(testMock as unknown as CreateMockPrivateReturnType)._setServerOrWorker(
+  workerMock as unknown as Parameters<
+    CreateMockPrivateReturnType['_setServerOrWorker']
+  >[0]
 );
 
-describe('createMock', () => {
-  beforeAll(() => {
-    initializeWorker({
-      mocks: [exampleMock],
-      setupServer,
-      startFnArg: { onUnhandledRequest: 'bypass' },
-    });
-  });
-  afterEach(() => {
-    resetHandlers();
-  });
-  afterAll(() => {
-    stopWorker();
-  });
-
-  it('works when initilized', async () => {
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('does not resolve unused mocks', async () => {
-    expect.assertions(1);
-    await fetch('http://localhost:1234/unused-example').catch((err) => {
-      expect(err).toBeInstanceOf(Error);
-    });
-  });
-  it('works when updateMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(updatedExampleFetch).toEqual({
-      success: 'no',
-    });
-  });
-  it('works when resetMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    exampleMock.resetMock();
-    const resetExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(resetExampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('should reset when resetHandlers is called', async () => {
-    exampleMock.updateMock({ success: false });
-    resetHandlers();
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
-    expect(loadFromStorage().mocks[0].openPageURL).toBe('yes-page');
-  });
-
-  it('saves state to localStorage', () => {
-    const expectedState: Partial<State> = {
-      mocks: [
-        {
-          mockTitle: 'example',
-          mockOptions: {
-            success: {
-              options: [true, false] as const,
-              defaultValue: true,
-            },
-            optionTwo: { defaultValue: 'hello' },
-          },
-          openPageURL: 'yes-page',
-        },
-      ],
-      scenarios: [],
-    };
-    expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
-      expectedState
-    );
-  });
-  it('updates state in localStorage', () => {
-    exampleMock.updateMock({ success: false });
-    const expectedState: State = {
-      mocks: [
-        {
-          mockTitle: 'example',
-          mockOptions: {
-            success: { ...mockOptions.success, selectedValue: false },
-            optionTwo: {
-              defaultValue: 'hello',
-            },
-          },
-          openPageURL: 'no-page',
-        },
-      ],
-      scenarios: [],
-    };
-    expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
-      expectedState
-    );
-  });
-  it('initializes with storage state', async () => {
-    exampleMock.updateMock({ success: false });
-    stopWorker();
-    initializeWorker({ mocks: [exampleMock], setupServer });
-    const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(updatedExampleFetch).toEqual({
-      success: 'no',
-    });
-  });
+afterEach(() => {
+  testMock.reset();
+  jest.resetAllMocks();
+});
+beforeAll(() => {
+  jest.useFakeTimers();
+});
+afterAll(() => {
+  jest.useRealTimers();
 });
 
-describe('createMock -> without saving to local storage', () => {
-  beforeAll(() => {
-    localStorage.removeItem(dynamicMswStorageKey);
-    initializeWorker({
-      mocks: [exampleMock],
-      setupServer,
-      config: { saveToLocalStorage: false },
-      startFnArg: { onUnhandledRequest: 'bypass' },
-    });
+test('createMock initializes, updates and resets properly', () => {
+  // * calls the mock handler function with converted mock options
+  expect(mockHandlerFnMock).toHaveBeenCalledTimes(1);
+  expect(mockHandlerFnMock).toHaveBeenCalledWith(convertedMockOptions, {
+    updateOptions: expect.any(Function),
+    updateData: expect.any(Function),
   });
-  afterEach(() => {
-    resetHandlers();
+
+  // * saves to local storage properly
+  expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
+    storedMockData
+  );
+
+  // * updates properly
+  testMock.updateOptions({ boolean: false });
+  expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual({
+    ...storedMockData,
+    mockOptions: {
+      ...storedMockData.mockOptions,
+      boolean: {
+        inputType: 'boolean',
+        defaultValue: true,
+        selectedValue: false,
+      },
+    },
   });
-  afterAll(() => {
-    stopWorker();
+  expect(workerMock.use).toBeCalledTimes(1);
+  expect(workerMock.use).toHaveBeenCalledWith('test');
+  expect(mockHandlerFnMock).toHaveBeenCalledTimes(2);
+  expect(mockHandlerFnMock).toHaveBeenLastCalledWith(
+    {
+      ...convertedMockOptions,
+      boolean: false,
+    },
+    {
+      updateOptions: expect.any(Function),
+      updateData: expect.any(Function),
+    }
+  );
+
+  // * resets properly
+  testMock.reset();
+  expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
+    storedMockData
+  );
+  expect(workerMock.use).toHaveBeenCalledTimes(2);
+});
+
+const defaultMockData = { test: ['default'] };
+const updatedMockData = { test: ['updated'] };
+
+const testDataMock = jest.fn();
+test('createMock updates data and options from context properly', () => {
+  const contextMock = createMock(
+    {
+      mockTitle: 'context test mock',
+      mockOptions: {
+        boolean: true,
+      },
+      data: defaultMockData,
+    },
+    ({ boolean }, { updateOptions, updateData, data }) => {
+      setTimeout(() => {
+        if (boolean) {
+          updateOptions({ boolean: false });
+          setTimeout(() => {
+            updateData(updatedMockData);
+          }, 2);
+        }
+        testDataMock({ data, boolean });
+      }, 2);
+      return [];
+    }
+  );
+  (contextMock as unknown as CreateMockPrivateReturnType)._setServerOrWorker(
+    workerMock as unknown as Parameters<
+      CreateMockPrivateReturnType['_setServerOrWorker']
+    >[0]
+  );
+  jest.advanceTimersByTime(3);
+  expect(testDataMock).toHaveBeenCalledWith({
+    data: defaultMockData,
+    boolean: true,
   });
-  it('should not save to local storage', async () => {
-    const storageSpy = jest.spyOn(localStorage, 'setItem');
-    initializeWorker({
-      mocks: [exampleMock],
-      setupServer,
-      config: { saveToLocalStorage: false },
-      startFnArg: { onUnhandledRequest: 'bypass' },
-    });
-    exampleMock.updateMock({ success: false });
-    resetHandlers();
-    expect(storageSpy).not.toBeCalled();
+  jest.advanceTimersByTime(2);
+  expect(testDataMock).toHaveBeenLastCalledWith({
+    data: defaultMockData,
+    boolean: false,
   });
-  it('works when initilized', async () => {
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('does not resolve unused mocks', async () => {
-    expect.assertions(1);
-    await fetch('http://localhost:1234/unused-example').catch((err) => {
-      expect(err).toBeInstanceOf(Error);
-    });
-  });
-  it('works when updateMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(updatedExampleFetch).toEqual({
-      success: 'no',
-    });
-  });
-  it('works when resetMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    exampleMock.resetMock();
-    const resetExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(resetExampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('should reset when resetHandlers is called', async () => {
-    exampleMock.updateMock({ success: false });
-    resetHandlers();
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
+  jest.advanceTimersByTime(4);
+  expect(testDataMock).toHaveBeenLastCalledWith({
+    data: updatedMockData,
+    boolean: false,
   });
 });

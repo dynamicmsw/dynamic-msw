@@ -1,135 +1,59 @@
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-
 import { createMock } from '../createMock/createMock';
-import { loadFromStorage } from '../storageState/storageState';
-import { resetHandlers, stopWorker, initializeWorker } from '../worker/worker';
 import { createScenario } from './createScenario';
 
-export const variatedExampleMock = createMock(
+const testMockHandlerFn = jest.fn();
+testMockHandlerFn.mockReturnValue(['test-mock-return-value']);
+const testMock = createMock(
   {
-    mockTitle: 'Variated mock options',
+    mockTitle: 'testMock',
     mockOptions: {
-      someTextOption: 'some text',
-      someNumberOption: 456,
-      someUndefinedOption: {
-        type: 'text',
-      },
-      someSelectOption: {
-        options: ['nl', 'en'] as const,
-        defaultValue: 'nl',
-      },
+      boolean: false,
     },
   },
-  (options) => {
-    const response = {
-      iAmText: options.someTextOption,
-      iAmNumber: options.someNumberOption,
-    };
-    return rest.get(
-      'http://localhost:1234/i-am-relative',
-      async (_req, res, ctx) => {
-        return res(ctx.json(response));
-      }
-    );
-  }
+  testMockHandlerFn
 );
 
-export const exampleScenario = createScenario(
+const otherMockHandlerFnMock = jest.fn();
+otherMockHandlerFnMock.mockReturnValue(['other-mock-return-value']);
+const otherMock = createMock(
   {
-    scenarioTitle: 'example scenario',
-    openPageURL: (config) =>
-      `http://localhost:1234/${config.exampleMock.someNumberOption}`,
+    mockTitle: 'otherMock',
+    mockOptions: {
+      otherMockOption: 'option',
+    },
   },
-  { exampleMock: variatedExampleMock },
-  {
-    exampleMock: { someNumberOption: 1111 },
-  }
+  otherMockHandlerFnMock
 );
 
-export const exampleScenario2 = createScenario(
-  {
-    scenarioTitle: 'example scenario 2',
-    openPageURL: (config) =>
-      `http://localhost:1234/${config.exampleMock.someNumberOption}`,
-  },
-  { exampleMock: variatedExampleMock },
-  {
-    exampleMock: { someNumberOption: 1111 },
-  }
-);
-
-describe('createScenario', () => {
-  beforeAll(() => {
-    initializeWorker({
-      mocks: [variatedExampleMock],
-      scenarios: [exampleScenario, exampleScenario2],
-      setupServer,
-    });
-  });
-  afterEach(() => {
-    resetHandlers();
-  });
-  afterAll(() => {
-    stopWorker();
+const testScenario = createScenario('test scenario')
+  .addMock('testaMockKey', testMock, { boolean: true })
+  .addMock('otherMockKey', otherMock, {
+    otherMockOption: 'works',
   });
 
-  it('saves proper mock config to state', () => {
-    expect(loadFromStorage().scenarios[0].mocks[0]).toEqual({
-      mockTitle: 'exampleMock',
-      originalMockTitle: 'Variated mock options',
-      mockOptions: {
-        someTextOption: {
-          defaultValue: 'some text',
-        },
-        someUndefinedOption: {
-          type: 'text',
-          defaultValue: undefined,
-        },
-        someSelectOption: {
-          options: ['nl', 'en'] as const,
-          defaultValue: 'nl',
-        },
-        someNumberOption: { defaultValue: 1111 },
-      },
-    });
-    expect(loadFromStorage().scenarios[0].openPageURL).toEqual(
-      `http://localhost:1234/1111`
-    );
-  });
-  it('responds with correct data', async () => {
-    exampleScenario.activateScenario();
-    const response = await fetch('http://localhost:1234/i-am-relative').then(
-      (res) => res.json()
-    );
-    expect(response.iAmNumber).toBe(1111);
-  });
-  it('responds with non scenario data when scenario is inactive', async () => {
-    const response = await fetch('http://localhost:1234/i-am-relative').then(
-      (res) => res.json()
-    );
-    expect(response.iAmNumber).toBe(456);
-  });
-  it('updates mock options', async () => {
-    exampleScenario.updateScenario({
-      exampleMock: { someNumberOption: 123123 },
-    });
-    exampleScenario.updateScenario({
-      exampleMock: { someNumberOption: 999 },
-    });
-    const response = await fetch('http://localhost:1234/i-am-relative').then(
-      (res) => res.json()
-    );
-    expect(response.iAmNumber).toBe(999);
-  });
-  it('resets mock options properly', async () => {
-    exampleScenario.updateScenario({
-      exampleMock: { someNumberOption: 123123 },
-    });
-    exampleScenario.resetMocks();
-    const response = await fetch('http://localhost:1234/i-am-relative').then(
-      (res) => res.json()
-    );
-    expect(response.iAmNumber).toBe(1111);
-  });
+afterEach(() => {
+  // testMock.reset();
+});
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
+test('createScenario initializes, updates and resets properly', () => {
+  // * calls the mock handler function with converted mock options
+  expect(testMockHandlerFn).toHaveBeenCalledTimes(2);
+  expect(testMockHandlerFn).toHaveBeenLastCalledWith(
+    {
+      boolean: true,
+    },
+    // TODO: fixme
+    {}
+  );
+  expect(otherMockHandlerFnMock).toHaveBeenCalledTimes(2);
+  expect(otherMockHandlerFnMock).toHaveBeenLastCalledWith(
+    {
+      otherMockOption: 'works',
+    },
+    // TODO: fixme
+    {}
+  );
 });

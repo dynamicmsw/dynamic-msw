@@ -1,93 +1,155 @@
-import type { RestHandler, GraphQLHandler } from 'msw';
+import type { MswHandlers, ArrayElementType } from '../types';
 
-export type ArrayElementType<T extends ReadonlyArray<unknown>> =
-  T extends ReadonlyArray<infer ArrayElementType> ? ArrayElementType : never;
+// * createMock Parameters
 
-export type OptionType = boolean | string | number;
+export interface CreateMockOptions<
+  TOptions extends MockOptions,
+  TData extends MockData
+> {
+  mockTitle: string;
+  openPageURL?: string | OpenPageUrlFn<MockOptions & TOptions>;
+  mockOptions: MockOptions & TOptions;
+  data?: TData;
+}
+export type CreateMockHandlerFn<
+  TOptions extends MockOptions,
+  TData extends MockData
+> = (
+  opts: ConvertedMockOptions<TOptions>,
+  context: CreateMockHandlerContext<TOptions, TData>
+) => MswHandlers | MswHandlers[];
 
-export type OptionRenderType = 'text' | 'number' | 'boolean';
-
-export type StateOptions<T extends OptionType = OptionType> = Record<
-  string,
-  {
-    optionTitle?: string;
-    options?: ReadonlyArray<T>;
-    selectedValue?: T;
-    type?: OptionRenderType;
-    defaultValue?: T;
-  }
->;
-
-export type SelectOptionsType<T extends OptionType = OptionType> = {
-  options: ReadonlyArray<T>;
-  defaultValue?: T;
-  type?: never;
-};
-
-type NoDefaultOptionsType = {
-  options?: never;
-  defaultValue?: never;
-  type: OptionRenderType;
-};
-
-export type Options<T extends OptionType = OptionType> = Record<
-  string,
-  SelectOptionsType<T> | NoDefaultOptionsType | T | ReadonlyArray<T>
->;
-
-interface OptionRenderTypeMap {
-  text: string;
-  number: number;
-  boolean: boolean;
+export interface CreateMockHandlerContext<
+  TOptions extends MockOptions,
+  TData extends MockData
+> {
+  data: TData;
+  updateData(update: TData): void;
+  updateOptions(options: ConvertedMockOptions<TOptions>): void;
 }
 
-export type ConvertedStateOptions<T extends StateOptions = StateOptions> = {
-  [Key in keyof T]: T[Key]['defaultValue'] extends OptionType
-    ? T[Key]['defaultValue'] extends boolean
-      ? boolean
-      : T[Key]['defaultValue']
-    : T[Key]['options'] extends ReadonlyArray<OptionType>
-    ? ArrayElementType<T[Key]['options']>
-    : T[Key] extends ReadonlyArray<OptionType>
-    ? ArrayElementType<T[Key]>
-    : OptionRenderTypeMap[T[Key]['type']];
-};
+export type MockData = Record<symbol, unknown> | undefined;
 
-export type ConvertedOptions<T extends Options = Options> = {
-  [Key in keyof T]: T[Key] extends Record<string, unknown>
-    ? T[Key]['options'] extends SelectOptionsType['options']
-      ? ArrayElementType<T[Key]['options']>
-      : T[Key]['type'] extends OptionRenderType
-      ? OptionRenderTypeMap[T[Key]['type']]
-      : never
-    : T[Key] extends true | false
-    ? boolean
-    : T[Key] extends ReadonlyArray<OptionType>
-    ? ArrayElementType<T[Key]>
-    : T[Key];
-};
-
-export type CreateMockHandlerFn<T extends Options = Options> = (
-  config: ConvertedOptions<T>
-) => RestHandler | GraphQLHandler | HandlerArray;
-
-export type OpenPageFn<T extends Options = Options> = (
-  config: ConvertedOptions<T>
+export type OpenPageUrlFn<T extends MockOptions> = (
+  opts: ConvertedMockOptions<T>
 ) => string;
 
-export type ConvertMockOptionsFn = (
-  options: StateOptions
-) => ConvertedStateOptions<StateOptions>;
+// * MockOptions
 
-export type SetupMocksFn = (
-  options: ConvertedStateOptions<StateOptions>,
-  createMockHandler: CreateMockHandlerFn
-) => HandlerArray;
+export type MockOptions = Record<
+  string,
+  MockOptionsValueType | readonly MockOptionsValueType[] | MockOptionsObjectType
+>;
 
-export type HandlerArray = Array<RestHandler | GraphQLHandler>;
+export type StoredMockOptions<T extends MockOptions> = Record<
+  keyof T,
+  StoredMockOptionsValue
+>;
 
-export interface CreateMockArg<T extends Options> {
+export type StoredMockOptionsValue = {
+  inputType: MockOptionsInputType;
+  options?: readonly MockOptionsValueType[];
+  defaultValue?: MockOptionsValueType;
+  selectedValue?: MockOptionsValueType;
+};
+
+export interface StoredMockState<
+  TOptions extends MockOptions,
+  TData extends MockData
+> {
   mockTitle: string;
-  openPageURL?: string | OpenPageFn<ConvertedOptions<T>>;
-  mockOptions?: T;
+  openPageURL?: string;
+  mockOptions: StoredMockOptions<TOptions>;
+  data: TData;
 }
+
+export type MockOptionsValueType = number | boolean | string;
+
+export type MockOptionsInputType = 'string' | 'number' | 'boolean' | 'select';
+
+export type MockOptionsObjectType =
+  | MockOptionsObjectTypeWithInputType
+  | MockOptionsObjectTypeWithOptionsArray
+  | MockOptionsObjectTypeWithDefaultValue;
+
+interface MockOptionsObjectTypeWithInputType {
+  // TODO: breaking change type renamed to inputType
+  inputType: MockOptionsInputType;
+  options?: readonly MockOptionsValueType[];
+  defaultValue?: MockOptionsValueType;
+}
+
+interface MockOptionsObjectTypeWithOptionsArray {
+  inputType?: MockOptionsInputType;
+  options: readonly MockOptionsValueType[];
+  defaultValue?: MockOptionsValueType;
+}
+interface MockOptionsObjectTypeWithDefaultValue {
+  inputType?: MockOptionsInputType;
+  options?: readonly MockOptionsValueType[];
+  defaultValue: MockOptionsValueType;
+}
+
+// * ConvertMockOptions
+
+export type ConvertedMockOptionsBase = Record<
+  string,
+  MockOptionsValueType | undefined
+>;
+
+export type ConvertedMockOptions<T extends MockOptions> = {
+  [K in keyof T]: T[K] extends MockOptionsValueType
+    ? ConvertedMockOptionsValueType<T[K]>
+    : T[K] extends readonly MockOptionsValueType[]
+    ? ArrayElementType<T[K]> | undefined
+    : T[K] extends MockOptionsObjectType
+    ? ConvertedObjectCreateMockOptions<T[K]>
+    : never;
+};
+
+type ConvertedMockOptionsValueType<T extends MockOptionsValueType> =
+  T extends boolean ? boolean : T;
+
+type ConvertedObjectCreateMockOptions<T extends MockOptionsObjectType> =
+  T extends MockOptionsObjectTypeWithOptionsArray
+    ? ConvertedMockOptionsObjectTypeWithOptionsArray<T>
+    : T extends MockOptionsObjectTypeWithInputType
+    ? ConvertedMockOptionsObjectTypeWithInputType<T>
+    : T extends MockOptionsObjectTypeWithDefaultValue
+    ? T['defaultValue']
+    : never;
+
+type ConvertedInputTypeValue<T extends MockOptionsInputType> =
+  T extends 'string'
+    ? string
+    : T extends 'number'
+    ? number
+    : T extends 'boolean'
+    ? boolean
+    : never;
+
+type ConvertedMockOptionsObjectTypeWithOptionsArray<
+  T extends MockOptionsObjectType
+> = T extends {
+  inputType?: MockOptionsInputType;
+  options: readonly MockOptionsValueType[];
+  defaultValue: MockOptionsValueType;
+}
+  ? ArrayElementType<T['options']>
+  : T extends MockOptionsObjectTypeWithOptionsArray
+  ? ArrayElementType<T['options']> | undefined
+  : never;
+
+type ConvertedMockOptionsObjectTypeWithInputType<
+  T extends MockOptionsObjectType
+> = T extends {
+  inputType: MockOptionsInputType;
+  options?: readonly MockOptionsValueType[];
+  defaultValue: MockOptionsValueType;
+}
+  ? ConvertedInputTypeValue<T['inputType']>
+  : T extends MockOptionsObjectTypeWithInputType
+  ? ConvertedInputTypeValue<T['inputType']> | undefined
+  : never;
+
+// *

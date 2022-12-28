@@ -1,44 +1,43 @@
 import type {
-  SetupMocksFn,
-  CreateMockOptions,
-  OpenPageFn,
-  Mocks,
-} from './createScenario.types';
+  CreateMockPrivateReturnType,
+  CreateMockReturnType,
+} from '../createMock/createMock';
+import type {
+  ConvertedMockOptionsBase,
+  MockData,
+  MockOptions,
+} from '../createMock/createMock.types';
 
-const initializeMocks: SetupMocksFn = (options, createMockHandler) => {
-  const createMockHandlerReturnValue = createMockHandler(options.mockOptions);
-  const arrayOfMocks = Array.isArray(createMockHandlerReturnValue)
-    ? createMockHandlerReturnValue
-    : [createMockHandlerReturnValue];
-  return arrayOfMocks;
+export const createMockState = <
+  TConvertedOptions extends ConvertedMockOptionsBase,
+  TMockData extends MockData
+>(
+  key: string,
+  mock: CreateMockReturnType<MockOptions, TMockData>,
+  mockOptions: TConvertedOptions,
+  mockData: TMockData
+) => {
+  const defaultConvertedMockOptions = (
+    mock as unknown as CreateMockPrivateReturnType
+  )._initialConvertedOptions;
+  const allMockOptions = { ...defaultConvertedMockOptions, ...mockOptions };
+  const initialMockData =
+    mockData ||
+    (mock as unknown as CreateMockPrivateReturnType)._initialMockData;
+  const initializedMockHandlers = (
+    mock as unknown as CreateMockPrivateReturnType
+  )._createMockHandler(
+    allMockOptions,
+    // TODO: fixme
+    {} as any
+  );
+  return {
+    [key]: {
+      mock,
+      initialMockOptions: allMockOptions,
+      mockOptions: allMockOptions,
+      initializedMockHandlers,
+      initialMockData,
+    },
+  };
 };
-
-export const initializeManyMocks = ({
-  mocks,
-  createMockOptions,
-}: {
-  mocks: Mocks;
-  createMockOptions: CreateMockOptions[];
-}) =>
-  Object.keys(mocks).flatMap((mockKey, index) => {
-    const mockHandler = mocks[mockKey].createMockHandler;
-    const mockOptions = createMockOptions[index];
-    const initializedMocks = initializeMocks(mockOptions, mockHandler);
-    return initializedMocks;
-  });
-
-export const getOpenPageURL = (
-  openPageURL: string | OpenPageFn<unknown>,
-  mockOptions: CreateMockOptions[]
-) =>
-  typeof openPageURL === 'function'
-    ? openPageURL(
-        mockOptions.reduce(
-          (prev, { mockTitle, mockOptions }) => ({
-            ...prev,
-            [mockTitle]: mockOptions,
-          }),
-          {}
-        )
-      )
-    : openPageURL;
