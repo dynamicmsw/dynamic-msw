@@ -14,6 +14,8 @@
 1. set number option to 0 on blur when no value is selected
 1. add tests for search functionality
 1. add optional option for mock options
+1. add auto mock data generator option
+1. add option to disable mocks unless a specific query parameter is in the url
 
 # TODOS after releasing a stable/well tested version
 

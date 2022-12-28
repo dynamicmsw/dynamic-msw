@@ -1,240 +1,150 @@
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-
-import type { State } from '../storageState/storageState';
-import {
-  loadFromStorage,
-  dynamicMswStorageKey,
-} from '../storageState/storageState';
-import { resetHandlers, stopWorker, initializeWorker } from '../worker/worker';
 import { createMock } from './createMock';
+import { createStorageKey } from './createMock.helpers';
+import type {
+  ConvertedMockOptions,
+  MockOptions,
+  OpenPageUrlFn,
+  StoredMockState,
+} from './createMock.types';
+
+const mockTitle = 'test mock title';
 
 const mockOptions = {
-  success: {
-    options: [true, false] as const,
-    defaultValue: true,
+  string: 'tanga',
+  number: 1337,
+  boolean: true,
+  options: ['tanga', 'alpha', 'beta'] as const,
+  variableOptions: ['tanga', 0, true] as const,
+  objOptions: { options: ['tanga', 0, true] as const },
+  objOptionsWithDefaultValue: {
+    options: ['tanga', 0, true] as const,
+    defaultValue: 'tanga',
   },
-  optionTwo: 'hello',
-};
-
-export const exampleMock = createMock(
-  {
-    mockTitle: 'example',
-    openPageURL: (config) => (config.success ? 'yes-page' : 'no-page'),
-    mockOptions,
+  objTypeString: { inputType: 'string' },
+  objTypeNumber: { inputType: 'number' },
+  objTypeBoolean: { inputType: 'boolean' },
+  objTypeOptions: {
+    inputType: 'string',
+    options: ['tanga', 0, true] as const,
   },
-  (config) => {
-    return rest.get('http://localhost:1234/test', async (_req, res, ctx) => {
-      return res(
-        ctx.json({
-          success: config.success === true ? 'yes' : 'no',
-        })
-      );
-    });
-  }
-);
+  objTypeStringDefaultValue: {
+    inputType: 'string',
+    defaultValue: 'asdf',
+  },
+} satisfies MockOptions;
 
-export const unusedMock = createMock(
-  {
-    mockTitle: 'unused-example',
-    mockOptions: {
-      success: true,
+const convertedMockOptions = {
+  string: 'tanga',
+  number: 1337,
+  boolean: true,
+  options: undefined,
+  variableOptions: undefined,
+  objOptions: undefined,
+  objOptionsWithDefaultValue: 'tanga',
+  objTypeString: undefined,
+  objTypeNumber: undefined,
+  objTypeBoolean: undefined,
+  objTypeOptions: undefined,
+  objTypeStringDefaultValue: 'asdf',
+} satisfies ConvertedMockOptions<typeof mockOptions>;
+
+const openPageURLFn: OpenPageUrlFn<typeof mockOptions> = (x) => `${x.string}`;
+
+const storedCreateMockData = {
+  mockTitle: mockTitle,
+  openPageURL: openPageURLFn.toString(),
+  mockOptions: {
+    string: { inputType: 'string', defaultValue: 'tanga' },
+    number: { inputType: 'number', defaultValue: 1337 },
+    boolean: { inputType: 'boolean', defaultValue: true },
+    options: {
+      inputType: 'select',
+      options: ['tanga', 'alpha', 'beta'] as const,
+    },
+    variableOptions: {
+      inputType: 'select',
+      options: ['tanga', 0, true] as const,
+    },
+    objOptions: { inputType: 'select', options: ['tanga', 0, true] as const },
+    objOptionsWithDefaultValue: {
+      inputType: 'select',
+      options: ['tanga', 0, true] as const,
+      defaultValue: 'tanga',
+    },
+    objTypeString: { inputType: 'string' },
+    objTypeNumber: { inputType: 'number' },
+    objTypeBoolean: { inputType: 'boolean' },
+    objTypeOptions: {
+      inputType: 'select',
+      options: ['tanga', 0, true] as const,
+    },
+    objTypeStringDefaultValue: {
+      inputType: 'string',
+      defaultValue: 'asdf',
     },
   },
-  (options) => {
-    return rest.get(
-      'http://localhost:1234/unused-example',
-      async (_req, res, ctx) => {
-        return res(ctx.json(options));
-      }
-    );
-  }
-);
+} satisfies StoredMockState<typeof mockOptions>;
 
-describe('createMock', () => {
-  beforeAll(() => {
-    initializeWorker({
-      mocks: [exampleMock],
-      setupServer,
-      startFnArg: { onUnhandledRequest: 'bypass' },
-    });
-  });
-  afterEach(() => {
-    resetHandlers();
-  });
-  afterAll(() => {
-    stopWorker();
-  });
+const createMockOptions = {
+  mockTitle,
+  mockOptions,
+  openPageURL: openPageURLFn,
+};
 
-  it('works when initilized', async () => {
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('does not resolve unused mocks', async () => {
-    expect.assertions(1);
-    await fetch('http://localhost:1234/unused-example').catch((err) => {
-      expect(err).toBeInstanceOf(Error);
-    });
-  });
-  it('works when updateMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(updatedExampleFetch).toEqual({
-      success: 'no',
-    });
-  });
-  it('works when resetMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    exampleMock.resetMock();
-    const resetExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(resetExampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('should reset when resetHandlers is called', async () => {
-    exampleMock.updateMock({ success: false });
-    resetHandlers();
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
-    expect(loadFromStorage().mocks[0].openPageURL).toBe('yes-page');
-  });
+const mockKey = createStorageKey(mockTitle);
 
-  it('saves state to localStorage', () => {
-    const expectedState: Partial<State> = {
-      mocks: [
-        {
-          mockTitle: 'example',
-          mockOptions: {
-            success: {
-              options: [true, false] as const,
-              defaultValue: true,
-            },
-            optionTwo: { defaultValue: 'hello' },
-          },
-          openPageURL: 'yes-page',
-        },
-      ],
-      scenarios: [],
-    };
-    expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
-      expectedState
-    );
-  });
-  it('updates state in localStorage', () => {
-    exampleMock.updateMock({ success: false });
-    const expectedState: State = {
-      mocks: [
-        {
-          mockTitle: 'example',
-          mockOptions: {
-            success: { ...mockOptions.success, selectedValue: false },
-            optionTwo: {
-              defaultValue: 'hello',
-            },
-          },
-          openPageURL: 'no-page',
-        },
-      ],
-      scenarios: [],
-    };
-    expect(JSON.parse(localStorage.getItem(dynamicMswStorageKey))).toEqual(
-      expectedState
-    );
-  });
-  it('initializes with storage state', async () => {
-    exampleMock.updateMock({ success: false });
-    stopWorker();
-    initializeWorker({ mocks: [exampleMock], setupServer });
-    const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(updatedExampleFetch).toEqual({
-      success: 'no',
-    });
-  });
+const mockHandlerFnMock = jest.fn();
+mockHandlerFnMock.mockReturnValue(['test']);
+
+const testMock = createMock(createMockOptions, mockHandlerFnMock);
+
+const workerMock = { use: jest.fn(), resetHandlers: jest.fn() };
+
+// @ts-expect-error the method is private as it's only used internally
+testMock._setServerOrWorker(workerMock);
+
+afterEach(() => {
+  testMock.reset();
+});
+afterEach(() => {
+  jest.resetAllMocks();
 });
 
-describe('createMock -> without saving to local storage', () => {
-  beforeAll(() => {
-    localStorage.removeItem(dynamicMswStorageKey);
-    initializeWorker({
-      mocks: [exampleMock],
-      setupServer,
-      config: { saveToLocalStorage: false },
-      startFnArg: { onUnhandledRequest: 'bypass' },
-    });
+test('createMock initializes, updates and resets properly', () => {
+  // * calls the mock handler function with converted mock options
+  expect(mockHandlerFnMock).toHaveBeenCalledTimes(1);
+  expect(mockHandlerFnMock).toHaveBeenCalledWith(convertedMockOptions);
+
+  // * saves to local storage properly
+  expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
+    storedCreateMockData
+  );
+
+  // * updates properly
+  testMock.update({ boolean: false });
+  expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual({
+    ...storedCreateMockData,
+    mockOptions: {
+      ...storedCreateMockData.mockOptions,
+      boolean: {
+        inputType: 'boolean',
+        defaultValue: true,
+        selectedValue: false,
+      },
+    },
   });
-  afterEach(() => {
-    resetHandlers();
+  expect(workerMock.use).toBeCalledTimes(1);
+  expect(workerMock.use).toHaveBeenCalledWith('test');
+  expect(mockHandlerFnMock).toHaveBeenCalledTimes(2);
+  expect(mockHandlerFnMock).toHaveBeenLastCalledWith({
+    ...convertedMockOptions,
+    boolean: false,
   });
-  afterAll(() => {
-    stopWorker();
-  });
-  it('should not save to local storage', async () => {
-    const storageSpy = jest.spyOn(localStorage, 'setItem');
-    initializeWorker({
-      mocks: [exampleMock],
-      setupServer,
-      config: { saveToLocalStorage: false },
-      startFnArg: { onUnhandledRequest: 'bypass' },
-    });
-    exampleMock.updateMock({ success: false });
-    resetHandlers();
-    expect(storageSpy).not.toBeCalled();
-  });
-  it('works when initilized', async () => {
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('does not resolve unused mocks', async () => {
-    expect.assertions(1);
-    await fetch('http://localhost:1234/unused-example').catch((err) => {
-      expect(err).toBeInstanceOf(Error);
-    });
-  });
-  it('works when updateMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    const updatedExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(updatedExampleFetch).toEqual({
-      success: 'no',
-    });
-  });
-  it('works when resetMock is called', async () => {
-    exampleMock.updateMock({ success: false });
-    exampleMock.resetMock();
-    const resetExampleFetch = await fetch('http://localhost:1234/test').then(
-      (res) => res.json()
-    );
-    expect(resetExampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
-  it('should reset when resetHandlers is called', async () => {
-    exampleMock.updateMock({ success: false });
-    resetHandlers();
-    const exampleFetch = await fetch('http://localhost:1234/test').then((res) =>
-      res.json()
-    );
-    expect(exampleFetch).toEqual({
-      success: 'yes',
-    });
-  });
+
+  // * resets properly
+  testMock.reset();
+  expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
+    storedCreateMockData
+  );
+  expect(workerMock.resetHandlers).toHaveBeenCalledTimes(1);
 });
