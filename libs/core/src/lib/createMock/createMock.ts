@@ -1,5 +1,3 @@
-import { M } from 'msw/lib/glossary-dc3fd077';
-
 import { loadFromStorage } from '../storage/storage';
 import type { MswHandlers, ServerOrWorker } from '../types';
 import {
@@ -104,10 +102,11 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       ...this._initialStorageOptions,
       ...storageData?.mockOptions,
     };
+    // TODO: check if we can remove this type cast
     this._initialMockData = options.data as TData;
-    this._data = (options.data as TData)
-      ? { ...options.data, ...storageData?.data }
-      : (options.data as TData);
+    this._data = this._initialMockData
+      ? { ...this._initialMockData, ...storageData?.data }
+      : this._initialMockData;
     this._initialConvertedOptions = convertMockOptions(this._storageOptions);
     this._convertedOptions = this._initialConvertedOptions;
     this._initializedMockHandlers = initializeMockHandlers<TOptions, TData>(

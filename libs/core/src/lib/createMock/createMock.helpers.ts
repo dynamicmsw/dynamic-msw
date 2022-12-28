@@ -37,23 +37,26 @@ export const createStorageMockOptions = <T extends MockOptions>(
     const isArray = Array.isArray(currValue);
     const isObject =
       !isArray && currValue !== null && typeof currValue === 'object';
+
+    const castedObjValue = currValue as MockOptionsObjectType;
+    const castedValue = currValue as MockOptionsValueType;
     return {
       ...prev,
       [key]: (isArray && { inputType: 'select', options: currValue }) ||
         (isObject && {
           inputType:
-            ((currValue as MockOptionsObjectType).options && 'select') ||
-            (currValue as MockOptionsObjectType).inputType ||
-            getObjectStorageOptions(currValue as MockOptionsObjectType),
-          ...((currValue as MockOptionsObjectType).defaultValue && {
-            defaultValue: (currValue as MockOptionsObjectType).defaultValue,
+            (castedObjValue.options && 'select') ||
+            castedObjValue.inputType ||
+            getObjectStorageOptions(castedObjValue),
+          ...(castedObjValue.defaultValue && {
+            defaultValue: castedObjValue.defaultValue,
           }),
-          ...((currValue as MockOptionsObjectType).options && {
-            options: (currValue as MockOptionsObjectType).options,
+          ...(castedObjValue.options && {
+            options: castedObjValue.options,
           }),
         }) || {
-          inputType: getTypeofValue(currValue as MockOptionsValueType),
-          defaultValue: currValue as MockOptionsValueType,
+          inputType: getTypeofValue(castedValue),
+          defaultValue: castedValue,
         },
     };
   }, {} as StoredMockOptions<T>);
