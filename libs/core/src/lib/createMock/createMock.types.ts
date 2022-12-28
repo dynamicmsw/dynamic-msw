@@ -2,14 +2,33 @@ import type { MswHandlers, ArrayElementType } from '../types';
 
 // * createMock Parameters
 
-export interface CreateMockOptions<T extends MockOptions> {
+export interface CreateMockOptions<
+  TOptions extends MockOptions,
+  TData extends MockData
+> {
   mockTitle: string;
-  openPageURL?: string | OpenPageUrlFn<MockOptions & T>;
-  mockOptions: MockOptions & T;
+  openPageURL?: string | OpenPageUrlFn<MockOptions & TOptions>;
+  mockOptions: MockOptions & TOptions;
+  data?: TData;
 }
-export type CreateMockHandlerFn<T extends MockOptions> = (
-  opts: ConvertedMockOptions<T>
+export type CreateMockHandlerFn<
+  TOptions extends MockOptions,
+  TData extends MockData
+> = (
+  opts: ConvertedMockOptions<TOptions>,
+  context: CreateMockHandlerContext<TOptions, TData>
 ) => MswHandlers | MswHandlers[];
+
+export interface CreateMockHandlerContext<
+  TOptions extends MockOptions,
+  TData extends MockData
+> {
+  data: TData;
+  updateData(update: TData): void;
+  updateOptions(options: ConvertedMockOptions<TOptions>): void;
+}
+
+export type MockData = Record<symbol, unknown> | undefined;
 
 export type OpenPageUrlFn<T extends MockOptions> = (
   opts: ConvertedMockOptions<T>
@@ -34,10 +53,14 @@ export type StoredMockOptionsValue = {
   selectedValue?: MockOptionsValueType;
 };
 
-export interface StoredMockState<T extends MockOptions> {
+export interface StoredMockState<
+  TOptions extends MockOptions,
+  TData extends MockData
+> {
   mockTitle: string;
   openPageURL?: string;
-  mockOptions: StoredMockOptions<T>;
+  mockOptions: StoredMockOptions<TOptions>;
+  data: TData;
 }
 
 export type MockOptionsValueType = number | boolean | string;
@@ -68,6 +91,11 @@ interface MockOptionsObjectTypeWithDefaultValue {
 }
 
 // * ConvertMockOptions
+
+export type ConvertedMockOptionsBase = Record<
+  string,
+  MockOptionsValueType | undefined
+>;
 
 export type ConvertedMockOptions<T extends MockOptions> = {
   [K in keyof T]: T[K] extends MockOptionsValueType

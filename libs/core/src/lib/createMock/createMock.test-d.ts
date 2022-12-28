@@ -1,9 +1,11 @@
 import type { CreateMock } from './createMock';
 
 const createMock: CreateMock = () => ({} as any);
+const testData = { testData: ['hello', 'data'] };
 
-// ✅
-const testMock = createMock(
+// ✅ converts proper type from mockOptions in openPageURL and
+// the mock handler fn
+export const testMock = createMock(
   {
     mockTitle: 'valid',
     mockOptions: {
@@ -29,6 +31,7 @@ const testMock = createMock(
         defaultValue: 1,
       },
     },
+    data: testData,
     openPageURL(o) {
       o.string satisfies string;
       o.number satisfies number;
@@ -46,7 +49,7 @@ const testMock = createMock(
       return 'valid';
     },
   },
-  (o) => {
+  (o, { data }) => {
     o.string satisfies string;
     o.number satisfies number;
     o.boolean satisfies boolean;
@@ -59,18 +62,30 @@ const testMock = createMock(
     o.objTypeBoolean satisfies boolean | undefined;
     o.objTypeOptions satisfies 'tanga' | 0 | true | undefined;
     o.objTypeStringDefaultValue satisfies string;
+    data satisfies typeof testData;
     return [];
   }
 );
 
-// ✅
-testMock.update({
+// ✅ no error with proper update options
+testMock.updateOptions({
   options: 'alpha',
   boolean: false,
   number: 12,
   objOptions: 0,
   objOptionsWithDefaultValue: true,
 });
+
+// ✅ passes proper data type to function and no error when
+// using correct data or a function that returns correct data
+testMock.updateData({ testData: ['updates'] });
+testMock.updateData((data) => {
+  data satisfies typeof testData;
+  return { testData: ['updates from function'] };
+});
+
+// ✅ no errors when not specifying mockData
+createMock({ mockTitle: 'no default data mock', mockOptions: {} }, () => []);
 
 // ❌
 createMock(
@@ -81,7 +96,6 @@ createMock(
       emptyObj: {},
     },
   },
-
   () => []
 );
 
@@ -138,7 +152,7 @@ createMock(
 );
 
 // ❌
-testMock.update({
+testMock.updateOptions({
   // @ts-expect-error invalid value type
   options: 'invalid',
   // @ts-expect-error invalid value type

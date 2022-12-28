@@ -1,6 +1,8 @@
 import { saveToStorage } from '../storage/storage';
 import type { MswHandlers, ServerOrWorker } from '../types';
 import type {
+  MockData,
+  CreateMockHandlerContext,
   MockOptionsValueType,
   StoredMockOptionsValue,
   StoredMockState,
@@ -91,34 +93,44 @@ const getTypeofValue = (
   }
 };
 
-export const initializeMockHandlers = <T extends MockOptions>(
-  options: ConvertedMockOptions<T>,
-  createMockHandler: CreateMockHandlerFn<T>
+export const initializeMockHandlers = <
+  TOptions extends MockOptions,
+  TData extends MockData
+>(
+  options: ConvertedMockOptions<TOptions>,
+  createMockHandler: CreateMockHandlerFn<TOptions, TData>,
+  context: CreateMockHandlerContext<TOptions, TData>
 ): MswHandlers[] => {
-  const initializedMockHandlers = createMockHandler(options);
+  const initializedMockHandlers = createMockHandler(options, context);
   return Array.isArray(initializedMockHandlers)
     ? initializedMockHandlers
     : [initializedMockHandlers];
 };
 
 export const createStorageKey = (mockTitle: string) =>
-  `dynamic-msw-mocks.${mockTitle}`;
+  `dynamic-msw.mocks.${mockTitle}`;
 
-export const saveMockToStorage = <T extends MockOptions>({
+export const saveMockToStorage = <
+  T extends MockOptions,
+  TData extends MockData
+>({
   mockOptions,
   mockTitle,
   storageKey,
   openPageURL,
+  data,
 }: {
   mockOptions: StoredMockOptions<T>;
   mockTitle: string;
   storageKey: string;
   openPageURL?: string;
+  data: TData;
 }) => {
-  saveToStorage<StoredMockState<T>>(storageKey, {
+  saveToStorage<StoredMockState<T, TData>>(storageKey, {
     mockTitle: mockTitle,
     openPageURL: openPageURL,
     mockOptions,
+    data,
   });
 };
 
@@ -128,12 +140,6 @@ export const useMockHandlers = (
 ) => {
   ensureServerOrWorkerIsDefined(serverOrWorker);
   serverOrWorker?.use(...mocks);
-};
-export const resetMockHandlers = (
-  serverOrWorker: ServerOrWorker | undefined
-) => {
-  ensureServerOrWorkerIsDefined(serverOrWorker);
-  serverOrWorker?.resetHandlers();
 };
 
 const ensureServerOrWorkerIsDefined = (

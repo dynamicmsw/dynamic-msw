@@ -1,7 +1,9 @@
+import type { CreateMockPrivateReturnType } from './createMock';
 import { createMock } from './createMock';
 import { createStorageKey } from './createMock.helpers';
 import type {
   ConvertedMockOptions,
+  MockData,
   MockOptions,
   OpenPageUrlFn,
   StoredMockState,
@@ -33,7 +35,7 @@ const mockOptions = {
   },
 } satisfies MockOptions;
 
-const convertedMockOptions = {
+export const convertedMockOptions = {
   string: 'tanga',
   number: 1337,
   boolean: true,
@@ -50,7 +52,7 @@ const convertedMockOptions = {
 
 const openPageURLFn: OpenPageUrlFn<typeof mockOptions> = (x) => `${x.string}`;
 
-const storedCreateMockData = {
+const storedMockData = {
   mockTitle: mockTitle,
   openPageURL: openPageURLFn.toString(),
   mockOptions: {
@@ -83,7 +85,8 @@ const storedCreateMockData = {
       defaultValue: 'asdf',
     },
   },
-} satisfies StoredMockState<typeof mockOptions>;
+  data: undefined,
+} satisfies StoredMockState<typeof mockOptions, MockData>;
 
 const createMockOptions = {
   mockTitle,
@@ -93,39 +96,49 @@ const createMockOptions = {
 
 const mockKey = createStorageKey(mockTitle);
 
-const mockHandlerFnMock = jest.fn();
+export const mockHandlerFnMock = jest.fn();
 mockHandlerFnMock.mockReturnValue(['test']);
 
-const testMock = createMock(createMockOptions, mockHandlerFnMock);
+export const testMock = createMock(createMockOptions, mockHandlerFnMock);
 
 const workerMock = { use: jest.fn(), resetHandlers: jest.fn() };
 
-// @ts-expect-error the method is private as it's only used internally
-testMock._setServerOrWorker(workerMock);
+(testMock as unknown as CreateMockPrivateReturnType)._setServerOrWorker(
+  workerMock as unknown as Parameters<
+    CreateMockPrivateReturnType['_setServerOrWorker']
+  >[0]
+);
 
 afterEach(() => {
   testMock.reset();
-});
-afterEach(() => {
   jest.resetAllMocks();
+});
+beforeAll(() => {
+  jest.useFakeTimers();
+});
+afterAll(() => {
+  jest.useRealTimers();
 });
 
 test('createMock initializes, updates and resets properly', () => {
   // * calls the mock handler function with converted mock options
   expect(mockHandlerFnMock).toHaveBeenCalledTimes(1);
-  expect(mockHandlerFnMock).toHaveBeenCalledWith(convertedMockOptions);
+  expect(mockHandlerFnMock).toHaveBeenCalledWith(convertedMockOptions, {
+    updateOptions: expect.any(Function),
+    updateData: expect.any(Function),
+  });
 
   // * saves to local storage properly
   expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
-    storedCreateMockData
+    storedMockData
   );
 
   // * updates properly
-  testMock.update({ boolean: false });
+  testMock.updateOptions({ boolean: false });
   expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual({
-    ...storedCreateMockData,
+    ...storedMockData,
     mockOptions: {
-      ...storedCreateMockData.mockOptions,
+      ...storedMockData.mockOptions,
       boolean: {
         inputType: 'boolean',
         defaultValue: true,
@@ -136,15 +149,69 @@ test('createMock initializes, updates and resets properly', () => {
   expect(workerMock.use).toBeCalledTimes(1);
   expect(workerMock.use).toHaveBeenCalledWith('test');
   expect(mockHandlerFnMock).toHaveBeenCalledTimes(2);
-  expect(mockHandlerFnMock).toHaveBeenLastCalledWith({
-    ...convertedMockOptions,
-    boolean: false,
-  });
+  expect(mockHandlerFnMock).toHaveBeenLastCalledWith(
+    {
+      ...convertedMockOptions,
+      boolean: false,
+    },
+    {
+      updateOptions: expect.any(Function),
+      updateData: expect.any(Function),
+    }
+  );
 
   // * resets properly
   testMock.reset();
   expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
-    storedCreateMockData
+    storedMockData
   );
-  expect(workerMock.resetHandlers).toHaveBeenCalledTimes(1);
+  expect(workerMock.use).toHaveBeenCalledTimes(2);
+});
+
+const defaultMockData = { test: ['default'] };
+const updatedMockData = { test: ['updated'] };
+
+const testDataMock = jest.fn();
+test('createMock updates data and options from context properly', () => {
+  const contextMock = createMock(
+    {
+      mockTitle: 'context test mock',
+      mockOptions: {
+        boolean: true,
+      },
+      data: defaultMockData,
+    },
+    ({ boolean }, { updateOptions, updateData, data }) => {
+      setTimeout(() => {
+        if (boolean) {
+          updateOptions({ boolean: false });
+          setTimeout(() => {
+            updateData(updatedMockData);
+          }, 2);
+        }
+        testDataMock({ data, boolean });
+      }, 2);
+      return [];
+    }
+  );
+  (contextMock as unknown as CreateMockPrivateReturnType)._setServerOrWorker(
+    workerMock as unknown as Parameters<
+      CreateMockPrivateReturnType['_setServerOrWorker']
+    >[0]
+  );
+  jest.advanceTimersByTime(3);
+  expect(testDataMock).toHaveBeenCalledWith({
+    data: defaultMockData,
+    boolean: true,
+  });
+  jest.advanceTimersByTime(2);
+  expect(testDataMock).toHaveBeenLastCalledWith({
+    data: defaultMockData,
+    boolean: false,
+  });
+  jest.advanceTimersByTime(4);
+  expect(testDataMock).toHaveBeenLastCalledWith({
+    data: updatedMockData,
+    boolean: false,
+  });
 });

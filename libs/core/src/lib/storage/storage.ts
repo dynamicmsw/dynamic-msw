@@ -1,9 +1,12 @@
 import type {
+  MockData,
   MockOptions,
   StoredMockState,
 } from '../createMock/createMock.types';
 
-export const loadFromStorage = <T extends StoredMockState<MockOptions>>(
+export const loadFromStorage = <
+  T extends StoredMockState<MockOptions, MockData>
+>(
   key: string
 ): T => {
   if (typeof localStorage !== 'undefined') {
@@ -13,7 +16,7 @@ export const loadFromStorage = <T extends StoredMockState<MockOptions>>(
   return {} as T;
 };
 
-export const saveToStorage = <T extends StoredMockState<MockOptions>>(
+export const saveToStorage = <T extends StoredMockState<MockOptions, MockData>>(
   key: string,
   state: T
 ) => {
