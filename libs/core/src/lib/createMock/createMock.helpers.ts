@@ -42,6 +42,8 @@ export const createStorageMockOptions = <T extends MockOptions>(
     const castedValue = currValue as MockOptionsValueType;
     return {
       ...prev,
+      // TODO: below ternaries are hard to digest. Rewrite digestable
+      // ? no default value when the value is an array
       [key]: (isArray && { inputType: 'select', options: currValue }) ||
         (isObject && {
           inputType:
