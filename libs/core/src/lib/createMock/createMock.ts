@@ -70,7 +70,7 @@ export const createMock: CreateMock = (options, handlerFn) =>
 class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   private readonly _mockTitle: string;
   private _mockOptions: TOptions;
-  private _initialMockData: TData;
+  private readonly _initialMockData: TData;
   private _data: TData;
   private readonly _openPageURL?: string;
   private readonly _createMockHandler: CreateMockHandlerFn<TOptions, TData>;
@@ -190,8 +190,6 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   };
 
   public updateData = (update: ((data: TData) => TData) | TData): void => {
-    // const updatedData =
-    //   typeof update === 'function' ? update(this._data) : update;
     const updatedData =
       typeof update === 'function' ? update(this._data) : update;
     const mockHandlers = initializeMockHandlers(

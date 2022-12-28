@@ -35,6 +35,9 @@ class CreateScenarioClass<T extends CreateScenarioMocksGeneric = undefined> {
       ...this._mocks,
       ...createMockState(key, mock, mockOptions, mockData),
     };
+    // ? yet to discover a way to extend the generic for each addMock call
+    // if this is possible, we can just return `this` instead of instantiating
+    // a new CreateScenarioClass
     return new CreateScenarioClass<
       UpdateCreateScenarioMocksGeneric<
         T,
