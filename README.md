@@ -237,3 +237,7 @@ describe('test example', () => {
 # Looking for collaborators
 
 Wanna help improve Dynamic Mock Service Worker? Great! You can get in touch via [bramzijpcode@gmail.com](mailto:bramzijpcode@gmail.com?subject=[Dynamic-MSW]Collaboration).
+
+## With special thanks to;
+
+- [Ian Luca](https://github.com/ianldgs) for consultation in parts of the development
