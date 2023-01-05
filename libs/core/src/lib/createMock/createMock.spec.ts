@@ -9,9 +9,9 @@ import type {
   StoredMockState,
 } from './createMock.types';
 
-const mockTitle = 'test mock title';
+export const title = 'test mock title';
 
-const mockOptions = {
+export const options = {
   string: 'tanga',
   number: 1337,
   boolean: true,
@@ -48,14 +48,14 @@ export const convertedMockOptions = {
   objTypeBoolean: undefined,
   objTypeOptions: undefined,
   objTypeStringDefaultValue: 'asdf',
-} satisfies ConvertedMockOptions<typeof mockOptions>;
+} satisfies ConvertedMockOptions<typeof options>;
 
-const openPageURLFn: OpenPageUrlFn<typeof mockOptions> = (x) => `${x.string}`;
+const openPageURLFn: OpenPageUrlFn<typeof options> = (x) => `${x.string}`;
 
 const storedMockData = {
-  mockTitle: mockTitle,
+  title: title,
   openPageURL: openPageURLFn.toString(),
-  mockOptions: {
+  options: {
     string: { inputType: 'string', defaultValue: 'tanga' },
     number: { inputType: 'number', defaultValue: 1337 },
     boolean: { inputType: 'boolean', defaultValue: true },
@@ -86,15 +86,15 @@ const storedMockData = {
     },
   },
   data: undefined,
-} satisfies StoredMockState<typeof mockOptions, MockData>;
+} satisfies StoredMockState<typeof options, MockData>;
 
 const createMockOptions = {
-  mockTitle,
-  mockOptions,
+  title,
+  options,
   openPageURL: openPageURLFn,
 };
 
-const mockKey = createStorageKey(mockTitle);
+const mockKey = createStorageKey(title);
 
 export const mockHandlerFnMock = jest.fn();
 mockHandlerFnMock.mockReturnValue(['test']);
@@ -108,6 +108,8 @@ const workerMock = { use: jest.fn(), resetHandlers: jest.fn() };
     CreateMockPrivateReturnType['_setServerOrWorker']
   >[0]
 );
+
+testMock.activate();
 
 afterEach(() => {
   testMock.reset();
@@ -137,8 +139,8 @@ test('createMock initializes, updates and resets properly', () => {
   testMock.updateOptions({ boolean: false });
   expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual({
     ...storedMockData,
-    mockOptions: {
-      ...storedMockData.mockOptions,
+    options: {
+      ...storedMockData.options,
       boolean: {
         inputType: 'boolean',
         defaultValue: true,
@@ -146,7 +148,7 @@ test('createMock initializes, updates and resets properly', () => {
       },
     },
   });
-  expect(workerMock.use).toBeCalledTimes(1);
+  expect(workerMock.use).toBeCalledTimes(2);
   expect(workerMock.use).toHaveBeenCalledWith('test');
   expect(mockHandlerFnMock).toHaveBeenCalledTimes(2);
   expect(mockHandlerFnMock).toHaveBeenLastCalledWith(
@@ -165,7 +167,7 @@ test('createMock initializes, updates and resets properly', () => {
   expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
     storedMockData
   );
-  expect(workerMock.use).toHaveBeenCalledTimes(2);
+  expect(workerMock.use).toHaveBeenCalledTimes(3);
 });
 
 const defaultMockData = { test: ['default'] };
@@ -175,8 +177,8 @@ const testDataMock = jest.fn();
 test('createMock updates data and options from context properly', () => {
   const contextMock = createMock(
     {
-      mockTitle: 'context test mock',
-      mockOptions: {
+      title: 'context test mock',
+      options: {
         boolean: true,
       },
       data: defaultMockData,

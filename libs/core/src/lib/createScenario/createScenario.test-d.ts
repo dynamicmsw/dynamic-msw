@@ -1,66 +1,43 @@
-import { createMock } from '../createMock/createMock';
+import type { TestData } from '../createMock/createMock.test-d';
 import { testMock } from '../createMock/createMock.test-d';
 import type { CreateScenario } from './createScenario';
 
-const createScenario: CreateScenario = () => ({} as any);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createScenario: CreateScenario = () => [] as any;
 
-export const otherMock = createMock(
-  {
-    mockTitle: 'otherMock',
-    mockOptions: {
-      otherMockOption: 'option',
-    },
-    data: { test: ['default'] },
-  },
-  () => {
-    return [];
-  }
-);
-
-// ✅
-const testScenario = createScenario('test scenario')
-  .addMock('testMockKey', testMock, {
-    boolean: false,
-  })
-  .addMock(
-    'otherMockKey',
-    otherMock,
-    {
-      otherMockOption: 'works',
-    },
-    {
-      test: ['updates'],
-    }
-  );
-
-// ✅
-testScenario.updateOptions({
-  testMockKey: { boolean: false, objOptions: true },
-  otherMockKey: { otherMockOption: 'tanga' },
+// ✅ it works when specifying known options with proper value types
+createScenario({
+  title: 'example',
+  mocks: { testMock },
+  options: { testMock: { boolean: true } },
+  data: { testMock: { testData: ['updated'] } satisfies TestData },
+});
+// ✅ it works without overriding options
+createScenario({
+  title: 'example',
+  mocks: { testMock },
 });
 
 // ❌
-createScenario('invalid scenario')
-  .addMock('testMockKey', testMock, {
-    // @ts-expect-error should inherit mock option types
-    boolean: 'not boolean',
-  })
-  .addMock('otherMockKey', otherMock, {
-    // @ts-expect-error should inherit mock option types
-    otherMockOption: true,
-  });
+createScenario({
+  title: 'example',
+  mocks: { testMock },
+  // @ts-expect-error must be boolean option ❌
+  options: { testMock: { boolean: 'true' } },
+});
 
 // ❌
-// @ts-expect-error invalid mock key
-testScenario.updateOptions({ invalidKey: { otherMockOption: '' } });
-// ❌
-testScenario.updateOptions({
-  testMockKey: { boolean: true },
-  otherMockKey: {
-    // @ts-expect-error invalid mock option value
-    otherMockOption: true,
-  },
+createScenario({
+  title: 'example',
+  mocks: { testMock },
+  // @ts-expect-error can not specify unknown keys ❌
+  options: { testMock: { unknownKey: true } },
 });
+
 // ❌
-// @ts-expect-error invalid mock option value
-testScenario.updateOptions({ testMockKey: { boolean: 'invalid value' } });
+createScenario({
+  title: 'example',
+  mocks: { testMock },
+  // @ts-expect-error can not specify invalid data ❌
+  data: { testMock: { invalid: 'data' } },
+});

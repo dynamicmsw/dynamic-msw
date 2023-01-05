@@ -1,14 +1,17 @@
 import type { CreateMock } from './createMock';
 
 const createMock: CreateMock = () => ({} as any);
-const testData = { testData: ['hello', 'data'] };
+const testData = {
+  testData: ['hello', 'darkness', 'my', 'old', 'friend'],
+};
+export type TestData = typeof testData;
 
-// ✅ converts proper type from mockOptions in openPageURL and
+// ✅ converts proper type from options in openPageURL and
 // the mock handler fn
 export const testMock = createMock(
   {
-    mockTitle: 'valid',
-    mockOptions: {
+    title: 'valid',
+    options: {
       string: 'tanga',
       number: 1337,
       boolean: true,
@@ -85,13 +88,13 @@ testMock.updateData((data) => {
 });
 
 // ✅ no errors when not specifying mockData
-createMock({ mockTitle: 'no default data mock', mockOptions: {} }, () => []);
+createMock({ title: 'no default data mock', options: {} }, () => []);
 
 // ❌
 createMock(
   {
-    mockTitle: 'invalid 1',
-    mockOptions: {
+    title: 'invalid 1',
+    options: {
       // @ts-expect-error can't be empty object ❌
       emptyObj: {},
     },
@@ -102,8 +105,8 @@ createMock(
 // ❌
 createMock(
   {
-    mockTitle: 'invalid 2',
-    mockOptions: {
+    title: 'invalid 2',
+    options: {
       options: ['tanga', 'alpha', 'beta'] as const,
       variableOptions: ['tanga', 0, true] as const,
       objOptions: { options: ['tanga', 0, true] as const },
@@ -142,8 +145,8 @@ createMock(
 // ❌
 createMock(
   {
-    mockTitle: 'invalid 3',
-    mockOptions: {},
+    title: 'invalid 3',
+    options: {},
   },
   // @ts-expect-error must return MSW handler array ❌
   () => {

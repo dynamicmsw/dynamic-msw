@@ -6,9 +6,9 @@ export interface CreateMockOptions<
   TOptions extends MockOptions,
   TData extends MockData
 > {
-  mockTitle: string;
+  title: string;
   openPageURL?: string | OpenPageUrlFn<MockOptions & TOptions>;
-  mockOptions: MockOptions & TOptions;
+  options: MockOptions & TOptions;
   data?: TData;
 }
 export type CreateMockHandlerFn<
@@ -57,9 +57,9 @@ export interface StoredMockState<
   TOptions extends MockOptions,
   TData extends MockData
 > {
-  mockTitle: string;
+  title: string;
   openPageURL?: string;
-  mockOptions: StoredMockOptions<TOptions>;
+  options: StoredMockOptions<TOptions>;
   data: TData;
 }
 

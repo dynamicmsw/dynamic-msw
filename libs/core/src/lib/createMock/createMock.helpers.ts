@@ -42,15 +42,13 @@ export const createStorageMockOptions = <T extends MockOptions>(
     const castedValue = currValue as MockOptionsValueType;
     return {
       ...prev,
-      // TODO: below ternaries are hard to digest. Rewrite digestable
-      // ? no default value when the value is an array
       [key]: (isArray && { inputType: 'select', options: currValue }) ||
         (isObject && {
           inputType:
             (castedObjValue.options && 'select') ||
             castedObjValue.inputType ||
             getObjectStorageOptions(castedObjValue),
-          ...(castedObjValue.defaultValue && {
+          ...(typeof castedObjValue.defaultValue !== 'undefined' && {
             defaultValue: castedObjValue.defaultValue,
           }),
           ...(castedObjValue.options && {
@@ -112,37 +110,38 @@ export const initializeMockHandlers = <
     : [initializedMockHandlers];
 };
 
-export const createStorageKey = (mockTitle: string) =>
-  `dynamic-msw.mocks.${mockTitle}`;
+export const createStorageKey = (title: string) => `dynamic-msw.${title}`;
 
 export const saveMockToStorage = <
   T extends MockOptions,
   TData extends MockData
 >({
-  mockOptions,
-  mockTitle,
+  options,
+  title,
   storageKey,
   openPageURL,
   data,
 }: {
-  mockOptions: StoredMockOptions<T>;
-  mockTitle: string;
+  options: StoredMockOptions<T>;
+  title: string;
   storageKey: string;
   openPageURL?: string;
   data: TData;
 }) => {
   saveToStorage<StoredMockState<T, TData>>(storageKey, {
-    mockTitle: mockTitle,
+    title: title,
     openPageURL: openPageURL,
-    mockOptions,
+    options,
     data,
   });
 };
 
 export const useMockHandlers = (
   mocks: MswHandlers[],
-  serverOrWorker: ServerOrWorker | undefined
+  serverOrWorker: ServerOrWorker | undefined,
+  isActive: boolean
 ) => {
+  if (!isActive) return;
   ensureServerOrWorkerIsDefined(serverOrWorker);
   serverOrWorker?.use(...mocks);
 };
