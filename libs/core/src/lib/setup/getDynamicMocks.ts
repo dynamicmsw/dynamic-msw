@@ -1,7 +1,10 @@
 import type { SetupWorkerApi } from 'msw';
 import type { SetupServerApi } from 'msw/node';
 
-import type { CreateMockReturnType } from '../createMock/createMock';
+import type {
+  CreateMockPrivateReturnType,
+  CreateMockReturnType,
+} from '../createMock/createMock';
 import type {
   CreateScenarioPrivateReturnType,
   CreateScenarioReturnType,
@@ -24,8 +27,15 @@ export const getDynamicMocks = ({
   setServer: (server: SetupServerApi) => void;
   setWorker: (worker: SetupWorkerApi) => void;
 } => {
-  const allCreators = [...(mocks || []), ...(scenarios || [])];
-  const handlers = allCreators.flatMap((creator) => {
+  const allCreators = [
+    ...((mocks || []) as CreateMockPrivateReturnType[]),
+    ...((scenarios || []) as CreateScenarioPrivateReturnType<any>[]),
+  ];
+  const handlers = (
+    config?.filterActive
+      ? allCreators.filter((creator) => creator._isActive)
+      : allCreators
+  ).flatMap((creator) => {
     if (config) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (creator as unknown as CreateScenarioPrivateReturnType<any>)._setConfig(
@@ -37,7 +47,7 @@ export const getDynamicMocks = ({
       ._initializedMockHandlers;
   });
   return {
-    handlers: handlers,
+    handlers,
     reset() {
       allCreators.forEach((creator) => {
         creator.reset();

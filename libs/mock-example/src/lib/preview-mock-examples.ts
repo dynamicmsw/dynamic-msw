@@ -1,15 +1,11 @@
-import {
-  createMock,
-  initializeWorker,
-  createScenario,
-} from '@dynamic-msw/core';
-import { rest } from 'msw';
+import { createMock, getDynamicMocks, createScenario } from '@dynamic-msw/core';
+import { rest, setupWorker } from 'msw';
 
 export const loginMock = createMock(
   {
-    mockTitle: 'Login',
+    title: 'Login',
     openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
-    mockOptions: {
+    options: {
       userRole: {
         options: ['ADMIN', 'MODERATOR', 'DEFAULT'] as const,
         defaultValue: 'ADMIN',
@@ -38,8 +34,8 @@ export const loginMock = createMock(
 
 export const featureFlagsMock = createMock(
   {
-    mockTitle: 'Feature flags',
-    mockOptions: {
+    title: 'Feature flags',
+    options: {
       invoiceDashboardVersion: ['v1', 'v2', 'v3'] as const,
       financeFlowIsEnabled: true,
       buyFlowIsEnabled: true,
@@ -58,8 +54,8 @@ export const featureFlagsMock = createMock(
 
 export const productDataMock = createMock(
   {
-    mockTitle: 'Product data',
-    mockOptions: {
+    title: 'Product data',
+    options: {
       multipleColorOptions: true,
       isInStock: true,
       deliveryTime: {
@@ -111,8 +107,8 @@ export const productDataMock = createMock(
 
 export const productReviewsMock = createMock(
   {
-    mockTitle: 'Product review data',
-    mockOptions: {
+    title: 'Product review data',
+    options: {
       hasReviews: true,
     },
   },
@@ -145,8 +141,8 @@ export const productReviewsMock = createMock(
 
 export const exampleForAllOptionTypes = createMock(
   {
-    mockTitle: 'Example with all option types',
-    mockOptions: {
+    title: 'Example with all option types',
+    options: {
       selectOption: {
         options: ['Option 1', 'Option 2', 1337, false] as const,
         defaultValue: false,
@@ -167,21 +163,17 @@ export const exampleForAllOptionTypes = createMock(
   }
 );
 
-export const defaultProductScenario = createScenario(
-  {
-    scenarioTitle: 'Default product scenario',
-    openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
-  },
-  { productDataMock, productReviewsMock, featureFlagsMock }
-);
+export const defaultProductScenario = createScenario({
+  title: 'Default product scenario',
+  openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
+  mocks: { productDataMock, productReviewsMock, featureFlagsMock },
+});
 
-export const unhappyProductScenario = createScenario(
-  {
-    scenarioTitle: 'Unhappy product scenario',
-    openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
-  },
-  { productDataMock, productReviewsMock, featureFlagsMock },
-  {
+export const unhappyProductScenario = createScenario({
+  title: 'Unhappy product scenario',
+  openPageURL: './iframe.html?id=preview-mockedresponsedata--primary',
+  mocks: { productDataMock, productReviewsMock, featureFlagsMock },
+  options: {
     productDataMock: {
       deliveryTime: '3 weeks',
       isInStock: false,
@@ -193,19 +185,21 @@ export const unhappyProductScenario = createScenario(
       buyFlowIsEnabled: false,
       leaseFlowIsEnabled: false,
     },
-  }
-);
+  },
+});
 
 export const setupPreview = () => {
-  const mockWorker = initializeWorker({
+  const { handlers, setWorker } = getDynamicMocks({
     mocks: [loginMock, featureFlagsMock, exampleForAllOptionTypes],
     scenarios: [defaultProductScenario, unhappyProductScenario],
-    startFnArg: {
-      serviceWorker: {
-        url: `${process.env.STORYBOOK_PUBLIC_PATH || '/'}mockServiceWorker.js`,
-      },
-    },
   });
 
-  return mockWorker;
+  const worker = setupWorker(...handlers);
+  setWorker(worker);
+  worker.start({
+    serviceWorker: {
+      url: `${process.env.STORYBOOK_PUBLIC_PATH || '/'}mockServiceWorker.js`,
+    },
+  });
+  return worker;
 };

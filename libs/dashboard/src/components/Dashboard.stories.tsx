@@ -7,15 +7,12 @@ const Story: ComponentMeta<typeof Dashboard> = {
   title: 'Dashboard',
 };
 
-(global as any).__mock_page = process.env.STORYBOOK_PREVIEW
-  ? './iframe.html?id=preview-mockedresponsedata--primary'
-  : './iframe.html?id=hidden-examplemocks--primary';
+(global as any).__mock_page =
+  './iframe.html?id=preview-mockedresponsedata--primary';
 
 export default Story;
 
-const Template: ComponentStory<typeof Dashboard> = (args) => (
-  <Dashboard {...args} />
-);
+const Template: ComponentStory<typeof Dashboard> = () => <Dashboard />;
 
 export const Primary = Template.bind({});
 Primary.args = {};

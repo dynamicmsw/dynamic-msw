@@ -30,6 +30,10 @@ export interface CreateMockHandlerContext<
 
 export type MockData = Record<symbol, unknown> | undefined;
 
+export type OpenPageUrl<TOptions extends MockOptions> =
+  | string
+  | OpenPageUrlFn<MockOptions & TOptions>;
+
 export type OpenPageUrlFn<T extends MockOptions> = (
   opts: ConvertedMockOptions<T>
 ) => string;
@@ -53,14 +57,11 @@ export type StoredMockOptionsValue = {
   selectedValue?: MockOptionsValueType;
 };
 
-export interface StoredMockState<
-  TOptions extends MockOptions,
-  TData extends MockData
-> {
+export interface StoredMockState<TOptions extends MockOptions> {
   title: string;
   openPageURL?: string;
+  isActive?: boolean;
   options: StoredMockOptions<TOptions>;
-  data: TData;
 }
 
 export type MockOptionsValueType = number | boolean | string;

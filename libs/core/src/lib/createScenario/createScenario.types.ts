@@ -9,6 +9,8 @@ export type CreateScenarioMocks = Record<
 export type CreateScenarioParameter<T extends CreateScenarioMocks> = {
   title: string;
   mocks: T;
+  // TODO: make dynamic
+  openPageURL?: string;
   options?: UpdateScenarioOptions<T>;
   data?: UpdateScenarioData<T>;
 };
@@ -24,3 +26,8 @@ export type ScenarioCreateMocks<T extends CreateScenarioMocks> = Record<
   keyof T,
   CreateMockReturnType
 >;
+
+export type StoredScenarioState = {
+  openPageURL?: string;
+  isActive?: boolean;
+};

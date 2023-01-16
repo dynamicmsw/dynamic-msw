@@ -18,6 +18,9 @@
   },
   "dependencies": {
     "@emotion/react": "11.10.4",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.3",
     "@stela-ui/css": "^1.1.5",
     "@stela-ui/react": "^0.2.0",
     "@theme-ui/preset-base": "^0.15.1",
@@ -49,6 +52,7 @@
     "@nrwl/react": "15.3.3",
     "@nrwl/storybook": "15.3.3",
     "@nrwl/web": "15.3.3",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@storybook/addon-essentials": "~6.5.9",
     "@storybook/builder-vite": "^0.2.4",
     "@storybook/builder-webpack5": "~6.5.9",

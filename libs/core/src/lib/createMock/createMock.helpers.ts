@@ -110,7 +110,15 @@ export const initializeMockHandlers = <
     : [initializedMockHandlers];
 };
 
-export const createStorageKey = (title: string) => `dynamic-msw.${title}`;
+export const createStorageKey = (title: string) =>
+  `dynamic-msw${title.startsWith('__scenario__') ? '.' : '.__mock__.'}${title}`;
+
+export const createDataStorageKey = (title: string) =>
+  `dynamic-msw${
+    title.startsWith('__scenario__')
+      ? title.replace('__scenario__', '__scenario-data__')
+      : '.__mock-data__.'
+  }${title}`;
 
 export const saveMockToStorage = <
   T extends MockOptions,
@@ -120,19 +128,19 @@ export const saveMockToStorage = <
   title,
   storageKey,
   openPageURL,
-  data,
+  isActive,
 }: {
   options: StoredMockOptions<T>;
   title: string;
   storageKey: string;
   openPageURL?: string;
-  data: TData;
+  isActive: boolean;
 }) => {
-  saveToStorage<StoredMockState<T, TData>>(storageKey, {
+  saveToStorage<StoredMockState<T>>(storageKey, {
     title: title,
     openPageURL: openPageURL,
     options,
-    data,
+    isActive,
   });
 };
 

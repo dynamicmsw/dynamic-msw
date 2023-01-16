@@ -19,7 +19,7 @@ export const createScenarioMocks = <T extends CreateScenarioMocks>(
       ...prev,
       [curr]: createMock(
         {
-          title: createScenarioKey(title, currMock._title),
+          title: createScenarioMockKey(title, currMock._title),
           openPageURL: currMock._openPageURL,
           data: data?.[curr] || currMock._initialMockData,
           options: options?.[curr]
@@ -44,5 +44,10 @@ export const createScenarioMocks = <T extends CreateScenarioMocks>(
     };
   }, {} as ScenarioCreateMocks<T>);
 
-export const createScenarioKey = (scenarioTitle: string, mockTitle: string) =>
-  `__scenario__.${scenarioTitle}.__mock__.${mockTitle}`;
+export const createScenarioKey = (scenarioTitle: string) =>
+  `__scenario__.${scenarioTitle}`;
+
+export const createScenarioMockKey = (
+  scenarioTitle: string,
+  mockTitle: string
+) => `${createScenarioKey(scenarioTitle)}.__mock__.${mockTitle}`;

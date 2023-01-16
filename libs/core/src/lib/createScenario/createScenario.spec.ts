@@ -3,17 +3,16 @@ import { createMock } from '../createMock/createMock';
 import { createStorageKey } from '../createMock/createMock.helpers';
 import type {
   ConvertedMockOptions,
-  MockData,
   MockOptions,
   OpenPageUrlFn,
   StoredMockState,
 } from '../createMock/createMock.types';
 import { createScenario } from './createScenario';
-import { createScenarioKey } from './createScenario.helpers';
+import { createScenarioMockKey } from './createScenario.helpers';
 
 export const mockTitle = 'test mock title';
 const scenarioTitle = 'scenario title';
-const scenarioKey = createScenarioKey(scenarioTitle, mockTitle);
+const scenarioKey = createScenarioMockKey(scenarioTitle, mockTitle);
 
 export const options = {
   string: 'tanga',
@@ -89,8 +88,7 @@ const storedMockData = {
       defaultValue: 'asdf',
     },
   },
-  data: undefined,
-} satisfies StoredMockState<typeof options, MockData>;
+} satisfies StoredMockState<typeof options>;
 
 const createMockOptions = {
   title: mockTitle,

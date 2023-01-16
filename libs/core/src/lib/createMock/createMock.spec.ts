@@ -85,8 +85,7 @@ const storedMockData = {
       defaultValue: 'asdf',
     },
   },
-  data: undefined,
-} satisfies StoredMockState<typeof options, MockData>;
+} satisfies StoredMockState<typeof options>;
 
 const createMockOptions = {
   title,

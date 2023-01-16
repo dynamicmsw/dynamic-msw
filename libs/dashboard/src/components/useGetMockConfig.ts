@@ -1,7 +1,6 @@
-import { loadFromStorage } from '@dynamic-msw/core';
 import { useEffect, useState } from 'react';
 
-import type { MockServerSettings } from '../../types';
+import type { MockServerSettings } from '../types';
 
 type MockServerSettingsStateType =
   | MockServerSettings
@@ -130,7 +129,6 @@ export const useGetMockConfig = () => {
 
   return {
     isLoading: !loadingComplete,
-    mockConfig: loadingComplete ? loadFromStorage() : null,
     iFrameError,
   };
 };

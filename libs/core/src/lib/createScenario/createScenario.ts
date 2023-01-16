@@ -1,12 +1,18 @@
 import type { CreateMockPrivateReturnType } from '../createMock/createMock';
+import { createStorageKey } from '../createMock/createMock.helpers';
+import { loadFromStorage, saveToStorage } from '../storage/storage';
 import type { Config, MswHandlers, ServerOrWorker } from '../types';
-import { createScenarioMocks } from './createScenario.helpers';
+import {
+  createScenarioKey,
+  createScenarioMocks,
+} from './createScenario.helpers';
 import type {
   CreateScenarioParameter,
   CreateScenarioMocks,
   UpdateScenarioOptions,
   UpdateScenarioData,
   ScenarioCreateMocks,
+  StoredScenarioState,
 } from './createScenario.types';
 
 export const createScenario: CreateScenario = (mocks) =>
@@ -15,18 +21,28 @@ export const createScenario: CreateScenario = (mocks) =>
 class CreateScenarioClass<T extends CreateScenarioMocks> {
   private _scenarioMocks: ScenarioCreateMocks<T>;
   private _initializedMockHandlers: MswHandlers[];
+  private _openPageURL?: string;
+  private _isActive: boolean;
   constructor(o: CreateScenarioParameter<T>) {
+    this._openPageURL = o.openPageURL;
     this._scenarioMocks = createScenarioMocks(
       o.mocks,
       o.title,
       o.options,
       o.data
     );
+    const storageKey = createStorageKey(createScenarioKey(o.title));
     this._initializedMockHandlers = Object.keys(this._scenarioMocks).flatMap(
       (key) =>
         (this._scenarioMocks[key] as CreateMockPrivateReturnType<any, any>)
           ._initializedMockHandlers
     );
+    const storageData = loadFromStorage<StoredScenarioState>(storageKey);
+    this._isActive = !!storageData.isActive;
+    saveToStorage<StoredScenarioState>(storageKey, {
+      isActive: this._isActive,
+      openPageURL: this._openPageURL,
+    });
   }
 
   // TODO: breaking change added requirement to set server or worker when using getDynamicMocks
@@ -47,6 +63,7 @@ class CreateScenarioClass<T extends CreateScenarioMocks> {
 
   // TODO: add comment and tests
   public activate() {
+    this._isActive = true;
     Object.keys(this._scenarioMocks).forEach((key) => {
       this._scenarioMocks[key].activate();
     });
@@ -78,7 +95,7 @@ class CreateScenarioClass<T extends CreateScenarioMocks> {
 
 export type CreateScenario = <T extends CreateScenarioMocks>(
   options: CreateScenarioParameter<T>
-) => CreateScenarioClass<T>;
+) => CreateScenarioReturnType<T>;
 
 export type CreateScenarioReturnType<T extends CreateScenarioMocks> = {
   activate: CreateScenarioClass<T>['activate'];
@@ -93,4 +110,5 @@ export type CreateScenarioPrivateReturnType<T extends CreateScenarioMocks> =
     _setServerOrWorker: CreateScenarioClass<T>['_setServerOrWorker'];
     _setConfig: CreateScenarioClass<T>['_setConfig'];
     _initializedMockHandlers: CreateScenarioClass<T>['_initializedMockHandlers'];
+    _isActive: boolean;
   };

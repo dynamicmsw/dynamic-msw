@@ -8,6 +8,7 @@ export type ArrayElementType<T extends ReadonlyArray<unknown>> =
 
 export interface Config {
   saveToStorage?: boolean;
+  filterActive?: boolean;
 }
 
 export type ServerOrWorker = SetupWorkerApi | SetupServerApi;

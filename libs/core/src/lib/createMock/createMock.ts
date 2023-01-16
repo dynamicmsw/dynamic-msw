@@ -1,7 +1,8 @@
-import { loadFromStorage } from '../storage/storage';
-import type { Config, MswHandlers, ServerOrWorker } from '../types';
+import { loadFromStorage, saveToStorage } from '../storage/storage';
+import type { MswHandlers, ServerOrWorker, Config } from '../types';
 import {
   convertMockOptions,
+  createDataStorageKey,
   createStorageKey,
   createStorageMockOptions,
   initializeMockHandlers,
@@ -76,6 +77,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   private readonly _createMockHandler: CreateMockHandlerFn<TOptions, TData>;
   private _initializedMockHandlers: MswHandlers[];
   private readonly _storageKey: string;
+  private readonly _storageDataKey: string;
   private readonly _initialStorageOptions: StoredMockOptions<TOptions>;
   private _storageOptions: StoredMockOptions<TOptions>;
   private readonly _initialConvertedOptions: ConvertedMockOptions<TOptions>;
@@ -98,18 +100,21 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
         : o.openPageURL;
     this._createMockHandler = createMockHandler;
     this._storageKey = createStorageKey(this._title);
+    this._storageDataKey = createDataStorageKey(this._title);
     this._initialStorageOptions = createStorageMockOptions(this._options);
-    const storageData = loadFromStorage<StoredMockState<TOptions, TData>>(
+    const storageConfig = loadFromStorage<StoredMockState<TOptions>>(
       this._storageKey
     );
+    const storageData = loadFromStorage<TData>(this._storageDataKey);
+    this._isActive = !!storageConfig.isActive;
     this._storageOptions = {
       ...this._initialStorageOptions,
-      ...storageData?.options,
+      ...storageConfig?.options,
     };
     // TODO: check if we can remove this type cast
     this._initialMockData = o.data as TData;
     this._data = this._initialMockData
-      ? { ...this._initialMockData, ...storageData?.data }
+      ? { ...this._initialMockData, ...storageData }
       : this._initialMockData;
     this._initialConvertedOptions = convertMockOptions(this._storageOptions);
     this._convertedOptions = this._initialConvertedOptions;
@@ -127,7 +132,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       title: this._title,
       openPageURL: this._openPageURL,
       options: this._storageOptions,
-      data: this._data,
+      isActive: this._isActive,
     });
   }
 
@@ -168,8 +173,9 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       title: this._title,
       openPageURL: this._openPageURL,
       options: this._initialStorageOptions,
-      data: this._initialMockData,
+      isActive: this._isActive,
     });
+    saveToStorage<TData>(this._storageDataKey, this._initialMockData);
   }
   // TODO: breaking change updateMock renamed to updateOptions
   /**
@@ -210,7 +216,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       title: this._title,
       openPageURL: this._openPageURL,
       options: this._storageOptions,
-      data: this._data,
+      isActive: this._isActive,
     });
   };
 
@@ -227,6 +233,8 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       }
     );
     useMockHandlers(mockHandlers, this._serverOrWorker, this._isActive);
+    // TODO: consider if we want to save data to storage
+    saveToStorage(this._storageDataKey, { ...this._data, ...updatedData });
   };
 }
 
@@ -271,4 +279,5 @@ export type CreateMockPrivateReturnType<
     TOptions,
     TData
   >['_initializedMockHandlers'];
+  _isActive: boolean;
 };

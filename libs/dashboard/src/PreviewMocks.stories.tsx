@@ -58,4 +58,3 @@ const Story: ComponentMeta<typeof Template> = {
 export default Story;
 
 export const Primary = Template.bind({});
-Primary.args = {};
