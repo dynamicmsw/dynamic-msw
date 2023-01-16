@@ -19,7 +19,7 @@
     "url": "https://github.com/dynamicmsw/dynamic-msw.git",
     "directory": "libs/core"
   },
-  "typedoc":{
+  "typedoc": {
     "entryPoint": "./src/index.ts",
     "readmeFile": "./README.md",
     "displayName": "@dynamic-msw/core",
