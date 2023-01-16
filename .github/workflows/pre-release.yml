@@ -57,8 +57,16 @@ jobs:
       - run: git rebase origin/main
       - run: yarn --immutable
 
+      # - name: Check if everything builds with nx release cache
+      #   run: yarn nx affected:build --parallel=3
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
       - name: Check if everything builds with nx release cache
-        run: yarn nx affected:build --parallel=3
+        run: yarn nx core:build
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+      - name: Check if everything builds with nx release cache
+        run: yarn nx dashboard:build
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 

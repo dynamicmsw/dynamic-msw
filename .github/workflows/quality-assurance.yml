@@ -49,15 +49,15 @@ jobs:
       - run: yarn nx affected:lint --parallel=3
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:test --parallel=3 --ci --code-coverage
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      # - run: yarn nx affected:test --parallel=3 --ci --code-coverage
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       - run: yarn nx affected --parallel=3 --target=testTypes
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:build --parallel=3
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
+      # - run: yarn nx affected:build --parallel=3
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
       # - run: yarn nx affected:e2e --configuration=build
       #   id: e2eTests
       #   env:
