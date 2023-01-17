@@ -1,4 +1,4 @@
-import type { SetupWorkerApi } from 'msw';
+import type { RequestHandler, SetupWorkerApi } from 'msw';
 import type { SetupServerApi } from 'msw/node';
 
 import type {
@@ -60,8 +60,9 @@ export const getDynamicMocks = ({
     //   });
     // },
     setServer(server) {
-      server.resetHandlers = () => {
-        server.resetHandlers();
+      const originalReset = server.resetHandlers;
+      server.resetHandlers = (...nextHandlers: RequestHandler[]) => {
+        originalReset(...nextHandlers);
         resetAll();
       };
       allCreators.forEach((creator) => {
@@ -70,8 +71,9 @@ export const getDynamicMocks = ({
       });
     },
     setWorker(worker) {
-      worker.resetHandlers = () => {
-        worker.resetHandlers();
+      const originalReset = worker.resetHandlers;
+      worker.resetHandlers = (...nextHandlers: RequestHandler[]) => {
+        originalReset(...nextHandlers);
         resetAll();
       };
       allCreators.forEach((creator) => {
