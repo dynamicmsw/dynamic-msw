@@ -1,5 +1,7 @@
+import type { RequestHandler } from 'msw';
+
 import { loadFromStorage, saveToStorage } from '../storage/storage';
-import type { MswHandlers, ServerOrWorker, Config } from '../types';
+import type { SetupServerOrWorkerApi, Config } from '../types';
 import {
   convertMockOptions,
   createDataStorageKey,
@@ -64,6 +66,7 @@ import type {
  loginMock.resetMock();
  * ```
  */
+
 export const createMock: CreateMock = (options, handlerFn) =>
   new CreateMockClass(options, handlerFn);
 
@@ -75,14 +78,14 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   private _data: TData;
   private readonly _openPageURL?: string;
   private readonly _createMockHandler: CreateMockHandlerFn<TOptions, TData>;
-  private _initializedMockHandlers: MswHandlers[];
+  private _initializedMockHandlers: RequestHandler[];
   private readonly _storageKey: string;
   private readonly _storageDataKey: string;
   private readonly _initialStorageOptions: StoredMockOptions<TOptions>;
   private _storageOptions: StoredMockOptions<TOptions>;
   private readonly _initialConvertedOptions: ConvertedMockOptions<TOptions>;
   private _convertedOptions: ConvertedMockOptions<TOptions>;
-  private _serverOrWorker?: ServerOrWorker;
+  private _serverOrWorker?: SetupServerOrWorkerApi;
   private _isActive = false;
   private _config: Config = { saveToStorage: false };
 
@@ -127,7 +130,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
         data: this._data,
       }
     );
-    saveMockToStorage<TOptions, TData>({
+    saveMockToStorage<TOptions>({
       storageKey: this._storageKey,
       title: this._title,
       openPageURL: this._openPageURL,
@@ -137,14 +140,14 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   }
 
   // TODO: breaking change added requirement to set server or worker when using getDynamicMocks
-  private _setServerOrWorker(serverOrWorker: ServerOrWorker) {
+  private _setServerOrWorker = (serverOrWorker: SetupServerOrWorkerApi) => {
     this._serverOrWorker = serverOrWorker;
-  }
-  private _setConfig(config: Partial<Config>) {
+  };
+  private _setConfig = (config: Partial<Config>) => {
     this._config = { ...this._config, ...config };
-  }
+  };
   // TODO: add comment and tests
-  public activate() {
+  public activate = () => {
     this._isActive = true;
     useMockHandlers(
       this._initializedMockHandlers,
@@ -152,15 +155,15 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       this._isActive,
       this._config
     );
-  }
+  };
   // TODO: add comment and tests
-  public deactivate() {
+  public deactivate = () => {
     this._isActive = false;
     this._serverOrWorker?.resetHandlers();
-  }
+  };
   // TODO: breaking change resetMock renamed to reset
   /** resets mock with the mock options as defined in the createMock helpers first argument */
-  public reset() {
+  public reset = () => {
     this._convertedOptions = this._initialConvertedOptions;
     this._storageOptions = this._initialStorageOptions;
     this._data = this._initialMockData;
@@ -170,7 +173,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       this._isActive,
       this._config
     );
-    saveMockToStorage<TOptions, TData>({
+    saveMockToStorage<TOptions>({
       storageKey: this._storageKey,
       title: this._title,
       openPageURL: this._openPageURL,
@@ -178,7 +181,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       isActive: this._isActive,
     });
     saveToStorage<TData>(this._storageDataKey, this._initialMockData);
-  }
+  };
   // TODO: breaking change updateMock renamed to updateOptions
   /**
    * (partially) update mock options
@@ -218,7 +221,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       this._isActive,
       this._config
     );
-    saveMockToStorage<TOptions, TData>({
+    saveMockToStorage<TOptions>({
       storageKey: this._storageKey,
       title: this._title,
       openPageURL: this._openPageURL,

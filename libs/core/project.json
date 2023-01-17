@@ -4,7 +4,18 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "serve": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run core:build-web",
+          "yarn nx run core:build-node",
+          "cp ./libs/core/node/package.json ./dist/libs/core/node/package.json"
+        ],
+        "parallel": false
+      }
+    },
+    "build-web": {
       "executor": "@nrwl/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -14,8 +25,6 @@
         "entryFile": "libs/core/src/index.ts",
         "format": ["cjs", "esm"],
         "externals": [],
-        "rollupConfig": ["rollup.config.js"],
-        "watch": true,
         "assets": [
           {
             "glob": "libs/core/README.md",
@@ -25,23 +34,16 @@
         ]
       }
     },
-    "build": {
+    "build-node": {
       "executor": "@nrwl/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/core",
+        "outputPath": "dist/libs/core/node",
         "tsConfig": "libs/core/tsconfig.lib.json",
         "project": "libs/core/package.json",
-        "entryFile": "libs/core/src/index.ts",
+        "entryFile": "libs/core/src/index.node.ts",
         "format": ["cjs", "esm"],
-        "externals": [],
-        "assets": [
-          {
-            "glob": "libs/core/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
+        "externals": []
       }
     },
     "lint": {

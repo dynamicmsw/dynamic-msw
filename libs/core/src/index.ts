@@ -17,8 +17,8 @@ export type {
 } from './lib/createScenario/createScenario';
 export * from './lib/createScenario/createScenario.types';
 
-export { getDynamicMocks } from './lib/setup/getDynamicMocks';
+export { setupWorker } from './lib/setup/setupWorker';
 
-export type { Config, MswHandlers, ServerOrWorker } from './lib/types';
+export type { Config, SetupServerOrWorker } from './lib/types';
 
 export { loadFromStorage, saveToStorage } from './lib/storage/storage';

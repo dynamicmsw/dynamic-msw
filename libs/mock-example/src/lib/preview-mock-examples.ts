@@ -1,5 +1,5 @@
-import { createMock, getDynamicMocks, createScenario } from '@dynamic-msw/core';
-import { rest, setupWorker } from 'msw';
+import { createMock, setupWorker, createScenario } from '@dynamic-msw/core';
+import { rest } from 'msw';
 
 export const loginMock = createMock(
   {
@@ -189,13 +189,13 @@ export const unhappyProductScenario = createScenario({
 });
 
 export const setupPreview = () => {
-  const { handlers, setWorker } = getDynamicMocks({
-    mocks: [loginMock, featureFlagsMock, exampleForAllOptionTypes],
-    scenarios: [defaultProductScenario, unhappyProductScenario],
-  });
-
-  const worker = setupWorker(...handlers);
-  setWorker(worker);
+  const worker = setupWorker(
+    loginMock,
+    featureFlagsMock,
+    exampleForAllOptionTypes,
+    defaultProductScenario,
+    unhappyProductScenario
+  );
   worker.start({
     serviceWorker: {
       url: `${process.env.STORYBOOK_PUBLIC_PATH || '/'}mockServiceWorker.js`,

@@ -1,5 +1,7 @@
+import type { RequestHandler } from 'msw';
+
 import { saveToStorage } from '../storage/storage';
-import type { Config, MswHandlers, ServerOrWorker } from '../types';
+import type { Config, SetupServerOrWorkerApi } from '../types';
 import type {
   MockData,
   CreateMockHandlerContext,
@@ -103,7 +105,7 @@ export const initializeMockHandlers = <
   options: ConvertedMockOptions<TOptions>,
   createMockHandler: CreateMockHandlerFn<TOptions, TData>,
   context: CreateMockHandlerContext<TOptions, TData>
-): MswHandlers[] => {
+): RequestHandler[] => {
   const initializedMockHandlers = createMockHandler(options, context);
   return Array.isArray(initializedMockHandlers)
     ? initializedMockHandlers
@@ -120,10 +122,7 @@ export const createDataStorageKey = (title: string) =>
       : '.__mock-data__.'
   }${title}`;
 
-export const saveMockToStorage = <
-  T extends MockOptions,
-  TData extends MockData
->({
+export const saveMockToStorage = <T extends MockOptions>({
   options,
   title,
   storageKey,
@@ -145,8 +144,8 @@ export const saveMockToStorage = <
 };
 
 export const useMockHandlers = (
-  mocks: MswHandlers[],
-  serverOrWorker: ServerOrWorker | undefined,
+  mocks: RequestHandler[],
+  serverOrWorker: SetupServerOrWorkerApi | undefined,
   isActive: boolean,
   config: Config
 ) => {
@@ -156,7 +155,7 @@ export const useMockHandlers = (
 };
 
 const ensureServerOrWorkerIsDefined = (
-  serverOrWorker: ServerOrWorker | undefined
+  serverOrWorker: SetupServerOrWorkerApi | undefined
 ) => {
   if (!serverOrWorker) {
     throw new Error(`Ensure you set the server or worker. Example: 

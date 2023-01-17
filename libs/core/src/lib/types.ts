@@ -1,7 +1,5 @@
-import type { GraphQLHandler, RestHandler, SetupWorkerApi } from 'msw';
-import type { SetupServerApi } from 'msw/lib/node';
-
-export type MswHandlers = RestHandler | GraphQLHandler;
+import type { setupWorker, SetupWorkerApi } from 'msw';
+import type { setupServer, SetupServerApi } from 'msw/lib/node';
 
 export type ArrayElementType<T extends ReadonlyArray<unknown>> =
   T extends ReadonlyArray<infer ArrayElementType> ? ArrayElementType : never;
@@ -11,4 +9,8 @@ export interface Config {
   filterActive?: boolean;
 }
 
-export type ServerOrWorker = SetupWorkerApi | SetupServerApi;
+export type SetupServer = typeof setupServer;
+export type SetupWorker = typeof setupWorker;
+
+export type SetupServerOrWorker = SetupServer | SetupWorker;
+export type SetupServerOrWorkerApi = SetupWorkerApi | SetupServerApi;

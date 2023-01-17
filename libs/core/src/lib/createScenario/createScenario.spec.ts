@@ -88,6 +88,7 @@ const storedMockData = {
       defaultValue: 'asdf',
     },
   },
+  isActive: false,
 } satisfies StoredMockState<typeof options>;
 
 const createMockOptions = {
@@ -122,8 +123,6 @@ const testScenario = createScenario({
     CreateMockPrivateReturnType['_setServerOrWorker']
   >[0]
 );
-
-testScenario.activate();
 
 afterEach(() => {
   testScenario.reset();
@@ -161,7 +160,7 @@ test('should initialize new createMocks with updated storage key', () => {
       },
     },
   });
-  expect(workerMock.use).toBeCalledTimes(2);
+  expect(workerMock.use).toBeCalledTimes(1);
   expect(workerMock.use).toHaveBeenCalledWith('test');
   expect(mockHandlerFnMock).toHaveBeenCalledTimes(3);
   expect(mockHandlerFnMock).toHaveBeenLastCalledWith(
@@ -180,5 +179,5 @@ test('should initialize new createMocks with updated storage key', () => {
   expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
     storedMockData
   );
-  expect(workerMock.use).toHaveBeenCalledTimes(3);
+  expect(workerMock.use).toHaveBeenCalledTimes(2);
 });

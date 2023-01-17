@@ -85,6 +85,7 @@ const storedMockData = {
       defaultValue: 'asdf',
     },
   },
+  isActive: false,
 } satisfies StoredMockState<typeof options>;
 
 const createMockOptions = {
@@ -107,8 +108,6 @@ const workerMock = { use: jest.fn(), resetHandlers: jest.fn() };
     CreateMockPrivateReturnType['_setServerOrWorker']
   >[0]
 );
-
-testMock.activate();
 
 afterEach(() => {
   testMock.reset();
@@ -147,7 +146,7 @@ test('createMock initializes, updates and resets properly', () => {
       },
     },
   });
-  expect(workerMock.use).toBeCalledTimes(2);
+  expect(workerMock.use).toBeCalledTimes(1);
   expect(workerMock.use).toHaveBeenCalledWith('test');
   expect(mockHandlerFnMock).toHaveBeenCalledTimes(2);
   expect(mockHandlerFnMock).toHaveBeenLastCalledWith(
@@ -166,7 +165,7 @@ test('createMock initializes, updates and resets properly', () => {
   expect(JSON.parse(localStorage.getItem(mockKey) || '{}')).toEqual(
     storedMockData
   );
-  expect(workerMock.use).toHaveBeenCalledTimes(3);
+  expect(workerMock.use).toHaveBeenCalledTimes(2);
 });
 
 const defaultMockData = { test: ['default'] };

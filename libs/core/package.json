@@ -24,5 +24,17 @@
     "readmeFile": "./README.md",
     "displayName": "@dynamic-msw/core",
     "tsconfig": "./tsconfig.lib.json"
+  },
+  "exports": {
+    "./node": {
+      "types": "./node/src/index.node.d.ts",
+      "require": "./node/index.node.js",
+      "default": "./node/index.node.cjs"
+    },
+    ".": {
+      "types": "./src/index.d.ts",
+      "require": "./index.js",
+      "default": "./index.cjs"
+    }
   }
 }

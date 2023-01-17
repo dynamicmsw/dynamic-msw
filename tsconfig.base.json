@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@dynamic-msw/core": ["libs/core/src/index.ts"],
+      "@dynamic-msw/core/node": ["libs/core/src/index.node.ts"],
       "@dynamic-msw/mock-example": ["libs/mock-example/src/index.ts"],
       "open-app-page": ["libs/open-app-page/src/index.ts"]
     }

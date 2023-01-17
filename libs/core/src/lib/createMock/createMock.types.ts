@@ -1,4 +1,6 @@
-import type { MswHandlers, ArrayElementType } from '../types';
+import type { RequestHandler } from 'msw';
+
+import type { ArrayElementType } from '../types';
 
 // * createMock Parameters
 
@@ -17,7 +19,7 @@ export type CreateMockHandlerFn<
 > = (
   opts: ConvertedMockOptions<TOptions>,
   context: CreateMockHandlerContext<TOptions, TData>
-) => MswHandlers | MswHandlers[];
+) => RequestHandler | RequestHandler[];
 
 export interface CreateMockHandlerContext<
   TOptions extends MockOptions,
