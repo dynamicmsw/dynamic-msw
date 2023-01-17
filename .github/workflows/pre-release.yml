@@ -70,11 +70,11 @@ jobs:
       #   env:
       #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
       - name: Check if everything builds with nx release cache
-        run: yarn nx core:build
+        run: yarn nx run core:build
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
       - name: Check if everything builds with nx release cache
-        run: yarn nx dashboard:build
+        run: yarn nx run dashboard:build
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 
