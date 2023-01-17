@@ -1,6 +1,5 @@
 import type {
   MockOptions,
-  MockData,
   StoredMockState,
   StoredScenarioState,
 } from '@dynamic-msw/core';
@@ -17,7 +16,6 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import {
-  Button,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -40,7 +38,6 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import type Fuse from 'fuse.js';
 import * as React from 'react';
