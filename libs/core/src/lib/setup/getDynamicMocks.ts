@@ -23,7 +23,7 @@ export const getDynamicMocks = ({
   config?: Partial<Config>;
 }): {
   handlers: MswHandlers[];
-  reset: () => void;
+  // reset: () => void;
   setServer: (server: SetupServerApi) => void;
   setWorker: (worker: SetupWorkerApi) => void;
 } => {
@@ -46,20 +46,34 @@ export const getDynamicMocks = ({
     return (creator as unknown as CreateScenarioPrivateReturnType<any>)
       ._initializedMockHandlers;
   });
+
+  const resetAll = () => {
+    allCreators.forEach((creator) => {
+      creator.reset();
+    });
+  };
   return {
     handlers,
-    reset() {
-      allCreators.forEach((creator) => {
-        creator.reset();
-      });
-    },
+    // reset() {
+    //   allCreators.forEach((creator) => {
+    //     creator.reset();
+    //   });
+    // },
     setServer(server) {
+      server.resetHandlers = () => {
+        server.resetHandlers();
+        resetAll();
+      };
       allCreators.forEach((creator) => {
         (creator as unknown as CreateScenarioPrivateReturnType<any>) // eslint-disable-line @typescript-eslint/no-explicit-any
           ._setServerOrWorker(server);
       });
     },
     setWorker(worker) {
+      worker.resetHandlers = () => {
+        worker.resetHandlers();
+        resetAll();
+      };
       allCreators.forEach((creator) => {
         (creator as unknown as CreateScenarioPrivateReturnType<any>) // eslint-disable-line @typescript-eslint/no-explicit-any
           ._setServerOrWorker(worker);
