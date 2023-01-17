@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [2.0.0-beta.0](https://github.com/dynamicmsw/dynamic-msw/compare/v2.0.0-alpha.0...v2.0.0-beta.0) (2023-01-17)
+
+
+### Bug Fixes
+
+* do not use data storage keys for dashboard ([ddbf139](https://github.com/dynamicmsw/dynamic-msw/commit/ddbf1396a96ab47906380ddda81d619b42754c8e))
+
 ## [2.0.0-alpha.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.5.1...v2.0.0-alpha.0) (2023-01-17)
 
 
