@@ -25,7 +25,7 @@
     "@stela-ui/react": "^0.2.0",
     "@theme-ui/preset-base": "^0.15.1",
     "fuse.js": "^6.6.2",
-    "msw": "^0.47.4",
+    "msw": "latest",
     "next": "12.3.1",
     "open": "^8.4.0",
     "react": "18.2.0",
