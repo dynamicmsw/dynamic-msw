@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.6.0-alpha.0](https://github.com/dynamicmsw/dynamic-msw/compare/v2.0.0-rc.0...v1.6.0-alpha.0) (2023-01-17)
+
+
+### Features
+
+* overwrite worker/server reset handlers to also reset dynamic mocks ([1246ffb](https://github.com/dynamicmsw/dynamic-msw/commit/1246ffba08d775360582d39c5e32b947983e5f00))
+
 ## [2.0.0-rc.0](https://github.com/dynamicmsw/dynamic-msw/compare/v2.0.0-beta.0...v2.0.0-rc.0) (2023-01-17)
 
 
