@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [2.0.0-rc.0](https://github.com/dynamicmsw/dynamic-msw/compare/v2.0.0-beta.0...v2.0.0-rc.0) (2023-01-17)
+
+
+### Features
+
+* overwrite worker/server reset handlers to also reset dynamic mocks ([86a0fbe](https://github.com/dynamicmsw/dynamic-msw/commit/86a0fbe20fc074ba954c09fae0d0f78e7cc119fb))
+
+
+### Bug Fixes
+
+* ensure workerOrWorker.use is called when not filtering active mocks ([74a14ef](https://github.com/dynamicmsw/dynamic-msw/commit/74a14efc85d025eb7ea2e83a5e9cc92f04ac34b3))
+
 ## [2.0.0-beta.0](https://github.com/dynamicmsw/dynamic-msw/compare/v2.0.0-alpha.0...v2.0.0-beta.0) (2023-01-17)
 
 ## [2.0.0-alpha.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.5.1...v2.0.0-alpha.0) (2023-01-17)
