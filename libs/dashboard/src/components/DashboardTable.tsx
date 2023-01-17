@@ -132,6 +132,7 @@ export const DashboardTableRow: React.FC<{
                 aria-label="Open page"
                 color="primary"
                 size="small"
+                target="_blank"
                 href={openPageURL}
               >
                 <LaunchIcon />
@@ -212,7 +213,6 @@ const DashboardTableInputRow: React.FC<{
               );
             case 'select': {
               const isBoolean = typeof currentValue === 'boolean';
-              console.log(isBoolean);
               return (
                 <FormControl key={id}>
                   <InputLabel id={id} size="small">
@@ -245,7 +245,6 @@ const DashboardTableInputRow: React.FC<{
                     }}
                   >
                     {optionData.options?.map((option) => {
-                      console.log(typeof option === 'boolean', option);
                       return (
                         <MenuItem
                           key={option.toString()}
@@ -350,10 +349,8 @@ export const DashboardTable: React.FC<{
               color="error"
               size="small"
               onClick={() => {
-                console.log(storageKeys);
                 storageKeys.map((key) => {
                   const item = loadFromStorage(key) as any;
-                  console.log(key, item.isActive);
                   if (item.isActive) {
                     item.isActive = false;
                   }

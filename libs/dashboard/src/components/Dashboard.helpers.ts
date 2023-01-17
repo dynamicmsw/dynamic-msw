@@ -1,6 +1,6 @@
-import type { DashboardItems } from './Dashboard.types';
+import type { DashboardItem } from './Dashboard.types';
 
-export const getStorageKeys = (): DashboardItems[] => {
+export const getStorageKeys = (): DashboardItem[] => {
   const filteredKeys = getFlatStorageKeys().map((key) =>
     key.replace(/(^dynamic-msw\.)/, '').replace(/^__mock__\./, '')
   );
