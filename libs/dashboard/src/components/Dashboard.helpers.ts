@@ -21,7 +21,12 @@ export const getStorageKeys = (): DashboardItem[] => {
 
 export const getFlatStorageKeys = () => {
   const storageKeys = Object.keys(localStorage);
-  return storageKeys.filter((key) => key.startsWith('dynamic-msw.'));
+  return storageKeys.filter(
+    (key) =>
+      key.startsWith('dynamic-msw.') &&
+      !key.startsWith('dynamic-msw.__mock-data__.') &&
+      !key.startsWith('dynamic-msw.__scenario-data__.')
+  );
 };
 
 const groupScenarioKeys = (keys: string[]) =>
