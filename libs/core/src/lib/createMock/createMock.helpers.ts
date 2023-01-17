@@ -1,5 +1,5 @@
 import { saveToStorage } from '../storage/storage';
-import type { MswHandlers, ServerOrWorker } from '../types';
+import type { Config, MswHandlers, ServerOrWorker } from '../types';
 import type {
   MockData,
   CreateMockHandlerContext,
@@ -147,9 +147,10 @@ export const saveMockToStorage = <
 export const useMockHandlers = (
   mocks: MswHandlers[],
   serverOrWorker: ServerOrWorker | undefined,
-  isActive: boolean
+  isActive: boolean,
+  config: Config
 ) => {
-  if (!isActive) return;
+  if (!isActive && config.filterActive) return;
   ensureServerOrWorkerIsDefined(serverOrWorker);
   serverOrWorker?.use(...mocks);
 };

@@ -149,7 +149,8 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
     useMockHandlers(
       this._initializedMockHandlers,
       this._serverOrWorker,
-      this._isActive
+      this._isActive,
+      this._config
     );
   }
   // TODO: add comment and tests
@@ -166,7 +167,8 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
     useMockHandlers(
       this._initializedMockHandlers,
       this._serverOrWorker,
-      this._isActive
+      this._isActive,
+      this._config
     );
     saveMockToStorage<TOptions, TData>({
       storageKey: this._storageKey,
@@ -210,7 +212,12 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
         data: this._data,
       }
     );
-    useMockHandlers(mockHandlers, this._serverOrWorker, this._isActive);
+    useMockHandlers(
+      mockHandlers,
+      this._serverOrWorker,
+      this._isActive,
+      this._config
+    );
     saveMockToStorage<TOptions, TData>({
       storageKey: this._storageKey,
       title: this._title,
@@ -232,7 +239,12 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
         data: updatedData,
       }
     );
-    useMockHandlers(mockHandlers, this._serverOrWorker, this._isActive);
+    useMockHandlers(
+      mockHandlers,
+      this._serverOrWorker,
+      this._isActive,
+      this._config
+    );
     // TODO: consider if we want to save data to storage
     saveToStorage(this._storageDataKey, { ...this._data, ...updatedData });
   };
