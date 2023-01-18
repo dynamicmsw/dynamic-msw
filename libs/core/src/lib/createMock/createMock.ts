@@ -135,13 +135,6 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
         data: this._data,
       }
     );
-    saveMockToStorage<TOptions>({
-      storageKey: this._storageKey,
-      title: this._title,
-      openPageURL: this._openPageURL,
-      options: this._storageOptions,
-      isActive: this._isActive,
-    });
   }
 
   // TODO: breaking change added requirement to set server or worker when using getDynamicMocks
@@ -150,6 +143,17 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   };
   private _setConfig = (config: Partial<Config>) => {
     this._config = { ...this._config, ...config };
+    saveMockToStorage<TOptions>({
+      storageKey: this._storageKey,
+      title: this._title,
+      openPageURL: this._openPageURL,
+      options: this._storageOptions,
+      isActive: this._isActive,
+      config: this._config,
+    });
+    if (this._config.saveToStorage && this._initialMockData) {
+      saveToStorage<TData>(this._storageDataKey, this._initialMockData);
+    }
   };
   // TODO: add comment and tests
   public activate = () => {
@@ -184,8 +188,11 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       openPageURL: this._openPageURL,
       options: this._initialStorageOptions,
       isActive: this._isActive,
+      config: this._config,
     });
-    saveToStorage<TData>(this._storageDataKey, this._initialMockData);
+    if (this._config.saveToStorage) {
+      saveToStorage<TData>(this._storageDataKey, this._initialMockData);
+    }
   };
   // TODO: breaking change updateMock renamed to updateOptions
   /**
@@ -232,6 +239,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       openPageURL: this._openPageURL,
       options: this._storageOptions,
       isActive: this._isActive,
+      config: this._config,
     });
   };
 
@@ -260,7 +268,9 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       this._config
     );
     // TODO: consider if we want to save data to storage
-    saveToStorage(this._storageDataKey, { ...this._data, ...updatedData });
+    if (this._config.saveToStorage) {
+      saveToStorage(this._storageDataKey, { ...this._data, ...updatedData });
+    }
   };
 }
 

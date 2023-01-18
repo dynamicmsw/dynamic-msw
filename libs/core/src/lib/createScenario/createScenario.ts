@@ -25,6 +25,7 @@ class CreateScenarioClass<T extends CreateScenarioMocks> {
   private _initializedMockHandlers: RequestHandler[];
   private _openPageURL?: string;
   private _isActive: boolean;
+  private _storageKey: string;
   constructor(o: CreateScenarioParameter<T>) {
     this._openPageURL = o.openPageURL;
     this._scenarioMocks = createScenarioMocks(
@@ -33,18 +34,14 @@ class CreateScenarioClass<T extends CreateScenarioMocks> {
       o.options,
       o.data
     );
-    const storageKey = createStorageKey(createScenarioKey(o.title));
+    this._storageKey = createStorageKey(createScenarioKey(o.title));
     this._initializedMockHandlers = Object.keys(this._scenarioMocks).flatMap(
       (key) =>
         (this._scenarioMocks[key] as CreateMockPrivateReturnType<any, any>)
           ._initializedMockHandlers
     );
-    const storageData = loadFromStorage<StoredScenarioState>(storageKey);
+    const storageData = loadFromStorage<StoredScenarioState>(this._storageKey);
     this._isActive = !!storageData.isActive;
-    saveToStorage<StoredScenarioState>(storageKey, {
-      isActive: this._isActive,
-      openPageURL: this._openPageURL,
-    });
   }
 
   // TODO: breaking change added requirement to set server or worker when using getDynamicMocks
@@ -56,6 +53,12 @@ class CreateScenarioClass<T extends CreateScenarioMocks> {
     });
   };
   private _setConfig = (config: Partial<Config>) => {
+    if (config.saveToStorage) {
+      saveToStorage<StoredScenarioState>(this._storageKey, {
+        isActive: this._isActive,
+        openPageURL: this._openPageURL,
+      });
+    }
     Object.keys(this._scenarioMocks).forEach((key) => {
       (
         this._scenarioMocks[key] as unknown as CreateMockPrivateReturnType

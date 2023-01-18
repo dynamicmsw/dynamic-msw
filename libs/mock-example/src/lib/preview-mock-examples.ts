@@ -195,7 +195,7 @@ export const setupPreview = () => {
     exampleForAllOptionTypes,
     defaultProductScenario,
     unhappyProductScenario
-  );
+  ).setConfig({ saveToStorage: true });
   worker.start({
     serviceWorker: {
       url: `${process.env.STORYBOOK_PUBLIC_PATH || '/'}mockServiceWorker.js`,

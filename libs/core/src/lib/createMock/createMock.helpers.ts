@@ -128,19 +128,23 @@ export const saveMockToStorage = <T extends MockOptions>({
   storageKey,
   openPageURL,
   isActive,
+  config,
 }: {
   options: StoredMockOptions<T>;
   title: string;
   storageKey: string;
   openPageURL?: string;
   isActive: boolean;
+  config: Config;
 }) => {
-  saveToStorage<StoredMockState<T>>(storageKey, {
-    title: title,
-    openPageURL: openPageURL,
-    options,
-    isActive,
-  });
+  if (config.saveToStorage) {
+    saveToStorage<StoredMockState<T>>(storageKey, {
+      title: title,
+      openPageURL: openPageURL,
+      options,
+      isActive,
+    });
+  }
 };
 
 export const useMockHandlers = (
