@@ -10,7 +10,9 @@ createScenario({
   title: 'example',
   mocks: { testMock },
   options: { testMock: { boolean: true } },
-  data: { testMock: { testData: ['updated'] } satisfies TestData },
+  data: {
+    testMock: { testData: ['updated'], otherData: 'y' } satisfies TestData,
+  },
 });
 // ✅ it works without overriding options
 createScenario({
