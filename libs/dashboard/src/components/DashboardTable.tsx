@@ -213,7 +213,7 @@ const DashboardTableInputRow: React.FC<{
               return (
                 <FormControl key={id}>
                   <InputLabel id={id} size="small">
-                    Age
+                    {key}
                   </InputLabel>
                   <Select
                     labelId={id}

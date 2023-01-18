@@ -13,7 +13,7 @@ on:
           - rc
       releaseAs:
         type: choice
-        description: Pre ID
+        description: Release As
         required: true
         options:
           - prepatch
@@ -82,7 +82,7 @@ jobs:
         run: >-
           yarn nx run dashboard:versionCI
           --releaseAs=$(
-          git log --oneline main..HEAD | grep -Eq "chore: release version.*${{ github.event.inputs.releaseAs }}.*" 
+          git cherry -v main | grep -Eq "chore: release version.*${{ github.event.inputs.releaseAs }}.*" 
           && echo "prerelease"
           || echo ${{ github.event.inputs.releaseAs }}) 
           --preid=${{ github.event.inputs.preid }}
