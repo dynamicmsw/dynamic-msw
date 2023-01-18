@@ -30,7 +30,7 @@ export interface CreateMockHandlerContext<
   TData extends MockData
 > {
   data: TData;
-  updateData(update: TData): void;
+  updateData(update: DeepPartial<TData>): void;
   updateOptions(options: ConvertedMockOptions<TOptions>): void;
 }
 

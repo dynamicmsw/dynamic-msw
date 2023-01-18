@@ -79,7 +79,14 @@ jobs:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 
       - name: Version
-        run: yarn nx run dashboard:versionCI --releaseAs=${{ github.event.inputs.releaseAs }} --preid=${{ github.event.inputs.preid }} --skip-nx-cache
+        run: >-
+          yarn nx run dashboard:versionCI
+          --releaseAs=$(
+          git log --oneline main..HEAD | grep -Eq "chore: release version.*${{ github.event.inputs.releaseAs }}.*" 
+          && echo "prerelease"
+          || echo ${{ github.event.inputs.releaseAs }}) 
+          --preid=${{ github.event.inputs.preid }}
+          --skip-nx-cache
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 

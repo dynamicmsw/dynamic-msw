@@ -149,23 +149,6 @@ export const useMockHandlers = (
   isActive: boolean,
   config: Config
 ) => {
-  if (!isActive && config.filterActive) return;
-  ensureServerOrWorkerIsDefined(serverOrWorker);
+  if ((!isActive && config.filterActive) || !serverOrWorker) return;
   serverOrWorker?.use(...mocks);
-};
-
-const ensureServerOrWorkerIsDefined = (
-  serverOrWorker: SetupServerOrWorkerApi | undefined
-) => {
-  if (!serverOrWorker) {
-    throw new Error(`Ensure you set the server or worker. Example: 
-import { setupServer } from "msw/node";
-
-const dynamicMocks = getDynamicMocks();
-
-const server = setupServer(...dynamicMocks.mocks);
-
-dynamicMocks.setupServerOrWorker(server)
-`);
-  }
 };

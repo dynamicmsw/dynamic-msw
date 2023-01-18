@@ -3,6 +3,7 @@ import type { CreateMock } from './createMock';
 const createMock: CreateMock = () => ({} as any);
 const testData = {
   testData: ['hello', 'darkness', 'my', 'old', 'friend'],
+  otherData: 'x',
 };
 export type TestData = typeof testData;
 
@@ -170,4 +171,4 @@ testMock.updateOptions({
 
 // ❌
 // @ts-expect-error incomplete data
-testMock.updateData({});
+testMock.updateData<TestData>({});
