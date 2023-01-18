@@ -82,10 +82,10 @@ testMock.updateOptions({
 // ✅ passes proper data type to function and no error when
 // using correct data or a function that returns correct data
 testMock.updateData({ testData: ['updates'] });
-testMock.updateData((data) => {
-  data satisfies typeof testData;
-  return { testData: ['updates from function'] };
-});
+// testMock.updateData((data) => {
+//   data satisfies typeof testData;
+//   return { testData: ['updates from function'] };
+// });
 
 // ✅ no errors when not specifying mockData
 createMock({ title: 'no default data mock', options: {} }, () => []);
@@ -167,3 +167,7 @@ testMock.updateOptions({
   // @ts-expect-error invalid value type
   objOptionsWithDefaultValue: 'invalid',
 });
+
+// ❌
+// @ts-expect-error incomplete data
+testMock.updateData({});

@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'msw';
 
 import { loadFromStorage, saveToStorage } from '../storage/storage';
-import type { SetupServerOrWorkerApi, Config } from '../types';
+import type { SetupServerOrWorkerApi, Config, DeepPartial } from '../types';
 import {
   convertMockOptions,
   createDataStorageKey,
@@ -77,6 +77,10 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   private readonly _initialMockData: TData;
   private _data: TData;
   private readonly _openPageURL?: string;
+  private readonly _updateDataTransformer?: CreateMockOptions<
+    TOptions,
+    TData
+  >['updateDataTransformer'];
   private readonly _createMockHandler: CreateMockHandlerFn<TOptions, TData>;
   private _initializedMockHandlers: RequestHandler[];
   private readonly _storageKey: string;
@@ -101,6 +105,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       typeof o.openPageURL === 'function'
         ? o.openPageURL.toString()
         : o.openPageURL;
+    this._updateDataTransformer = o.updateDataTransformer;
     this._createMockHandler = createMockHandler;
     this._storageKey = createStorageKey(this._title);
     this._storageDataKey = createDataStorageKey(this._title);
@@ -230,16 +235,22 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
     });
   };
 
-  public updateData = (update: ((data: TData) => TData) | TData): void => {
+  public updateData = <
+    ReturnData extends DeepPartial<TData> = DeepPartial<TData>
+  >(
+    update: ((data: TData) => ReturnData) | ReturnData
+  ): void => {
     const updatedData =
       typeof update === 'function' ? update(this._data) : update;
+    const transformedData =
+      this._updateDataTransformer?.(updatedData, this._data) || updatedData;
     const mockHandlers = initializeMockHandlers(
       this._convertedOptions,
       this._createMockHandler,
       {
         updateOptions: this.updateOptions,
         updateData: this.updateData,
-        data: updatedData,
+        data: transformedData as TData,
       }
     );
     useMockHandlers(

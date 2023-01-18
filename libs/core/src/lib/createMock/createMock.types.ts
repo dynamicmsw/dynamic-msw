@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'msw';
 
-import type { ArrayElementType } from '../types';
+import type { ArrayElementType, DeepPartial } from '../types';
 
 // * createMock Parameters
 
@@ -12,6 +12,10 @@ export interface CreateMockOptions<
   openPageURL?: string | OpenPageUrlFn<MockOptions & TOptions>;
   options: MockOptions & TOptions;
   data?: TData;
+  updateDataTransformer?: (
+    newData: DeepPartial<TData>,
+    oldData: TData
+  ) => TData;
 }
 export type CreateMockHandlerFn<
   TOptions extends MockOptions,
