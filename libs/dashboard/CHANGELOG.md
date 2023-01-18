@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+### [1.5.2-beta.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.5.2-alpha.0...v1.5.2-beta.0) (2023-01-18)
+
+
+### Bug Fixes
+
+* select label ([511630f](https://github.com/dynamicmsw/dynamic-msw/commit/511630f515e39ffb542cfe9e179a808ca4fbbd0a))
+
 ### [1.5.2-alpha.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.6.0-beta.0...v1.5.2-alpha.0) (2023-01-18)
 
 ## [1.6.0-beta.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.6.0-alpha.0...v1.6.0-beta.0) (2023-01-18)
