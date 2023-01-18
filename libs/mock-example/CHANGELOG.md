@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+### [1.5.2-alpha.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.6.0-beta.0...v1.5.2-alpha.0) (2023-01-18)
+
+
+### Bug Fixes
+
+* only save to storage when configured ([1a6287b](https://github.com/dynamicmsw/dynamic-msw/commit/1a6287b121690d2d31170dbaa3579d9b8779def2))
+
 ## [1.6.0-beta.0](https://github.com/dynamicmsw/dynamic-msw/compare/v1.6.0-alpha.0...v1.6.0-beta.0) (2023-01-18)
 
 ## [1.6.0-alpha.0](https://github.com/dynamicmsw/dynamic-msw/compare/v2.0.0-rc.0...v1.6.0-alpha.0) (2023-01-17)

@@ -1,6 +1,6 @@
 {
   "name": "open-app-page",
-  "version": "1.6.0-beta.0",
+  "version": "1.5.2-alpha.0",
   "license": "MIT",
   "description": "Function to wait on a web application to be running an then open a specific URL.",
   "keywords": [
