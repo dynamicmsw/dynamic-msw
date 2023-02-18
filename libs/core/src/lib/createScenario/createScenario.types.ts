@@ -1,4 +1,5 @@
 import type { CreateMockReturnType } from '../createMock/createMock';
+import type { DeepPartial } from '../types';
 
 export type CreateScenarioMocks = Record<
   string,
@@ -16,10 +17,10 @@ export type CreateScenarioParameter<T extends CreateScenarioMocks> = {
 };
 
 export type UpdateScenarioOptions<T extends CreateScenarioMocks> = {
-  [K in keyof T]: Parameters<T[K]['updateOptions']>[0];
+  [K in keyof T]?: Parameters<T[K]['updateOptions']>[0];
 };
 export type UpdateScenarioData<T extends CreateScenarioMocks> = {
-  [K in keyof T]: Parameters<T[K]['updateData']>[0];
+  [K in keyof T]: DeepPartial<T[K]['data']>;
 };
 
 export type ScenarioCreateMocks<T extends CreateScenarioMocks> = Record<

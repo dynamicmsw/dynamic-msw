@@ -11289,6 +11289,7 @@ __metadata:
     "@nrwl/node": 15.3.3
     "@nrwl/nx-cloud": latest
     "@nrwl/react": 15.3.3
+    "@nrwl/rollup": 15.3.3
     "@nrwl/storybook": 15.3.3
     "@nrwl/web": 15.3.3
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
@@ -11332,6 +11333,7 @@ __metadata:
     jest: 28.1.1
     jest-environment-jsdom: ^29.1.2
     lint-staged: ^13.0.3
+    lodash: ^4.17.21
     msw: latest
     next: 12.3.1
     node-fetch: ^2

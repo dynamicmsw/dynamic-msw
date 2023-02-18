@@ -3,7 +3,7 @@ import type { RequestHandler } from 'msw';
 import type { CreateMockPrivateReturnType } from '../createMock/createMock';
 import { createStorageKey } from '../createMock/createMock.helpers';
 import { loadFromStorage, saveToStorage } from '../storage/storage';
-import type { Config, SetupServerOrWorkerApi } from '../types';
+import type { Config, DeepPartial, SetupServerOrWorkerApi } from '../types';
 import {
   createScenarioKey,
   createScenarioMocks,
@@ -81,14 +81,24 @@ class CreateScenarioClass<T extends CreateScenarioMocks> {
   };
   public updateOptions = (options: Partial<UpdateScenarioOptions<T>>) => {
     Object.keys(options).forEach((key) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this._scenarioMocks[key].updateOptions(options[key]!);
+      const option = options[key];
+      if (option) {
+        this._scenarioMocks[key].updateOptions(option);
+      }
     });
   };
-  public updateData = (data: Partial<UpdateScenarioData<T>>) => {
+  public updateData = (data: DeepPartial<UpdateScenarioData<T>>) => {
     Object.keys(data).forEach((key) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this._scenarioMocks[key].updateData(data[key]!);
+      this._scenarioMocks[key].updateData(data[key]);
+    });
+  };
+  public setData = (data: {
+    [Key in keyof UpdateScenarioData<T>]:
+      | UpdateScenarioData<T>[Key]
+      | undefined;
+  }) => {
+    Object.keys(data).forEach((key) => {
+      this._scenarioMocks[key].setData(data[key]);
     });
   };
   public reset = () => {

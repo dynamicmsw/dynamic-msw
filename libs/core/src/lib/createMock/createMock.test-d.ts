@@ -4,6 +4,7 @@ const createMock: CreateMock = () => ({} as any);
 const testData = {
   testData: ['hello', 'darkness', 'my', 'old', 'friend'],
   otherData: 'x',
+  nestedObj: { x: 'y', y: ['s'], z: { x: 's' } },
 };
 export type TestData = typeof testData;
 
@@ -35,6 +36,7 @@ export const testMock = createMock(
         defaultValue: 1,
       },
     },
+    updateDataTransformer: () => ({} as typeof testData),
     data: testData,
     openPageURL(o) {
       o.string satisfies string;

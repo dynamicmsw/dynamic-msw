@@ -116,6 +116,7 @@ const testScenario = createScenario({
   title: scenarioTitle,
   mocks: { testMock },
   options: { testMock: { string: 'updated', boolean: false, number: 0 } },
+  data: {testMock: {}}
 });
 
 (testScenario as unknown as CreateMockPrivateReturnType)._setServerOrWorker(

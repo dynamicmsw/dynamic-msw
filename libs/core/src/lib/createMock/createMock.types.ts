@@ -12,10 +12,6 @@ export interface CreateMockOptions<
   openPageURL?: string | OpenPageUrlFn<MockOptions & TOptions>;
   options: MockOptions & TOptions;
   data?: TData;
-  updateDataTransformer?: (
-    newData: DeepPartial<TData>,
-    oldData: TData
-  ) => TData;
 }
 export type CreateMockHandlerFn<
   TOptions extends MockOptions,
@@ -30,7 +26,8 @@ export interface CreateMockHandlerContext<
   TData extends MockData
 > {
   data: TData;
-  updateData(update: DeepPartial<TData>): void;
+  updateData(partialData: DeepPartial<TData>): TData;
+  setData(newData: TData): TData;
   updateOptions(options: ConvertedMockOptions<TOptions>): void;
 }
 

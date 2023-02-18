@@ -15,28 +15,26 @@ export const createScenarioMocks = <T extends CreateScenarioMocks>(
 ) =>
   Object.keys(mocks).reduce((prev, curr) => {
     const currMock = mocks[curr] as unknown as CreateMockPrivateReturnType;
+    const currData = data?.[curr];
+    const currOptions = options?.[curr];
     return {
       ...prev,
       [curr]: createMock(
         {
           title: createScenarioMockKey(title, currMock._title),
-          openPageURL: currMock._openPageURL,
-          data: data?.[curr] || currMock._initialMockData,
-          options: options?.[curr]
-            ? Object.keys(options[curr]).reduce(
-                (prevOptions, currOptionKey) => {
-                  const currValue = options[curr][currOptionKey];
-                  return {
-                    ...prevOptions,
-                    [currOptionKey]: {
-                      ...prevOptions[currOptionKey],
-                      defaultValue: currValue,
-                      selectedValue: currValue,
-                    },
-                  };
-                },
-                currMock._initialStorageOptions
-              )
+          data: currData || currMock._initialMockData,
+          options: currOptions
+            ? Object.keys(currOptions).reduce((prevOptions, currOptionKey) => {
+                const currValue = currOptions[currOptionKey];
+                return {
+                  ...prevOptions,
+                  [currOptionKey]: {
+                    ...prevOptions[currOptionKey],
+                    defaultValue: currValue,
+                    selectedValue: currValue,
+                  },
+                };
+              }, currMock._initialStorageOptions)
             : currMock._initialStorageOptions,
         },
         currMock._createMockHandler

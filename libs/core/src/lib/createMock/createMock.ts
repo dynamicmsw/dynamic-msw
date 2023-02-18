@@ -1,5 +1,6 @@
 import type { RequestHandler } from 'msw';
 
+import merge from '../helpers/lodash.merge';
 import { loadFromStorage, saveToStorage } from '../storage/storage';
 import type { SetupServerOrWorkerApi, Config, DeepPartial } from '../types';
 import {
@@ -77,10 +78,6 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
   private readonly _initialMockData: TData;
   private _data: TData;
   private readonly _openPageURL?: string;
-  private readonly _updateDataTransformer?: CreateMockOptions<
-    TOptions,
-    TData
-  >['updateDataTransformer'];
   private readonly _createMockHandler: CreateMockHandlerFn<TOptions, TData>;
   private _initializedMockHandlers: RequestHandler[];
   private readonly _storageKey: string;
@@ -105,7 +102,6 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       typeof o.openPageURL === 'function'
         ? o.openPageURL.toString()
         : o.openPageURL;
-    this._updateDataTransformer = o.updateDataTransformer;
     this._createMockHandler = createMockHandler;
     this._storageKey = createStorageKey(this._title);
     this._storageDataKey = createDataStorageKey(this._title);
@@ -132,6 +128,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       {
         updateOptions: this.updateOptions,
         updateData: this.updateData,
+        setData: this.setData,
         data: this._data,
       }
     );
@@ -224,6 +221,7 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
       {
         updateOptions: this.updateOptions,
         updateData: this.updateData,
+        setData: this.setData,
         data: this._data,
       }
     );
@@ -243,22 +241,22 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
     });
   };
 
-  public updateData = <
-    ReturnData extends DeepPartial<TData> = DeepPartial<TData>
-  >(
-    update: ((data: TData) => ReturnData) | ReturnData
-  ): void => {
-    const updatedData =
-      typeof update === 'function' ? update(this._data) : update;
-    const transformedData =
-      this._updateDataTransformer?.(updatedData, this._data) || updatedData;
+  public updateData = (partialData: DeepPartial<TData>): TData => {
+    const mergedData = merge(partialData, this._data);
+    this.setData(mergedData);
+    return mergedData;
+  };
+
+  public setData(data: TData): TData {
+    this._data = data;
     const mockHandlers = initializeMockHandlers(
       this._convertedOptions,
       this._createMockHandler,
       {
         updateOptions: this.updateOptions,
         updateData: this.updateData,
-        data: transformedData as TData,
+        setData: this.setData,
+        data,
       }
     );
     useMockHandlers(
@@ -269,9 +267,14 @@ class CreateMockClass<TOptions extends MockOptions, TData extends MockData> {
     );
     // TODO: consider if we want to save data to storage
     if (this._config.saveToStorage) {
-      saveToStorage(this._storageDataKey, { ...this._data, ...updatedData });
+      saveToStorage(this._storageDataKey, data);
     }
-  };
+    return data;
+  }
+
+  public get data() {
+    return this._data;
+  }
 }
 
 export type CreateMock = <
@@ -289,8 +292,10 @@ export type CreateMockReturnType<
   updateOptions: CreateMockClass<TOptions, TData>['updateOptions'];
   reset: CreateMockClass<TOptions, TData>['reset'];
   updateData: CreateMockClass<TOptions, TData>['updateData'];
+  setData: CreateMockClass<TOptions, TData>['setData'];
   activate: CreateMockClass<TOptions, TData>['activate'];
   deactivate: CreateMockClass<TOptions, TData>['deactivate'];
+  data: TData;
 };
 
 export type CreateMockPrivateReturnType<

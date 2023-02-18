@@ -1,5 +1,6 @@
 import type { TestData } from '../createMock/createMock.test-d';
 import { testMock } from '../createMock/createMock.test-d';
+import type { DeepPartial } from '../types';
 import type { CreateScenario } from './createScenario';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,8 +12,16 @@ createScenario({
   mocks: { testMock },
   options: { testMock: { boolean: true } },
   data: {
-    testMock: { testData: ['updated'], otherData: 'y' } satisfies TestData,
+    testMock: {
+      testData: ['updated'],
+      nestedObj: { x: 'y', y: ['s'] },
+    } satisfies DeepPartial<TestData>,
   },
+});
+// ✅ it works without overriding options
+createScenario({
+  title: 'example',
+  mocks: { testMock },
 });
 // ✅ it works without overriding options
 createScenario({

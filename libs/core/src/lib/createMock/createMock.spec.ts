@@ -3,7 +3,6 @@ import { createMock } from './createMock';
 import { createStorageKey } from './createMock.helpers';
 import type {
   ConvertedMockOptions,
-  MockData,
   MockOptions,
   OpenPageUrlFn,
   StoredMockState,
