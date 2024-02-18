@@ -1,21 +1,22 @@
 {
-  "extends": ["../../.eslintrc.json"],
+  "extends": [
+    "plugin:@nx/react",
+    "../../.eslintrc.json",
+    "../../.eslintrc.base.json"
+  ],
   "ignorePatterns": ["!**/*"],
   "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
     {
       "files": ["*.ts", "*.tsx"],
       "rules": {}
     },
     {
-      "files": ["*.stories.ts", "*.stories.tsx"],
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
-          0,
-          {
-            "enforceBuildableLibDependency": false
-          }
-        ]
-      }
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
     }
   ]
 }
