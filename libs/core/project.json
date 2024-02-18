@@ -1,76 +1,33 @@
 {
+  "name": "core",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/core/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
-    "serve": {
-      "executor": "@nrwl/web:rollup",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/core",
-        "tsConfig": "libs/core/tsconfig.lib.json",
-        "project": "libs/core/package.json",
-        "entryFile": "libs/core/src/index.ts",
-        "format": ["cjs", "esm"],
-        "externals": [],
-        "rollupConfig": ["rollup.config.js"],
-        "watch": true,
-        "assets": [
-          {
-            "glob": "libs/core/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
-      }
-    },
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/core",
+        "outputPath": "dist/core",
+        "main": "libs/core/src/index.ts",
         "tsConfig": "libs/core/tsconfig.lib.json",
-        "project": "libs/core/package.json",
-        "entryFile": "libs/core/src/index.ts",
-        "format": ["cjs", "esm"],
-        "externals": [],
-        "assets": [
-          {
-            "glob": "libs/core/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
+        "assets": ["libs/core/*.md"]
       }
     },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/core/**/*.{ts,tsx,js,jsx}"]
-      }
+    "publish": {
+      "command": "node tools/scripts/publish.mjs core {args.ver} {args.tag}",
+      "dependsOn": ["build"]
     },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/core"],
-      "options": {
-        "jestConfig": "libs/core/jest.config.ts",
-        "passWithNoTests": true
-      }
+    "typetest": {
+      "command": "tsc --project {projectRoot}/tsconfig.typetest.json"
     },
-    "testTypes": {
+    "can-publish": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit -p tsconfig.test.json",
-        "cwd": "libs/core"
-      }
-    },
-    "publishCI": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn nx build core && npm publish ./dist/libs/core --access=public --registry=https://registry.npmjs.org"
+        "command": "npx can-npm-publish",
+        "cwd": "{projectRoot}"
       }
     }
-  }
+  },
+  "tags": []
 }

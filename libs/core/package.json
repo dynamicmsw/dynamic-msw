@@ -1,22 +1,15 @@
 {
   "name": "@dynamic-msw/core",
-  "license": "MIT",
-  "sideEffects": false,
-  "version": "1.5.1",
-  "description": "Alter mocked responses on the fly using an infinite amount of configuration parameters. Usefull for testing feature flags, error responses or what ever reason you have to alter your API mocks.",
-  "keywords": [
-    "dynamic-msw",
-    "msw",
-    "mock",
-    "mocking"
-  ],
-  "homepage": "https://github.com/dynamicmsw/dynamic-msw/tree/main/libs/core",
-  "bugs": {
-    "url": "https://github.com/dynamicmsw/dynamic-msw/issues"
+  "version": "1.33.71",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.2.1",
+    "lodash": "^4.17.21",
+    "redux-state-sync": "^3.1.4",
+    "redux-persist": "^6.0.0",
+    "react-redux": "^9.1.0",
+    "msw": "^2.2.1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dynamicmsw/dynamic-msw.git",
-    "directory": "libs/core"
-  }
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
 }
