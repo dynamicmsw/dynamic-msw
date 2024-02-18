@@ -1,0 +1,8 @@
+{
+  "name": "@dynamic-msw/dashboard-button",
+  "version": "1.33.71",
+  "dependencies": {},
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
+}

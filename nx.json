@@ -1,47 +1,17 @@
 {
+  "nxCloudUrl": "https://cloud.nx.app",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "dynamic-msw",
-  "affected": {
-    "defaultBase": "main"
-  },
   "workspaceLayout": {
     "libsDir": "libs",
     "appsDir": "examples"
   },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/nx-cloud",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "testTypes",
-          "e2e",
-          "publishCI",
-          "versionCI",
-          "build-storybook"
-        ],
-        "runtimeCacheInputs": ["echo $STORYBOOK_PUBLIC_PATH"]
+  "release": {
+    "version": {
+      "currentVersionResolver": "git-tag",
+      "conventionalCommits": true,
+      "generatorOptions": {
+        "fallbackCurrentVersionResolver": "disk"
       }
-    }
-  },
-  "targetDefaults": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
-    },
-    "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
-    },
-    "e2e": {
-      "inputs": ["default", "^production"]
-    },
-    "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
-    },
-    "build-storybook": {
-      "inputs": ["default", "^production", "{workspaceRoot}/.storybook/**/*"]
     }
   },
   "namedInputs": {
@@ -50,38 +20,73 @@
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.js",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
       "!{projectRoot}/.storybook/**/*",
-      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)"
+      "!{projectRoot}/tsconfig.storybook.json"
     ],
-    "sharedGlobals": ["{workspaceRoot}/babel.config.json"]
+    "sharedGlobals": []
   },
-  "generators": {
-    "@nrwl/react": {
-      "application": {
-        "babel": false
-      },
-      "component": {
-        "style": "none",
-        "directory": "components",
-        "pascalCaseDirectory": true,
-        "pascalCaseFiles": true
+  "plugins": [
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "test",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
       }
     },
-    "@nrwl/next": {
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "buildStorybookTargetName": "build-storybook",
+        "serveStorybookTargetName": "storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook"
+      }
+    }
+  ],
+  "generators": {
+    "@nx/react": {
       "application": {
+        "babel": true,
+        "style": "@emotion/styled",
+        "linter": "eslint",
+        "bundler": "vite"
+      },
+      "component": {
+        "style": "@emotion/styled"
+      },
+      "library": {
+        "style": "@emotion/styled",
         "linter": "eslint"
       }
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "pluginsConfig": {
-    "@nrwl/web": {
-      "analyzeSourceFiles": true
+  "targetDefaults": {
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "typetest": {
+      "cache": true,
+      "inputs": ["production", "^production"]
     }
-  },
-  "defaultProject": "next"
+  }
 }

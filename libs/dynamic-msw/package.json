@@ -1,0 +1,10 @@
+{
+  "name": "dynamic-msw",
+  "version": "1.33.71",
+  "dependencies": {
+    "@dynamic-msw/core": "1.33.71"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
+}

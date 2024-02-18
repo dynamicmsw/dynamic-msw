@@ -1,0 +1,64 @@
+name: Deploy static GitHub pages
+
+concurrency:
+  group: deploy-static-github-pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-storybook:
+    name: build-storybook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Enable corepack
+        run: corepack enable
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        id: cache-pnpm-store
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Bot"
+          git config user.email "bramzijpcode@gmail.com"
+      - run: pnpm i --frozen-lockfile
+      - name: Build build storybook
+        run: npx nx run-many -t build -p dashboard storybook
+        env:
+          STORYBOOK_PREVIEW: true
+          STORYBOOK_PUBLIC_PATH: /dynamic-msw/
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist/apps/storybook
+  deploy-storybook:
+    runs-on: ubuntu-latest
+    needs: build-storybook
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
