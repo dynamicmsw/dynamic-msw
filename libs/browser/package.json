@@ -1,0 +1,13 @@
+{
+  "name": "@dynamic-msw/browser",
+  "version": "1.33.7",
+  "dependencies": {
+    "msw": "^2.2.1",
+    "@dynamic-msw/core": "0.0.1",
+    "@dynamic-msw/setup": "0.0.1",
+    "@dynamic-msw/dashboard-button": "0.0.1"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
+}

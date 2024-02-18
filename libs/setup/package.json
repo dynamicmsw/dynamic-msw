@@ -1,0 +1,12 @@
+{
+  "name": "@dynamic-msw/setup",
+  "version": "1.33.7",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.2.1",
+    "@dynamic-msw/core": "0.0.1",
+    "msw": "^2.2.1"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
+}

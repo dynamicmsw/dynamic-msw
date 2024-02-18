@@ -1,5 +1,8 @@
 name: Pre-release
 
+concurrency:
+  group: pre-release
+
 on:
   workflow_dispatch:
     inputs:
@@ -11,72 +14,88 @@ on:
           - alpha
           - beta
           - rc
+      releaseAs:
+        type: choice
+        description: Release As
+        required: true
+        options:
+          - prepatch
+          - preminor
+          - premajor
 
 jobs:
   quality-assurance:
-    if: startsWith(github.ref, 'refs/heads/release')
+    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release')
     uses: ./.github/workflows/quality-assurance.yml
   pre-release:
-    if: startsWith(github.ref, 'refs/heads/release')
+    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release')
     environment: release
     runs-on: ubuntu-latest
     needs: quality-assurance
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PUSH_TOKEN }}
-      - uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
-          cache: 'yarn'
+          node-version: '20'
+          cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
       - name: Enable corepack
         run: corepack enable
-      - name: Cache modules
-        id: cache-modules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-modules
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        id: cache-pnpm-store
+        name: Setup pnpm cache
         with:
-          path: |
-            node_modules
-            .yarn
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
-
+            ${{ runner.os }}-pnpm-store-
       - name: Setup Git
         run: |
           git config user.name "GitHub Bot"
           git config user.email "bramzijpcode@gmail.com"
       - run: git rebase origin/main
-      - run: yarn --immutable
-
-      - name: Check if everything builds with nx release cache
-        run: yarn nx affected:build --parallel=3
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+      - run: pnpm i --frozen-lockfile
+      - run: npx nx affected -t lint test typetest build e2e-ci --parallel=5
         env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
-      - name: Version
-        run: yarn nx run dashboard:versionCI --releaseAs=prerelease --preid=${{ github.event.inputs.preid }} --skip-nx-cache
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+      # - name: Check if everything builds with nx release cache
+      #   run: npx nx affected:build --parallel=3
+      #   env:
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+      #   run: >-
+      #     npx nx run dashboard:versionCI
+      #     --releaseAs=$(
+      #     git cherry -v main | grep -Eq "chore: release version.*${{ github.event.inputs.releaseAs }}.*"
+      #     && echo "prerelease"
+      #     || echo ${{ github.event.inputs.releaseAs }})
+      #     --preid=${{ github.event.inputs.preid }}
+      #     --skip-nx-cache
+      # env:
+      #   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
 
-      - name: Check for created tags to see if a new version has been made
-        run: git tag -l --contains $(git rev-parse HEAD) | cat | grep . && echo "Found newly created tag" || { echo "No changes found"; exit 1; };
+      # - name: Check for created tags to see if a new version has been made
+      #   run: git tag -l --contains $(git rev-parse HEAD) | cat | grep . && echo "Found newly created tag" || { echo "No changes found"; exit 1; };
 
-      - name: Push changes
-        run: git push origin HEAD
-      - name: Push tags
-        run: git push --tags
+      # - name: Push changes
+      #   run: git push origin HEAD
+      # - name: Push tags
+      #   run: git push --tags
 
-      - name: Publish changes
-        run: yarn nx affected --target=publishCI --parallel 1 --nx-bail
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}
+      # - name: Publish changes
+      #   run: npx nx affected --target=publishCI --parallel 1 --nx-bail
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_RELEASE_TOKEN }}

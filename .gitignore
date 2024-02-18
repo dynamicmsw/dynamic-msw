@@ -1,22 +1,12 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
-/tmp
+dist
+tmp
 /out-tsc
 
 # dependencies
 node_modules
-package-lock.json
-
-# yarn berry
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
 
 # IDEs and editors
 /.idea
@@ -48,11 +38,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Next.js
-.next
-
-# dashboard
-**/mock-dashboard/index.html
-
-# env
+.nx/cache
+.env.local
 nx-cloud.env
+
+storybook-static

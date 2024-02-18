@@ -1,12 +1,10 @@
 {
-  "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "import"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -23,63 +21,12 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
-      "rules": {
-        "@typescript-eslint/consistent-type-imports": [
-          2,
-          { "prefer": "type-imports", "disallowTypeAnnotations": true }
-        ],
-        "@typescript-eslint/no-unused-vars": [
-          "warn",
-          { "argsIgnorePattern": "^_" }
-        ]
-      }
-    },
-    {
-      "files": ["*.tsx"],
-      "extends": [
-        "plugin:@nrwl/nx/react-typescript",
-        "plugin:react/recommended"
-      ],
-      "rules": {
-        "react/function-component-definition": [
-          "error",
-          { "namedComponents": "arrow-function" }
-        ],
-        "react/no-unknown-property": ["error", { "ignore": ["css"] }],
-        "react/react-in-jsx-scope": 0
-      }
+      "rules": {}
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
-      "rules": {}
-    },
-    {
-      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
-      "env": {
-        "jest": true
-      },
       "rules": {}
     }
   ],
-  "rules": {
-    "import/newline-after-import": 2,
-    "import/no-useless-path-segments": 2,
-    "import/order": [
-      2,
-      {
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": false
-        },
-        "groups": [
-          "builtin",
-          "external",
-          ["parent", "internal", "index", "sibling"]
-        ],
-        "newlines-between": "always"
-      }
-    ]
-  }
+  "extends": ["./.eslintrc.base.json"]
 }

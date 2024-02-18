@@ -1,0 +1,23 @@
+{
+  "name": "dynamic-msw",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dynamic-msw/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/dynamic-msw",
+        "main": "libs/dynamic-msw/src/index.ts",
+        "tsConfig": "libs/dynamic-msw/tsconfig.lib.json",
+        "assets": ["libs/dynamic-msw/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs dynamic-msw {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}
