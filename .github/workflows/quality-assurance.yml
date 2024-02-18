@@ -1,72 +1,63 @@
-name: Quality-assurance
+name: Quality Assurance
+
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 on:
-  workflow_call:
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   quality-assurance:
     name: quality-assurance
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: Enable corepack
         run: corepack enable
-      - name: Cache modules
-        id: cache-modules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-modules
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        id: cache-pnpm-store
+        name: Setup pnpm cache
         with:
-          path: |
-            node_modules
-            .yarn
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Cache build
-        uses: actions/cache@v3
+            ${{ runner.os }}-pnpm-store-
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Bot"
+          git config user.email "bramzijpcode@gmail.com"
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+      - run: pnpm i --frozen-lockfile
+      - run: npx nx format:check
+      - run: npx nx affected -t lint test typetest build e2e-ci --parallel=5 --verbose
         env:
-          cache-name: build-cache
-        with:
-          path: |
-            ./node_modules/.cache
-            ./examples/next/.next/cache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('./yarn.lock') }}-${{ hashFiles('./libs/**/*.[jt]s', './libs/**/*.[jt]sx','./examples/**/*.[jt]s', './examples/**/*.[jt]sx','./e2e/**/*.[jt]s', './e2e/**/*.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
-
-      - run: yarn --immutable
-
-      - run: yarn nx workspace-lint
-      - run: yarn nx format:check
-      - run: yarn nx affected:lint --parallel=3
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:test --parallel=3 --ci --code-coverage
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected --parallel=3 --target=testTypes
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:build --parallel=3
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - run: yarn nx affected:e2e --configuration=build
-        id: e2eTests
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_DEFAULT_TOKEN }}
-      - name: Upload e2e result artifact
-        if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: e2e-test-reports
-          path: dist/cypress/
-          retention-days: 2
-          if-no-files-found: error
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      - run: npx nx release version --specifier=prerelease --preid=alpha
+      - run: git tag
+      - run: npx nx release version --specifier=prerelease --preid=alpha --git-tag --git-commit
+      - run: npx nx affected lint --fix --verbose
+      - run: git push --follow-tags --dry-run
+      - run: npx nx run-many -t can-publish --verbose --parallel=40
+      # - name: Upload e2e result artifact
+      #   if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: e2e-test-reports
+      #     path: dist/cypress/
+      #     retention-days: 2
+      #     if-no-files-found: error
