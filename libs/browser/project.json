@@ -1,0 +1,23 @@
+{
+  "name": "browser",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/libs/browser/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/browser",
+        "main": "libs/browser/src/index.ts",
+        "tsConfig": "libs/browser/tsconfig.lib.json",
+        "assets": ["libs/browser/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs browser {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}

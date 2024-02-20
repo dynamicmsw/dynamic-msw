@@ -1,0 +1,13 @@
+{
+  "name": "dashboard",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dashboard/src",
+  "projectType": "library",
+  "targets": {
+    "publish": {
+      "command": "node tools/scripts/publish.mjs browser {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}

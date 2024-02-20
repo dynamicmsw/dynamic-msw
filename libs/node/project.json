@@ -1,0 +1,23 @@
+{
+  "name": "node",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/node/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/node",
+        "main": "libs/node/src/index.ts",
+        "tsConfig": "libs/node/tsconfig.lib.json",
+        "assets": ["libs/node/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs node {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}
