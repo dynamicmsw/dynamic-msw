@@ -1,4 +1,6 @@
 {
+  "nxCloudAccessToken": "NTcyOTZkNzAtNTUyZC00YzZiLTliZjMtY2QyYWZiNDY4OTZifHJlYWQtd3JpdGU=",
+  "nxCloudUrl": "https://cloud.nx.app",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "npmScope": "dynamic-msw",
   "affected": {
