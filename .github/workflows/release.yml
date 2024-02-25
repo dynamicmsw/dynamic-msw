@@ -9,7 +9,9 @@ on:
       version:
         type: choice
         description: Version
+        default: ''
         options:
+          - ''
           - patch
           - minor
           - major
@@ -17,7 +19,7 @@ on:
 jobs:
   release:
     name: release
-    if: startsWith(github.ref, 'refs/heads/main')
+    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release')
     environment: release
     runs-on: ubuntu-latest
     steps:

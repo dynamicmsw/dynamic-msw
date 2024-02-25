@@ -91,12 +91,12 @@ export const createFeatureFlagsMock = configureMock(
 ### CRUD mock
 
 ```ts
-import { createMock } from 'dynamic-msw';
+import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
 
 type Todo = { id: string; title: string; done: boolean };
 
-export const todoMocks = createMock(
+export const createTodoMocks = configureMock(
   {
     key: 'todos',
     data: { todos: [] satisfies Todo[] as Todo[] },
