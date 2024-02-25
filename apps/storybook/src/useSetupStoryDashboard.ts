@@ -7,15 +7,20 @@ import {
 } from './testMocks';
 import { createTestScenario2, createTestScenario3 } from './testScenarios';
 
-const setup = setupDashboard([
-  createTestScenarioMock2(),
-  createTestMock(),
-  createTestScenarioMock2(),
-  createTestScenario3(),
-  createTestScenario2(),
-  createTestScenarioMock2(),
-  createTestScenarioMock(),
-]);
+const setup = setupDashboard(
+  [
+    createTestScenarioMock2(),
+    createTestMock(),
+    createTestScenarioMock2(),
+    createTestScenario3(),
+    createTestScenario2(),
+    createTestScenarioMock2(),
+    createTestScenarioMock(),
+  ],
+  {
+    renderDashboardButton: true, // true by default
+  }
+);
 
 // ? ensures that mocks are initialized on first render
 export default function useSetupStoryDashboard() {
