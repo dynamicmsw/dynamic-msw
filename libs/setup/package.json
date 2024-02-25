@@ -1,9 +1,10 @@
 {
+  "private": false,
   "name": "@dynamic-msw/setup",
-  "version": "1.33.72-alpha.1.0",
+  "version": "1.33.72-alpha.1.1",
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
-    "@dynamic-msw/core": "1.33.72-alpha.1.0",
+    "@dynamic-msw/core": "1.33.72-alpha.1.1",
     "msw": "^2.2.1"
   },
   "main": "./index.js",
