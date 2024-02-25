@@ -79,6 +79,11 @@
     }
   },
   "targetDefaults": {
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectName}"
+      }
+    },
     "@nx/vite:build": {
       "cache": true,
       "dependsOn": ["^build"],
