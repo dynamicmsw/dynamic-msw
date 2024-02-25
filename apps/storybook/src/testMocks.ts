@@ -1,7 +1,7 @@
-import { createMock } from '@dynamic-msw/core';
+import { configureMock } from '@dynamic-msw/core';
 import { HttpResponse, http } from 'msw';
 
-export const getTestMock = createMock(
+export const createTestMock = configureMock(
   {
     key: 'testMock',
     parameters: {
@@ -36,7 +36,7 @@ export const getTestMock = createMock(
     ),
   ]
 );
-export const getTestScenarioMock = createMock(
+export const createTestScenarioMock = configureMock(
   {
     key: 'testScenarioMock',
     parameters: {
@@ -71,7 +71,7 @@ export const getTestScenarioMock = createMock(
     ];
   }
 );
-export const getTestScenarioMock2 = createMock(
+export const createTestScenarioMock2 = configureMock(
   {
     key: 'testScenarioMock2',
     parameters: {

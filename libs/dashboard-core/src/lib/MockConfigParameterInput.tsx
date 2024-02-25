@@ -1,7 +1,7 @@
 import {
   NormalizedMockParameter,
-  createMockActions,
-  createMockId,
+  configureMockActions,
+  configureMockId,
   useAppDispatch,
 } from '@dynamic-msw/core';
 import {
@@ -33,7 +33,8 @@ export default function MockConfigParameterInput({
     parameter.dashboardInputType ||
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     (parameter.selectOptions?.length >= 0 && 'select');
-  const uniqueId = createMockId(mockKey, scenarioKey).toString() + parameterKey;
+  const uniqueId =
+    configureMockId(mockKey, scenarioKey).toString() + parameterKey;
   switch (inputType) {
     case 'boolean':
       return (
@@ -43,7 +44,7 @@ export default function MockConfigParameterInput({
               checked={!!currentValue}
               onChange={() =>
                 dispatch(
-                  createMockActions.updateOne({
+                  configureMockActions.updateOne({
                     mockKey,
                     scenarioKey,
                     changes: {
@@ -80,7 +81,7 @@ export default function MockConfigParameterInput({
                 })}
             onChange={(e) => {
               dispatch(
-                createMockActions.updateOne({
+                configureMockActions.updateOne({
                   mockKey,
                   scenarioKey,
                   changes: {
@@ -128,7 +129,7 @@ export default function MockConfigParameterInput({
             const isNaNNumber = Number.isNaN(e.target.value);
             if (isNaNNumber) return;
             dispatch(
-              createMockActions.updateOne({
+              configureMockActions.updateOne({
                 mockKey,
                 scenarioKey,
                 changes: {
@@ -154,7 +155,7 @@ export default function MockConfigParameterInput({
           value={currentValue}
           onChange={(e) => {
             dispatch(
-              createMockActions.updateOne({
+              configureMockActions.updateOne({
                 mockKey,
                 scenarioKey,
                 changes: {

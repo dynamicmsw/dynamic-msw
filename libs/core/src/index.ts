@@ -24,18 +24,18 @@ export {
 export {
   type CreateMockReturnType,
   type AnyCreateMockReturnType,
-  default as createMock,
-} from './createMock/createMock';
+  default as configureMock,
+} from './configureMock/configureMock';
 export {
   type CreateScenarioReturnType,
-  default as createScenario,
-} from './createScenario/createScenario';
+  default as configureScenario,
+} from './configureScenario/configureScenario';
 export { type AllHandlerTypes } from './types/AllHandlerTypes';
 export {
   selectAllCreateMocks,
   selectCreateMockById,
-  createMockActions,
-  createMockId,
+  configureMockActions,
+  configureMockId,
   selectAllNonScenarioMocksIds,
   selectScenarioMocksById,
   selectOrderedScenariosAndMocks,
@@ -48,7 +48,7 @@ export {
 export {
   selectActiveSortedCreateScenarioIds,
   selectCreateScenarioById,
-  createScenarioActions,
+  configureScenarioActions,
   selectIsScenarioExpanded,
   selectIsOneScenarioExpanded,
 } from './state/createScenario.slice';

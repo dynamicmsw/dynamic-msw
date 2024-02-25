@@ -1,6 +1,6 @@
 import {
-  createMockActions,
-  createMockId,
+  configureMockActions,
+  configureMockId,
   selectCreateMockById,
   useAppDispatch,
   useTypedSelector,
@@ -12,7 +12,7 @@ import { Stack } from '@mui/material';
 export default function MockTableRow({ mockKey }: { mockKey: string }) {
   const dispatch = useAppDispatch();
   const mock = useTypedSelector(
-    selectCreateMockById(createMockId(mockKey, undefined))
+    selectCreateMockById(configureMockId(mockKey, undefined))
   );
   return (
     <ConfigTableRow
@@ -35,7 +35,7 @@ export default function MockTableRow({ mockKey }: { mockKey: string }) {
 
   function setIsActive(isActive: boolean) {
     dispatch(
-      createMockActions.updateOne({
+      configureMockActions.updateOne({
         mockKey,
         scenarioKey: undefined,
         changes: { isActive },

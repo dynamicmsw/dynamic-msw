@@ -44,6 +44,6 @@ jobs:
         uses: nrwl/nx-set-shas@v4
       - run: pnpm i --frozen-lockfile
       - run: npx nx format:check
-      - run: npx nx affected -t lint test typetest build e2e-ci --parallel=5
+      - run: npx nx affected -t lint test typetest typecheck-tests build e2e-ci --parallel=5
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}

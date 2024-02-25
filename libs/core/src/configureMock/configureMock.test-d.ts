@@ -1,6 +1,6 @@
-import createMock from './createMock';
+import configureMock from './configureMock';
 
-export const getTestMock = createMock(
+export const createTestMock = configureMock(
   {
     key: 'testMock',
     parameters: {
@@ -45,7 +45,7 @@ export const getTestMock = createMock(
     return [];
   }
 );
-createMock(
+configureMock(
   {
     key: 'testMockNoParametersAndData',
     data: { some: 'data' },
@@ -57,7 +57,7 @@ createMock(
     return [];
   }
 );
-export const getTestMockNoParametersAndNoData = createMock(
+export const createTestMockNoParametersAndNoData = configureMock(
   {
     key: 'testMockParametersAndNoData',
   },
@@ -66,7 +66,7 @@ export const getTestMockNoParametersAndNoData = createMock(
     return [];
   }
 );
-createMock(
+configureMock(
   {
     key: 'testMockParametersAndData',
     data: { some: 'data' },
@@ -81,10 +81,10 @@ createMock(
   }
 );
 
-getTestMock().overrideDefaultParameterValues({ boolean: true });
-getTestMock().updateParameters({ boolean: true });
-getTestMock().updateData({ test: 'b' });
+createTestMock().overrideDefaultParameterValues({ boolean: true });
+createTestMock().updateParameters({ boolean: true });
+createTestMock().updateData({ test: 'b' });
 
 // TODO: try omit the object key "updateParameters" while keeping type defs sane
-getTestMockNoParametersAndNoData().updateParameters satisfies undefined;
-getTestMockNoParametersAndNoData().updateData satisfies undefined;
+createTestMockNoParametersAndNoData().updateParameters satisfies undefined;
+createTestMockNoParametersAndNoData().updateData satisfies undefined;

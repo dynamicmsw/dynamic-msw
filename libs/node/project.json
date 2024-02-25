@@ -21,6 +21,9 @@
     "typetest": {
       "command": "tsc --project {projectRoot}/tsconfig.typetest.json"
     },
+    "typecheck-tests": {
+      "command": "tsc --project {projectRoot}/tsconfig.spec.json"
+    },
     "can-publish": {
       "executor": "nx:run-commands",
       "options": {

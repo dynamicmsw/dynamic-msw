@@ -15,9 +15,9 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LaunchIcon from '@mui/icons-material/Launch';
 import {
   DashboardConfig,
-  createMockActions,
-  createMockId,
-  createScenarioActions,
+  configureMockActions,
+  configureMockId,
+  configureScenarioActions,
   dashboardActions,
   selectIsMockExpanded,
   selectIsScenarioExpanded,
@@ -62,7 +62,7 @@ export default function ConfigTableRow({
   const isExpanded = useTypedSelector(
     isScenario
       ? selectIsScenarioExpanded(scenarioKey)
-      : selectIsMockExpanded(createMockId(mockKey, scenarioKey))
+      : selectIsMockExpanded(configureMockId(mockKey, scenarioKey))
   );
   const dispatch = useAppDispatch();
   const pageURL = dashboardConfig?.pageURL;
@@ -76,11 +76,11 @@ export default function ConfigTableRow({
             onClick={() =>
               dispatch(
                 isScenario
-                  ? createScenarioActions.updateOne({
+                  ? configureScenarioActions.updateOne({
                       id: scenarioKey,
                       changes: { isExpanded: !isExpanded },
                     })
-                  : createMockActions.updateOne({
+                  : configureMockActions.updateOne({
                       mockKey,
                       scenarioKey,
                       changes: { isExpanded: !isExpanded },

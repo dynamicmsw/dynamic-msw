@@ -1,18 +1,18 @@
-import { createScenario } from '@dynamic-msw/core';
-import { getTestScenarioMock, getTestScenarioMock2 } from './testMocks';
+import { configureScenario } from '@dynamic-msw/core';
+import { createTestScenarioMock, createTestScenarioMock2 } from './testMocks';
 
-export const getTestScenario = createScenario({
+export const createTestScenario = configureScenario({
   key: 'someScenario',
-  mocks: [getTestScenarioMock()],
+  mocks: [createTestScenarioMock()],
   dashboardConfig: { pageURL: 'test-scenario', title: 'Test scenario title' },
 });
-export const getTestScenario2 = createScenario({
+export const createTestScenario2 = configureScenario({
   key: 'someScenario2',
-  mocks: [getTestScenarioMock2()],
+  mocks: [createTestScenarioMock2()],
   dashboardConfig: { pageURL: 'test-scenario2' },
 });
-export const getTestScenario3 = createScenario({
+export const createTestScenario3 = configureScenario({
   key: 'someScenario3',
-  mocks: [getTestScenarioMock2(), getTestScenarioMock()],
+  mocks: [createTestScenarioMock2(), createTestScenarioMock()],
   dashboardConfig: { pageURL: 'test-scenario2' },
 });

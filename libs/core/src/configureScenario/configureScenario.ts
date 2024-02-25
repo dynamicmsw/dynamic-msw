@@ -1,10 +1,10 @@
 import { Store } from '@reduxjs/toolkit';
-import { AnyCreateMockReturnType } from '../createMock/createMock';
+import { AnyCreateMockReturnType } from '../configureMock/configureMock';
 import { DashboardConfig } from '../types/DashboardConfig';
-import { createScenarioActions } from '../state/createScenario.slice';
+import { configureScenarioActions } from '../state/createScenario.slice';
 import { OmitUndefinedObjKeys } from '../types/utility-types';
 
-export default function createScenario<
+export default function configureScenario<
   TCreateMocks extends AnyCreateMockReturnType[]
 >({
   key,
@@ -21,7 +21,7 @@ export default function createScenario<
       return acc;
     }, {} as Record<string, AnyCreateMockReturnType>);
     return {
-      // TODO: consider changing the API to override default values from the createScenario returned function parameters
+      // TODO: consider changing the API to override default values from the configureScenario returned function parameters
       overrideDefaultParameterValues: (parameters) => {
         Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
           mocksMap[mockKey].overrideDefaultParameterValues?.(mockParameters!);
@@ -50,7 +50,7 @@ export default function createScenario<
       internals: {
         initialize: (globalStore) => {
           globalStore.dispatch(
-            createScenarioActions.setOne({ dashboardConfig, id: key })
+            configureScenarioActions.setOne({ dashboardConfig, id: key })
           );
           mocks.forEach((mock) => {
             mock.internals.initialize(globalStore, key);

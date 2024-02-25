@@ -1,6 +1,6 @@
 import { Unsubscribe } from '@reduxjs/toolkit';
 import { RequestHandler } from 'msw';
-import { Store, createMockActions, createStore } from '@dynamic-msw/core';
+import { Store, configureMockActions, createStore } from '@dynamic-msw/core';
 
 import { AllHandlerTypes } from '@dynamic-msw/core';
 import { initializeCreateMocks } from './lib/initializeCreateMocks';
@@ -46,7 +46,7 @@ export class Setup {
   };
 
   public resetHandlers = (...nextHandlers: AllHandlerTypes[]) => {
-    this.store.dispatch(createMockActions.resetAll());
+    this.store.dispatch(configureMockActions.resetAll());
     this.initializedHandlers = undefined;
     if (nextHandlers.length > 0) {
       this.initialHandlers = nextHandlers;

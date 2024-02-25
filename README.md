@@ -4,8 +4,8 @@
 - [Underlying Concept](#underlying-concept)
 - [Packages](#packages)
 - [Getting started](#getting-started)
-  - [Create mocks](#create-mocks)
-  - [Create scenarios](#create-scenarios)
+  - [Configure mocks](#configure-mocks)
+  - [Configure scenarios](#configure-scenarios)
   - [Testing](#create-scenarios)
   - [Browser development](#browser-development)
 - [Dashboard](#dashboard)
@@ -56,16 +56,16 @@ Node.js only
 dynamic-msw @dynamic-msw/node
 ```
 
-Browswer only
+Browser only
 
 ```
 dynamic-msw @dynamic-msw/browser
 ```
 
-## Create mocks
+## Configure mocks
 
 ```ts
-import { createMock } from 'dynamic-msw';
+import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
 
 export const createFeatureFlagsMock = configureMock(

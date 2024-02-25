@@ -1,11 +1,11 @@
 import setupServer from './setupServer';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
-  getTestMock,
-  testMockNoParametersAndNoData,
-} from '../../../core/src/createMock/createMock.test-d';
+  createTestMock,
+  createTestMockNoParametersAndNoData,
+} from '../../../core/src/configureMock/configureMock.test-d';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { testScenario } from '../../../core/src/createScenario/createScenario.test-d';
+import { createTestScenario } from '../../../core/src/configureScenario/configureScenario.test-d';
 import { http } from 'msw';
 
 const nonDynamicHandler = http.get('/posts', () => {
@@ -13,8 +13,8 @@ const nonDynamicHandler = http.get('/posts', () => {
 });
 
 setupServer(
-  getTestMock(),
-  testMockNoParametersAndNoData(),
-  testScenario,
+  createTestMock(),
+  createTestMockNoParametersAndNoData(),
+  createTestScenario(),
   nonDynamicHandler
 );
