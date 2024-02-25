@@ -6,10 +6,10 @@
 - [Getting started](#getting-started)
   - [Configure mocks](#configure-mocks)
   - [Configure scenarios](#configure-scenarios)
-  - [Testing](#create-scenarios)
-  - [Browser development](#browser-development)
+    <!-- - [Testing](#testing) -->
+    <!-- - [Browser development](#browser-development) -->
 - [Dashboard](#dashboard)
-  - [Best practices for using the dashboard](#best-practices-for-using-the-dashboard)
+  <!-- - [Best practices for using the dashboard](#best-practices-for-using-the-dashboard) -->
   - [Demo](#demo)
 
 ## Summary
@@ -64,6 +64,8 @@ dynamic-msw @dynamic-msw/browser
 
 ## Configure mocks
 
+### Simple mock
+
 ```ts
 import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
@@ -84,10 +86,48 @@ export const createFeatureFlagsMock = configureMock(
     });
   }
 );
+```
+
+### CRUD mock
+
+```ts
+import { createMock } from 'dynamic-msw';
+import { HttpResponse, http } from 'msw';
+
+type Todo = { id: string; title: string; done: boolean };
+
+export const todoMocks = createMock(
+  {
+    key: 'todos',
+    data: { todos: [] satisfies Todo[] as Todo[] },
+  },
+  (parameters, data, updateData) => {
+    return [
+      http.post('/todos/create', () => {
+        const newTodo = await request.json();
+        const newTodos = [...data.todos, newTodo];
+        updateData({ todos: newTodos });
+        return HttpResponse.json(newTodos);
+      }),
+      http.get('/todos', () => {
+        return HttpResponse.json(data.todos);
+      }),
+    ];
+  }
+);
+```
+
+<details>
+
+<summary>Advanced mock</summary>
+
+```ts
+import { configureMock } from 'dynamic-msw';
+import { HttpResponse, http } from 'msw';
 
 type Product = { id: string; title: string; availableStock: 2; };
 
-const productsData: Product[] = [{ id: 'some-product', title: 'Harry Potter', availableStock: 2 }]
+const testProductsData: Product[] = [{ id: 'some-product', title: 'Harry Potter', availableStock: 2 }]
 
 export const createProductMocks = configureMock(
   {
@@ -95,7 +135,7 @@ export const createProductMocks = configureMock(
     parameters: {
       productExists: true,
     },
-    data: { products: productsData },
+    data: { products: testProductsData },
   },
   (parameters, data, updateData) => {
     return [
@@ -108,10 +148,16 @@ export const createProductMocks = configureMock(
             { status: 404 }
           );
         }
-        return HttpResponse.json(data.products.find((product) => product.id === params.id));
+        return HttpResponse.json(
+          data.products.find(
+            (product) => product.id === params.id
+          )
+        );
       }),
       http.get('/products/:product/reserve', () => {
-        const product = data.products.find((product) => product.id === params.id)
+        const product = data.products.find(
+          (product) => product.id === params.id
+        )
         if (product.availableStock <= 0) {
           return return HttpResponse.json(
             {
@@ -120,10 +166,25 @@ export const createProductMocks = configureMock(
             { status: 404 }
           );
         }
-        updateData(data.products.map((product) => product.id === params.id ? {...product, availableStock: product.availableStock - 1 } : product))
+        updateData(data.products.map(
+          (product) =>
+            product.id === params.id
+              ? {...product, availableStock: product.availableStock - 1 }
+              : product)
+        )
         return HttpResponse.text("OK")
       }),
     ];
   }
 );
 ```
+
+</details>
+
+## Dashboard
+
+<!-- TODO: explain OpenAPI dashboard development security -->
+
+## Demo
+
+[Storybook](https://dynamicmsw.github.io/dynamic-msw)
