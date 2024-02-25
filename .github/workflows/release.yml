@@ -5,11 +5,19 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: Version
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   release:
     name: release
-    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release')
+    if: startsWith(github.ref, 'refs/heads/main')
     environment: release
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +56,7 @@ jobs:
       - run: npx nx affected -t lint test typetest e2e-ci --parallel=5
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-      - run: npx nx release version --git-tag --git-commit
+      - run: npx nx release version ${{ github.event.inputs.version }} --git-tag --git-commit
       - run: npx nx run-many -t build --parallel=10
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
