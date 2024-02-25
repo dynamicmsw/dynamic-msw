@@ -14,49 +14,52 @@ export default function createScenario<
   key: string;
   mocks: [...TCreateMocks];
   dashboardConfig?: DashboardConfig;
-}): CreateScenarioReturnType<TCreateMocks> {
-  const mocksMap = mocks.reduce((acc, curr) => {
-    acc[curr.internals.key] = curr;
-    return acc;
-  }, {} as Record<string, AnyCreateMockReturnType>);
-  return {
-    overrideDefaultParameterValues: (parameters) => {
-      Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
-        mocksMap[mockKey].overrideDefaultParameterValues?.(mockParameters!);
-      });
-    },
-    updateParameters: (parameters) => {
-      Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
-        mocksMap[mockKey].updateParameters?.(mockParameters!);
-      });
-    },
-    updateData: (data) => {
-      Object.entries(data).forEach(([mockKey, mockData]) => {
-        mocksMap[mockKey].updateData?.(mockData!);
-      });
-    },
-    overrideDefaultData: (data) => {
-      Object.entries(data).forEach(([mockKey, mockData]) => {
-        mocksMap[mockKey].overrideDefaultData?.(mockData!);
-      });
-    },
-    reset: () => {
-      mocks.forEach((mock) => {
-        mock.reset();
-      });
-    },
-    internals: {
-      initialize: (globalStore) => {
-        globalStore.dispatch(
-          createScenarioActions.setOne({ dashboardConfig, id: key })
-        );
-        mocks.forEach((mock) => {
-          mock.internals.initialize(globalStore, key);
+}): () => CreateScenarioReturnType<TCreateMocks> {
+  return () => {
+    const mocksMap = mocks.reduce((acc, curr) => {
+      acc[curr.internals.key] = curr;
+      return acc;
+    }, {} as Record<string, AnyCreateMockReturnType>);
+    return {
+      // TODO: consider changing the API to override default values from the createScenario returned function parameters
+      overrideDefaultParameterValues: (parameters) => {
+        Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
+          mocksMap[mockKey].overrideDefaultParameterValues?.(mockParameters!);
         });
       },
-      getMocks: () => mocks,
-      isCreateScenario: true,
-    },
+      updateParameters: (parameters) => {
+        Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
+          mocksMap[mockKey].updateParameters?.(mockParameters!);
+        });
+      },
+      updateData: (data) => {
+        Object.entries(data).forEach(([mockKey, mockData]) => {
+          mocksMap[mockKey].updateData?.(mockData!);
+        });
+      },
+      overrideDefaultData: (data) => {
+        Object.entries(data).forEach(([mockKey, mockData]) => {
+          mocksMap[mockKey].overrideDefaultData?.(mockData!);
+        });
+      },
+      reset: () => {
+        mocks.forEach((mock) => {
+          mock.reset();
+        });
+      },
+      internals: {
+        initialize: (globalStore) => {
+          globalStore.dispatch(
+            createScenarioActions.setOne({ dashboardConfig, id: key })
+          );
+          mocks.forEach((mock) => {
+            mock.internals.initialize(globalStore, key);
+          });
+        },
+        getMocks: () => mocks,
+        isCreateScenario: true,
+      },
+    };
   };
 }
 

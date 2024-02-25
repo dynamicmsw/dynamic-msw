@@ -26,88 +26,91 @@ export default function createMock<
     dashboardConfig,
   }: CreateMockConfig<TMockKey, TMockParameterObject, TMockData>,
   handlers: DynamicMockHandlerFn<TMockParameterObject, TMockData>
-): CreateMockReturnType<TMockKey, TMockParameterObject, TMockData> {
-  let isInitialized = false;
-  let scenarioKey: string | undefined;
-  let store: Store;
-  let parameterOverrides: Record<string, MockParameterValueType> | undefined;
-  let dataOverride: TMockData | undefined;
-  const getEntityId = () => {
-    if (!isInitialized) {
-      throw new Error(
-        'Tried updating a dynamic mock/scenario that is not being used by the server/worker. Please ensure you pass it to the setupServer/setupWorker/setupDashboard function.'
-      );
-    }
-    return createMockId(key, scenarioKey);
-  };
+): () => CreateMockReturnType<TMockKey, TMockParameterObject, TMockData> {
+  return () => {
+    let isInitialized = false;
+    let scenarioKey: string | undefined;
+    let store: Store;
+    let parameterOverrides: Record<string, MockParameterValueType> | undefined;
+    let dataOverride: TMockData | undefined;
+    const getEntityId = () => {
+      if (!isInitialized) {
+        throw new Error(
+          'Tried updating a dynamic mock/scenario that is not being used by the server/worker. Please ensure you pass it to the setupServer/setupWorker/setupDashboard function.'
+        );
+      }
+      return createMockId(key, scenarioKey);
+    };
 
-  return {
-    overrideDefaultParameterValues: parameters
-      ? (overrideParameters) => {
-          if (isInitialized) {
-            throw new Error(
-              'Can not override parameter defaults after the setupWorker/setupDashboard/setupDashboard has been initialized. Use updateParameters instead.'
+    return {
+      // TODO: consider changing the API to override default values from the createScenario returned function parameters
+      overrideDefaultParameterValues: parameters
+        ? (overrideParameters) => {
+            if (isInitialized) {
+              throw new Error(
+                'Can not override parameter defaults after the setupWorker/setupDashboard/setupDashboard has been initialized. Use updateParameters instead.'
+              );
+            }
+            parameterOverrides = overrideParameters as Record<
+              string,
+              MockParameterValueType
+            >;
+          }
+        : (undefined as any),
+      updateParameters: parameters
+        ? (parameters) => {
+            store.dispatch(
+              createMockActions.updateOne({
+                mockKey: key,
+                scenarioKey,
+                changes: { parameters },
+              })
             );
           }
-          parameterOverrides = overrideParameters as Record<
-            string,
-            MockParameterValueType
-          >;
-        }
-      : (undefined as any),
-    updateParameters: parameters
-      ? (parameters) => {
-          store.dispatch(
-            createMockActions.updateOne({
-              mockKey: key,
-              scenarioKey,
-              changes: { parameters },
-            })
-          );
-        }
-      : (undefined as any),
-    updateData: data
-      ? (data) => {
-          store.dispatch(
-            createMockActions.updateOne({
-              mockKey: key,
-              scenarioKey,
-              changes: { data },
-            })
-          );
-        }
-      : (undefined as any),
-    overrideDefaultData: data
-      ? (data) => {
-          dataOverride = data;
-        }
-      : (undefined as any),
-    reset: () => {
-      store.dispatch(createMockActions.resetOne(getEntityId()));
-    },
-    internals: {
-      initialize: (
-        globalStore: Store,
-        passedScenarioKey: string | undefined
-      ) => {
-        isInitialized = true;
-        store = globalStore;
-        scenarioKey = passedScenarioKey;
-        store.dispatch(
-          createMockActions.upsertOne({
-            parameters: normalizeParameters(parameters, parameterOverrides),
-            data: dataOverride ?? data,
-            mockKey: key,
-            scenarioKey,
-            dashboardConfig,
-          })
-        );
+        : (undefined as any),
+      updateData: data
+        ? (data) => {
+            store.dispatch(
+              createMockActions.updateOne({
+                mockKey: key,
+                scenarioKey,
+                changes: { data },
+              })
+            );
+          }
+        : (undefined as any),
+      overrideDefaultData: data
+        ? (data) => {
+            dataOverride = data;
+          }
+        : (undefined as any),
+      reset: () => {
+        store.dispatch(createMockActions.resetOne(getEntityId()));
       },
-      getHandlers: () => handlers as AnyDynamicMockHandlerFn,
-      getEntityId,
-      key,
-      isCreateMock: true,
-    },
+      internals: {
+        initialize: (
+          globalStore: Store,
+          passedScenarioKey: string | undefined
+        ) => {
+          isInitialized = true;
+          store = globalStore;
+          scenarioKey = passedScenarioKey;
+          store.dispatch(
+            createMockActions.upsertOne({
+              parameters: normalizeParameters(parameters, parameterOverrides),
+              data: dataOverride ?? data,
+              mockKey: key,
+              scenarioKey,
+              dashboardConfig,
+            })
+          );
+        },
+        getHandlers: () => handlers as AnyDynamicMockHandlerFn,
+        getEntityId,
+        key,
+        isCreateMock: true,
+      },
+    };
   };
 }
 

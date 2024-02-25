@@ -3,7 +3,7 @@ import { HttpResponse, http } from 'msw';
 import { createMock, createScenario } from '@dynamic-msw/core';
 import setupServer from './lib/setupServer';
 
-const testMock = createMock(
+const getTestMock = createMock(
   {
     key: 'testMock',
     parameters: {
@@ -35,7 +35,7 @@ const testMock = createMock(
     ];
   }
 );
-const testScenarioMock = createMock(
+const getTestScenarioMock = createMock(
   {
     key: 'testScenarioMock',
     parameters: {
@@ -67,6 +67,9 @@ const testScenarioMock = createMock(
     ];
   }
 );
+
+const testMock = getTestMock();
+const testScenarioMock = getTestScenarioMock();
 
 const testScenario = createScenario({
   key: 'someScenario',

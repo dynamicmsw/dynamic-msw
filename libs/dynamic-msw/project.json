@@ -10,8 +10,7 @@
       "options": {
         "outputPath": "dist/dynamic-msw",
         "main": "libs/dynamic-msw/src/index.ts",
-        "tsConfig": "libs/dynamic-msw/tsconfig.lib.json",
-        "assets": ["libs/dynamic-msw/*.md"]
+        "tsConfig": "libs/dynamic-msw/tsconfig.lib.json"
       }
     },
     "publish": {

@@ -1,7 +1,3 @@
-# dashboard-button
+# @dynamic-msw/dashboard-button
 
-This library was generated with [Nx](https://nx.dev).
-
-## Building
-
-Run `nx build dashboard-button` to build the library.
+Documentation can be found here: [dynamic-msw](https://github.com/dynamicmsw/dynamic-msw/tree/main?tab=readme-ov-file#dynamic-mock-service-worker)
