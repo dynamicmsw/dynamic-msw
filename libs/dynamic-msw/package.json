@@ -1,6 +1,22 @@
 {
   "name": "dynamic-msw",
   "version": "1.33.72-alpha.1.1",
+  "description": "Dynamic Mock Service Worker (Dynamic MSW) enhances MSW with dynamic request handlers, updateable parameters, and updateable data for easy CRUD testing. The dashboard feature enables on-the-fly mock configuration. Expected familiarity with MSW, consult the official documentation for optimal use.",
+  "keywords": [
+    "dynamic-msw",
+    "msw",
+    "mock",
+    "mocking"
+  ],
+  "homepage": "https://github.com/dynamicmsw/dynamic-msw/tree/main?tab=readme-ov-file#dynamic-mock-service-worker",
+  "bugs": {
+    "url": "https://github.com/dynamicmsw/dynamic-msw/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dynamicmsw/dynamic-msw.git",
+    "directory": "libs/core"
+  },
   "dependencies": {
     "@dynamic-msw/core": "1.33.72-alpha.1.1"
   },
