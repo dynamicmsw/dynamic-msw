@@ -47,11 +47,3 @@ jobs:
       - run: npx nx affected -t lint test typetest build e2e-ci --parallel=5
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-      # - name: Upload e2e result artifact
-      #   if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: e2e-test-reports
-      #     path: dist/cypress/
-      #     retention-days: 2
-      #     if-no-files-found: error

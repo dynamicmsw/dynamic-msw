@@ -1,6 +1,6 @@
 import createMock from './createMock';
 
-export const testMock = createMock(
+export const getTestMock = createMock(
   {
     key: 'testMock',
     parameters: {
@@ -57,7 +57,7 @@ createMock(
     return [];
   }
 );
-export const testMockNoParametersAndNoData = createMock(
+export const getTestMockNoParametersAndNoData = createMock(
   {
     key: 'testMockParametersAndNoData',
   },
@@ -81,10 +81,10 @@ createMock(
   }
 );
 
-testMock.overrideDefaultParameterValues({ boolean: true });
-testMock.updateParameters({ boolean: true });
-testMock.updateData({ test: 'b' });
+getTestMock().overrideDefaultParameterValues({ boolean: true });
+getTestMock().updateParameters({ boolean: true });
+getTestMock().updateData({ test: 'b' });
 
 // TODO: try omit the object key "updateParameters" while keeping type defs sane
-testMockNoParametersAndNoData.updateParameters satisfies undefined;
-testMockNoParametersAndNoData.updateData satisfies undefined;
+getTestMockNoParametersAndNoData().updateParameters satisfies undefined;
+getTestMockNoParametersAndNoData().updateData satisfies undefined;

@@ -13,6 +13,10 @@
               {
                 "sourceTag": "*",
                 "onlyDependOnLibsWithTags": ["*"]
+              },
+              {
+                "sourceTag": "*",
+                "bannedExternalImports": ["dynamic-msw"]
               }
             ]
           }
