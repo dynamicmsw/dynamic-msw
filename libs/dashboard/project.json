@@ -4,6 +4,16 @@
   "sourceRoot": "libs/dashboard/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/dashboard",
+        "main": "libs/dashboard/src/index.ts",
+        "tsConfig": "libs/dashboard/tsconfig.app.json",
+        "assets": ["libs/dashboard/*.md"]
+      }
+    },
     "publish": {
       "command": "node tools/scripts/publish.mjs browser {args.ver} {args.tag}",
       "dependsOn": ["build"]

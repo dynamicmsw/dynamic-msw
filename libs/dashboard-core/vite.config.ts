@@ -25,7 +25,7 @@ export default defineConfig({
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
-    outDir: '../../dist/libs/dashboard-core',
+    outDir: '../../dist/dashboard-core',
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
