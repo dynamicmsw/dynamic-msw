@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
+import type { InlineConfig } from 'vitest';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
@@ -53,19 +54,20 @@ export default defineConfig({
       external: [/node_modules/, 'msw/node'],
     },
   },
+  ...{
+    test: {
+      globals: true,
+      cache: {
+        dir: '../../node_modules/.vitest',
+      },
+      environment: 'node',
+      include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 
-  test: {
-    globals: true,
-    cache: {
-      dir: '../../node_modules/.vitest',
-    },
-    environment: 'node',
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-
-    reporters: ['default'],
-    coverage: {
-      reportsDirectory: '../../coverage/node',
-      provider: 'v8',
-    },
+      reporters: ['default'],
+      coverage: {
+        reportsDirectory: '../../coverage/node',
+        provider: 'v8',
+      },
+    } satisfies InlineConfig,
   },
 });
