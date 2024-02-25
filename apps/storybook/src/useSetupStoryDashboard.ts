@@ -1,20 +1,20 @@
 import { setupDashboard } from '@dynamic-msw/browser';
 import { useEffect, useState } from 'react';
 import {
-  getTestMock,
-  getTestScenarioMock,
-  getTestScenarioMock2,
+  createTestMock,
+  createTestScenarioMock,
+  createTestScenarioMock2,
 } from './testMocks';
-import { getTestScenario2, getTestScenario3 } from './testScenarios';
+import { createTestScenario2, createTestScenario3 } from './testScenarios';
 
 const setup = setupDashboard([
-  getTestScenarioMock2(),
-  getTestMock(),
-  getTestScenarioMock2(),
-  getTestScenario3(),
-  getTestScenario2(),
-  getTestScenarioMock2(),
-  getTestScenarioMock(),
+  createTestScenarioMock2(),
+  createTestMock(),
+  createTestScenarioMock2(),
+  createTestScenario3(),
+  createTestScenario2(),
+  createTestScenarioMock2(),
+  createTestScenarioMock(),
 ]);
 
 // ? ensures that mocks are initialized on first render

@@ -1,6 +1,6 @@
 import { RequestHandler } from 'msw';
-import { AnyCreateMockReturnType } from '../createMock/createMock';
-import { CreateScenarioReturnType } from '../createScenario/createScenario';
+import { AnyCreateMockReturnType } from '../configureMock/configureMock';
+import { CreateScenarioReturnType } from '../configureScenario/configureScenario';
 
 export type AllHandlerTypes =
   | RequestHandler

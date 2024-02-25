@@ -1,9 +1,9 @@
 import { expect, test, afterEach } from 'vitest';
 import { HttpResponse, http } from 'msw';
-import { createMock, createScenario } from '@dynamic-msw/core';
+import { configureMock, configureScenario } from '@dynamic-msw/core';
 import setupServer from './lib/setupServer';
 
-const getTestMock = createMock(
+const createTestMock = configureMock(
   {
     key: 'testMock',
     parameters: {
@@ -35,7 +35,7 @@ const getTestMock = createMock(
     ];
   }
 );
-const getTestScenarioMock = createMock(
+const createTestScenarioMock = configureMock(
   {
     key: 'testScenarioMock',
     parameters: {
@@ -68,13 +68,15 @@ const getTestScenarioMock = createMock(
   }
 );
 
-const testMock = getTestMock();
-const testScenarioMock = getTestScenarioMock();
+const testMock = createTestMock();
+const testScenarioMock = createTestScenarioMock();
 
-const testScenario = createScenario({
+const createScenario = configureScenario({
   key: 'someScenario',
   mocks: [testScenarioMock],
 });
+
+const testScenario = createScenario();
 
 const initialParameters = {
   string: 'test-string',

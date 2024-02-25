@@ -52,7 +52,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
       - run: pnpm i --frozen-lockfile
       - run: npx nx format:check
-      - run: npx nx affected -t lint test typetest e2e-ci --parallel=5
+      - run: npx nx affected -t lint test typetest typecheck-tests e2e-ci --parallel=5
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       - run: npx nx release version --specifier=prerelease --preid=${{ github.event.inputs.preid }} --git-tag --git-commit

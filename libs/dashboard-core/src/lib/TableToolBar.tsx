@@ -13,9 +13,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {
-  createMockActions,
-  createMockId,
-  createScenarioActions,
+  configureMockActions,
+  configureMockId,
+  configureScenarioActions,
   dashboardActions,
   selectIsOneMockExpanded,
   selectIsOneMockInactive,
@@ -43,9 +43,9 @@ export default function TableToolBar() {
       filteredMocksAndScenarios.flatMap((mock) =>
         mock.scenarioKey
           ? mock.mockKeys.map((mockKey) =>
-              createMockId(mockKey, mock.scenarioKey)
+              configureMockId(mockKey, mock.scenarioKey)
             )
-          : createMockId(mock.mockKey!, undefined)
+          : configureMockId(mock.mockKey!, undefined)
       ),
     [filteredMocksAndScenarios]
   );
@@ -75,16 +75,20 @@ export default function TableToolBar() {
             size="small"
             onClick={() => {
               if (isOneExpanded) {
-                dispatch(createMockActions.collapseEntities(filteredMockIds));
                 dispatch(
-                  createScenarioActions.collapseEntities(
+                  configureMockActions.collapseEntities(filteredMockIds)
+                );
+                dispatch(
+                  configureScenarioActions.collapseEntities(
                     filteredScenarioMocksIds
                   )
                 );
               } else {
-                dispatch(createMockActions.expandEntities(filteredMockIds));
+                dispatch(configureMockActions.expandEntities(filteredMockIds));
                 dispatch(
-                  createScenarioActions.expandEntities(filteredScenarioMocksIds)
+                  configureScenarioActions.expandEntities(
+                    filteredScenarioMocksIds
+                  )
                 );
               }
             }}
@@ -117,16 +121,20 @@ export default function TableToolBar() {
               checked={!isOneMockInactive}
               onChange={() => {
                 if (isOneMockInactive) {
-                  dispatch(createMockActions.activateEntities(filteredMockIds));
                   dispatch(
-                    createScenarioActions.activateEntities(
+                    configureMockActions.activateEntities(filteredMockIds)
+                  );
+                  dispatch(
+                    configureScenarioActions.activateEntities(
                       filteredScenarioMocksIds
                     )
                   );
                 } else {
-                  dispatch(createMockActions.deactiveEntities(filteredMockIds));
                   dispatch(
-                    createScenarioActions.deactiveEntities(
+                    configureMockActions.deactiveEntities(filteredMockIds)
+                  );
+                  dispatch(
+                    configureScenarioActions.deactiveEntities(
                       filteredScenarioMocksIds
                     )
                   );
@@ -180,8 +188,8 @@ export default function TableToolBar() {
               color="error"
               size="small"
               onClick={() => {
-                dispatch(createMockActions.resetAll());
-                dispatch(createScenarioActions.resetAll());
+                dispatch(configureMockActions.resetAll());
+                dispatch(configureScenarioActions.resetAll());
                 dispatch(dashboardActions.reset());
               }}
             >

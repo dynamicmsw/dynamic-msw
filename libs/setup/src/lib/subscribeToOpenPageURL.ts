@@ -2,7 +2,7 @@ import {
   type Store,
   selectOpenPageURL,
   dashboardActions,
-  createScenario,
+  configureScenario,
 } from '@dynamic-msw/core';
 
 export function subscribeToOpenPageURLChanges(store: Store) {

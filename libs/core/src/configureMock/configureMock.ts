@@ -1,4 +1,7 @@
-import { createMockActions, createMockId } from '../state/createMock.slice';
+import {
+  configureMockActions,
+  configureMockId,
+} from '../state/createMock.slice';
 import { Store } from '../state/store';
 import { ConvertMockParameters } from '../types/ConvertMockParameters';
 import { CreateMockConfig } from '../types/CreateMockConfig';
@@ -14,7 +17,7 @@ import {
 import normalizeParameters from './normalizeParameters';
 import { EntityId } from '@reduxjs/toolkit';
 
-export default function createMock<
+export default function configureMock<
   TMockKey extends string,
   TMockParameterObject,
   TMockData
@@ -39,11 +42,11 @@ export default function createMock<
           'Tried updating a dynamic mock/scenario that is not being used by the server/worker. Please ensure you pass it to the setupServer/setupWorker/setupDashboard function.'
         );
       }
-      return createMockId(key, scenarioKey);
+      return configureMockId(key, scenarioKey);
     };
 
     return {
-      // TODO: consider changing the API to override default values from the createScenario returned function parameters
+      // TODO: consider changing the API to override default values from the configureScenario returned function parameters
       overrideDefaultParameterValues: parameters
         ? (overrideParameters) => {
             if (isInitialized) {
@@ -60,7 +63,7 @@ export default function createMock<
       updateParameters: parameters
         ? (parameters) => {
             store.dispatch(
-              createMockActions.updateOne({
+              configureMockActions.updateOne({
                 mockKey: key,
                 scenarioKey,
                 changes: { parameters },
@@ -71,7 +74,7 @@ export default function createMock<
       updateData: data
         ? (data) => {
             store.dispatch(
-              createMockActions.updateOne({
+              configureMockActions.updateOne({
                 mockKey: key,
                 scenarioKey,
                 changes: { data },
@@ -85,7 +88,7 @@ export default function createMock<
           }
         : (undefined as any),
       reset: () => {
-        store.dispatch(createMockActions.resetOne(getEntityId()));
+        store.dispatch(configureMockActions.resetOne(getEntityId()));
       },
       internals: {
         initialize: (
@@ -96,7 +99,7 @@ export default function createMock<
           store = globalStore;
           scenarioKey = passedScenarioKey;
           store.dispatch(
-            createMockActions.upsertOne({
+            configureMockActions.upsertOne({
               parameters: normalizeParameters(parameters, parameterOverrides),
               data: dataOverride ?? data,
               mockKey: key,

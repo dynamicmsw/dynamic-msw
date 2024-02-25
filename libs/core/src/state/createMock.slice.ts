@@ -30,14 +30,14 @@ export type CreateMockEntity = {
   isExpanded?: boolean;
 };
 
-const createMockAdapater = createEntityAdapter<CreateMockEntity, EntityId>({
+const configureMockAdapater = createEntityAdapter<CreateMockEntity, EntityId>({
   selectId: (mockEntry) =>
-    createMockId(mockEntry.mockKey, mockEntry.scenarioKey),
+    configureMockId(mockEntry.mockKey, mockEntry.scenarioKey),
 });
 
 export const slice = createSlice({
-  name: 'createMock',
-  initialState: () => createMockAdapater.getInitialState(),
+  name: 'configureMock',
+  initialState: () => configureMockAdapater.getInitialState(),
   reducers: {
     upsertOne: (
       state,
@@ -45,11 +45,11 @@ export const slice = createSlice({
         payload: { mockKey, scenarioKey, parameters, data, dashboardConfig },
       }: PayloadAction<CreateMockEntity>
     ) => {
-      const id = createMockId(mockKey, scenarioKey);
+      const id = configureMockId(mockKey, scenarioKey);
       const prevState = state.entities[id];
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!prevState) {
-        return createMockAdapater.setOne(state, {
+        return configureMockAdapater.setOne(state, {
           mockKey,
           scenarioKey,
           parameters,
@@ -61,7 +61,7 @@ export const slice = createSlice({
         });
       }
 
-      return createMockAdapater.upsertOne(state, {
+      return configureMockAdapater.upsertOne(state, {
         mockKey,
         scenarioKey,
         initialData: data,
@@ -89,7 +89,7 @@ export const slice = createSlice({
         };
       }>
     ) => {
-      const entitiy = state.entities[createMockId(mockKey, scenarioKey)];
+      const entitiy = state.entities[configureMockId(mockKey, scenarioKey)];
       entitiy.data = changes.data ?? entitiy.data;
       Object.entries(changes.parameters || {}).forEach(([key, value]) => {
         const currentParameter = entitiy.parameters?.[key];
@@ -153,17 +153,17 @@ export interface StateWithCreateMockSlice {
   [slice.name]: EntityState<CreateMockEntity, EntityId>;
 }
 
-export const createMockActions = slice.actions;
+export const configureMockActions = slice.actions;
 
 export default slice.reducer;
 
-const selectors = createMockAdapater.getSelectors();
+const selectors = configureMockAdapater.getSelectors();
 
 export const selectAllCreateMocks = (state: StateWithCreateMockSlice) =>
-  selectors.selectAll(state.createMock);
+  selectors.selectAll(state.configureMock);
 export const selectCreateMockById =
   (id: EntityId) => (state: StateWithCreateMockSlice) =>
-    selectors.selectById(state.createMock, id);
+    selectors.selectById(state.configureMock, id);
 
 export const selectScenarioMocksById = createSelector(
   [(state) => selectAllCreateMocks(state), (_state, id: EntityId) => id],
@@ -241,7 +241,7 @@ export const selectIsOneMockInactive = (state: StateWithCreateMockSlice) =>
     (id) => !state[slice.name].entities[id].isActive
   );
 
-export function createMockId(
+export function configureMockId(
   mockKey: string,
   scenarioKey: string | undefined
 ): EntityId {

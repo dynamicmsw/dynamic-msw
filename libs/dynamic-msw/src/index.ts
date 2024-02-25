@@ -1,6 +1,6 @@
 export {
-  createScenario,
-  createMock,
+  configureScenario,
+  configureMock,
   type CreateScenarioReturnType,
   type AllHandlerTypes,
   type CreateMockReturnType,

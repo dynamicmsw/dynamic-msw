@@ -1,15 +1,15 @@
 import {
-  getTestMock,
-  getTestMockNoParametersAndNoData,
-} from '../createMock/createMock.test-d';
-import createScenario from './createScenario';
+  createTestMock,
+  createTestMockNoParametersAndNoData,
+} from '../configureMock/configureMock.test-d';
+import configureScenario from './configureScenario';
 
-export const getTestScenario = createScenario({
+export const createTestScenario = configureScenario({
   key: 'testScenario',
-  mocks: [getTestMock(), getTestMockNoParametersAndNoData()],
+  mocks: [createTestMock(), createTestMockNoParametersAndNoData()],
 });
 
-const testScenario = getTestScenario();
+const testScenario = createTestScenario();
 
 testScenario.updateParameters({
   testMock: {

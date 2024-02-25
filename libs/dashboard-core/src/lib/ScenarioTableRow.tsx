@@ -3,7 +3,7 @@ import {
   selectScenarioMocksById,
   useAppDispatch,
   useTypedSelector,
-  createScenarioActions,
+  configureScenarioActions,
 } from '@dynamic-msw/core';
 import ConfigTableRow from './ConfigTableRow';
 import { Table, TableBody } from '@mui/material';
@@ -50,7 +50,7 @@ export default function ScenarioTableRow({
 
   function setIsActive(isActive: boolean) {
     dispatch(
-      createScenarioActions.updateOne({
+      configureScenarioActions.updateOne({
         id: scenarioId,
         changes: { isActive },
       })

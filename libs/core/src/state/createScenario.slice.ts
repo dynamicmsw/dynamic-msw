@@ -14,17 +14,17 @@ export type CreateScenarioEntity = {
   dashboardConfig?: DashboardConfig;
 };
 
-const createScenarioAdapter = createEntityAdapter<CreateScenarioEntity>();
+const configureScenarioAdapter = createEntityAdapter<CreateScenarioEntity>();
 
 export const slice = createSlice({
-  name: 'createScenario',
-  initialState: () => createScenarioAdapter.getInitialState(),
+  name: 'configureScenario',
+  initialState: () => configureScenarioAdapter.getInitialState(),
   reducers: {
     setOne: (state, { payload }: PayloadAction<CreateScenarioEntity>) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const wasActive = state.entities[payload.id]?.isActive;
       const wasExpanded = state.entities[payload.id]?.isActive;
-      createScenarioAdapter.setOne(state, {
+      configureScenarioAdapter.setOne(state, {
         ...payload,
         isExpanded: payload.isExpanded ?? wasExpanded ?? false,
         isActive: payload.isActive ?? wasActive ?? true,
@@ -36,7 +36,7 @@ export const slice = createSlice({
         payload: { changes, id },
       }: PayloadAction<{ changes: Partial<CreateScenarioEntity>; id: string }>
     ) =>
-      createScenarioAdapter.updateOne(state, {
+      configureScenarioAdapter.updateOne(state, {
         changes,
         id,
       }),
@@ -73,29 +73,29 @@ export interface StateWithCreateScenarioSlice {
   [slice.name]: EntityState<CreateScenarioEntity, string>;
 }
 
-export const createScenarioActions = slice.actions;
+export const configureScenarioActions = slice.actions;
 
 export default slice.reducer;
-const selectors = createScenarioAdapter.getSelectors();
+const selectors = configureScenarioAdapter.getSelectors();
 
 export const selectCreateScenarioById =
   (id: string) => (state: StateWithCreateScenarioSlice) =>
-    selectors.selectById(state.createScenario, id);
+    selectors.selectById(state.configureScenario, id);
 
 export const selectActiveSortedCreateScenarioIds = (
   state: StateWithCreateScenarioSlice
 ) =>
   selectors
-    .selectIds(state.createScenario)
+    .selectIds(state.configureScenario)
     .slice()
     .sort((a, b) => {
       if (
-        state.createScenario.entities[b].isActive ===
-        state.createScenario.entities[a].isActive
+        state.configureScenario.entities[b].isActive ===
+        state.configureScenario.entities[a].isActive
       ) {
         return 0;
       }
-      return state.createScenario.entities[b].isActive ? 1 : -1;
+      return state.configureScenario.entities[b].isActive ? 1 : -1;
     });
 
 export const selectIsScenarioActive =

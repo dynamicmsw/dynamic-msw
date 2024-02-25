@@ -15,21 +15,23 @@ export function getRequestHandlers(
   const nextRequestHandlers = handlers.flatMap((handler) => {
     if (handlerIsCreateMock(handler)) {
       const entityId = handler.internals.getEntityId();
-      const createMockState = selectCreateMockById(entityId)(store.getState());
+      const configureMockState = selectCreateMockById(entityId)(
+        store.getState()
+      );
       return dynamicHandlerMap[entityId].internals.getHandlers()(
-        getParameterValues(createMockState),
-        createMockState.data!,
+        getParameterValues(configureMockState),
+        configureMockState.data!,
         dynamicHandlerMap[entityId].updateData!
       );
     } else if (handlerIsCreateScenario(handler)) {
       return handler.internals.getMocks().flatMap((mock) => {
         const entityId = mock.internals.getEntityId();
-        const createMockState = selectCreateMockById(entityId)(
+        const configureMockState = selectCreateMockById(entityId)(
           store.getState()
         );
         return dynamicHandlerMap[entityId].internals.getHandlers()(
-          getParameterValues(createMockState),
-          createMockState.data!,
+          getParameterValues(configureMockState),
+          configureMockState.data!,
           dynamicHandlerMap[entityId].updateData!
         );
       });

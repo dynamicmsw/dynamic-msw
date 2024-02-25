@@ -4,8 +4,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
   NormalizedMockParameters,
-  createMockActions,
-  createMockId,
+  configureMockActions,
+  configureMockId,
   selectIsMockExpanded,
   useAppDispatch,
   useTypedSelector,
@@ -26,7 +26,7 @@ export default function ScenarioSubTableRow({
   parameters: NormalizedMockParameters | undefined;
 }) {
   const isExpanded = useTypedSelector(
-    selectIsMockExpanded(createMockId(mockKey, scenarioKey))
+    selectIsMockExpanded(configureMockId(mockKey, scenarioKey))
   );
   const dispatch = useAppDispatch();
   return (
@@ -38,7 +38,7 @@ export default function ScenarioSubTableRow({
             size="small"
             onClick={() =>
               dispatch(
-                createMockActions.updateOne({
+                configureMockActions.updateOne({
                   mockKey,
                   scenarioKey,
                   changes: { isExpanded: !isExpanded },
