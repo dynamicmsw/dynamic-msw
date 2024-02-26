@@ -1,11 +1,11 @@
 {
   "name": "@dynamic-msw/browser",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "dependencies": {
     "msw": "^2.2.1",
-    "@dynamic-msw/core": "2.0.0",
-    "@dynamic-msw/setup": "2.0.0",
-    "@dynamic-msw/dashboard-button": "2.0.0"
+    "@dynamic-msw/core": "2.1.0",
+    "@dynamic-msw/setup": "2.1.0",
+    "@dynamic-msw/dashboard-button": "2.1.0"
   },
   "main": "./index.js",
   "module": "./index.mjs",
