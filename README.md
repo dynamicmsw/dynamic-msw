@@ -17,7 +17,7 @@
 ## Summary
 
 Dynamic Mock Service Worker (Dynamic MSW) serves as an extension to the
-Mock Service Worker (MSW),enhancing it with the capability to make request handlers
+Mock Service Worker (MSW), enhancing it with the capability to make request handlers
 dynamic by incorporating updateable parameters. Moreover, it provides preloaded
 data that can be seamlessly updated, facilitating the testing of CRUD operations.
 Additionally, the library offers a dashboard feature, allowing you to configure
@@ -264,8 +264,6 @@ test('Checkout scenario v2', () => {
 import { setupWorker } from '@dynamic-msw/browser';
 import { createCheckoutScenario } from './createCheckoutScenario.ts';
 
-const testScenarioMock = createCheckoutScenario();
-
 const worker = setupWorker(createCheckoutScenario());
 
 worker.start();
@@ -282,8 +280,6 @@ import { setupDashboard } from '@dynamic-msw/browser';
 import { createCheckoutScenario } from './createCheckoutScenario.ts';
 import { createFeatureFlagsMock } from './createFeatureFlagsMock.ts';
 import { createTodoMocks } from './createTodoMocks.ts';
-
-const testScenarioMock = createCheckoutScenario();
 
 export const mockDashboard = setupDashboard([createFeatureFlagsMock(), createCheckoutScenario()], {
   renderDashboardButton: true, // true by default
