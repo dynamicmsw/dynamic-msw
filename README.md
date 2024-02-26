@@ -7,8 +7,9 @@
   - [Configure mocks](#configure-mocks)
   - [Configure scenarios](#configure-scenarios)
   - [Testing](#testing)
-  - [Browser development](#browser-development)
-- [Dashboard](#dashboard)
+  - [Setup worker](#setup-worker)
+  - [Setup dashboard](#setup-dashboard)
+- Dashboard
   - [Best practices for using the dashboard](#best-practices-for-using-the-dashboard)
   - [Demo](#demo)
 
@@ -62,11 +63,14 @@ Browser only
 dynamic-msw @dynamic-msw/browser
 ```
 
-## Configure mocks
+## Getting started
 
-### Simple mock
+### Configure mocks
+
+#### Simple mock
 
 ```ts
+// createFeatureFlagsMock.ts
 import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
 
@@ -88,9 +92,10 @@ export const createFeatureFlagsMock = configureMock(
 );
 ```
 
-### CRUD mock
+#### CRUD mock
 
 ```ts
+// createTodoMocks.ts
 import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
 
@@ -103,8 +108,8 @@ export const createTodoMocks = configureMock(
   },
   (parameters, data, updateData) => {
     return [
-      http.post('/todos/create', () => {
-        const newTodo = await request.json();
+      http.post('/todos/create', async ({ request }) => {
+        const newTodo = (await request.json()) as Todo;
         const newTodos = [...data.todos, newTodo];
         updateData({ todos: newTodos });
         return HttpResponse.json(newTodos);
@@ -122,12 +127,13 @@ export const createTodoMocks = configureMock(
 <summary>Advanced mock</summary>
 
 ```ts
+// createProductMocks.ts
 import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
 
-type Product = { id: string; title: string; availableStock: 2; };
+type Product = { id: string; title: string; availableStock: 1; };
 
-const testProductsData: Product[] = [{ id: 'some-product', title: 'Harry Potter', availableStock: 2 }]
+const testProductsData: Product[] = [{ id: 'some-product', title: 'Harry Potter', availableStock: 1 }]
 
 export const createProductMocks = configureMock(
   {
@@ -181,19 +187,129 @@ export const createProductMocks = configureMock(
 
 </details>
 
+## Configure scenarios
+
+```ts
+// createCheckoutScenario.ts
+import { createFeatureFlagsMock } from './createFeatureFlagsMock.ts';
+import { createProductMocks } from './createProductMocks.ts';
+
+const createCheckoutScenario = configureScenario({
+  key: 'checkoutScenario', // unique key
+  mocks: [createFeatureFlagsMock(), createProductMocks()],
+  dashboardConfig: {
+    openPageURL: '/checkout',
+  },
+});
+```
+
 ## Testing
 
-<!-- TODO: Add documentation -->
+```ts
+import { setupServer } from '@dynamic-msw/node';
+import { createCheckoutScenario } from './createCheckoutScenario.ts';
 
-No documentation available yet. [This should get a rough idea.](https://github.com/dynamicmsw/dynamic-msw/blob/main/libs/node/src/integration.spec.ts)
+const testTodoMock = createTestTodoMock();
+const testScenarioMock = createCheckoutScenario();
 
-## Browser development
+const server = setupServer(testScenarioMock, testTodoMock);
 
-## Dashboard
+server.listen();
 
-<!-- TODO: explain OpenAPI dashboard development security -->
+afterEach(() => {
+  server.resetHandlers();
+});
 
-No documentation available yet. [This should get a rough idea.](https://github.com/dynamicmsw/dynamic-msw/blob/main/apps/storybook/src/useSetupStoryDashboard.ts)
+test('Initial todos', () => {
+  testTodoMock.updateData({ todos: [{ id: 'new-todo', title: 'new-todo', done: false }] });
+  // Assert what ever needs to happen with a list of initial todos.
+});
+
+test('Non existing product page', () => {
+  createProductMocks.updateParameters({ productExists: false });
+  // Assert what ever needs to happen when a product does not exist
+});
+
+test('Checkout scenario v1', () => {
+  testScenario.updateParameters({ featureFlags: { checkoutProcessVersion: 'v1' } });
+  // Assert what ever is relevant to the checkout v1 flow.
+});
+
+test('Checkout scenario v2', () => {
+  testScenario.updateParameters({ featureFlags: { checkoutProcessVersion: 'v2' } });
+  // Assert what ever is relevant to the checkout v2 flow.
+});
+```
+
+## Setup worker
+
+```ts
+import { setupWorker } from '@dynamic-msw/browser';
+import { createCheckoutScenario } from './createCheckoutScenario.ts';
+
+const testScenarioMock = createCheckoutScenario();
+
+const worker = setupWorker(createCheckoutScenario());
+
+worker.start();
+```
+
+## Setup dashboard
+
+We dynamically import the mock dashboard in a later example to prevent bundling
+(dynamic) MSW dependencies into production builds.
+
+```ts
+// setupMockDashboard.ts
+import { setupDashboard } from '@dynamic-msw/browser';
+import { createCheckoutScenario } from './createCheckoutScenario.ts';
+import { createFeatureFlagsMock } from './createFeatureFlagsMock.ts';
+import { createTodoMocks } from './createTodoMocks.ts';
+
+const testScenarioMock = createCheckoutScenario();
+
+export const mockDashboard = setupDashboard([createFeatureFlagsMock(), createCheckoutScenario()], {
+  renderDashboardButton: true, // true by default
+});
+```
+
+This example is based using a React hook solution but the gist is similar with
+other frameworks.
+
+```ts
+// useLoadMockDashboard.ts
+import { useState } from 'react';
+
+const isUsingMockDashboard = process.env.USE_MOCK_DASHBOARD === 'true';
+
+export default function useLoadMockDashboard() {
+  const [isLoaded, setIsLoaded] = useState(!isUsingMockDashboard);
+  useEffect(() => {
+    if (!isUsingMockDashboard) return;
+    const cancel = false;
+    import('./setupMockDashboard.ts').then(({ mockDashboard }) => {
+      if (cancel) return;
+      mockDashboard.start();
+      setIsLoaded(true);
+    });
+    return () => {
+      cancel = true;
+    };
+  }, []);
+  return { isLoaded };
+}
+```
+
+```tsx
+// App.tsx
+import { useState } from 'react';
+
+export default function App() {
+  const { isLoaded } = useLoadMockDashboard();
+  if (!isLoaded) return null;
+  return <Layout />;
+}
+```
 
 ### Best practices for using the dashboard
 
