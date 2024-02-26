@@ -99,6 +99,11 @@
       "dependsOn": ["^build"],
       "inputs": ["storybook"]
     },
+    "@nx/storybook:serve": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["storybook"]
+    },
     "typetest": {
       "cache": true,
       "inputs": ["production", "^production"]
