@@ -26,6 +26,11 @@
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/tsconfig.storybook.json"
     ],
+    "storybook": [
+      "{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "{projectRoot}/.storybook/**/*",
+      "{projectRoot}/tsconfig.storybook.json"
+    ],
     "sharedGlobals": []
   },
   "plugins": [
@@ -88,6 +93,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/storybook:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["storybook"]
     },
     "typetest": {
       "cache": true,
