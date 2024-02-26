@@ -1,6 +1,6 @@
 {
   "name": "@dynamic-msw/core",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
     "lodash": "^4.17.21",
