@@ -58,9 +58,8 @@ export default function ScenarioSubTableRow({
             colSpan={5}
           >
             <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
+              <Box sx={{ margin: 1, pt: 2 }}>
                 <MockConfig
-                  title={title}
                   mockKey={mockKey}
                   scenarioKey={scenarioKey}
                   parameters={parameters}
