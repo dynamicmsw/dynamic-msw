@@ -89,6 +89,15 @@ export default function configureMock<
         : (undefined as any),
       reset: () => {
         store.dispatch(configureMockActions.resetOne(getEntityId()));
+        if (data) {
+          store.dispatch(
+            configureMockActions.updateOne({
+              mockKey: key,
+              scenarioKey,
+              changes: { data: dataOverride ?? data },
+            })
+          );
+        }
       },
       internals: {
         initialize: (

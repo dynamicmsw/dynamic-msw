@@ -43,3 +43,5 @@ Thumbs.db
 nx-cloud.env
 
 storybook-static
+
+vite.config.mts.timestamp*
