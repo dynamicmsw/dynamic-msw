@@ -10,6 +10,7 @@ import { HandleUpdate } from './types/HandleUpdate';
 import { subscribeToOpenPageURLChanges } from './lib/subscribeToOpenPageURL';
 import { CreateMockReturnValueMap } from './types/CreateMockReturnValueMap';
 import { getCreateMockReturnValueMap } from './lib/getCreateMockReturnValueMap';
+import resetAllCreateMocks from './lib/resetAllCreateMocks';
 
 export class Setup {
   private store!: Store;
@@ -46,7 +47,7 @@ export class Setup {
   };
 
   public resetHandlers = (...nextHandlers: AllHandlerTypes[]) => {
-    this.store.dispatch(configureMockActions.resetAll());
+    resetAllCreateMocks(this.dynamicHandlerInternalsMap);
     this.initializedHandlers = undefined;
     if (nextHandlers.length > 0) {
       this.initialHandlers = nextHandlers;
