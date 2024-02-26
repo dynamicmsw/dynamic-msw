@@ -2,7 +2,9 @@ import { Store } from '@reduxjs/toolkit';
 import { AnyCreateMockReturnType } from '../configureMock/configureMock';
 import { DashboardConfig } from '../types/DashboardConfig';
 import { configureScenarioActions } from '../state/createScenario.slice';
-import { OmitUndefinedObjKeys } from '../types/utility-types';
+import { ConvertScenarioParamaters } from '../types/ConvertScenarioParamaters';
+import { ConvertScenarioData } from '../types/ConvertScenarioData';
+import { CreateScenarioOverrides } from '../types/CreateScenarioOverrides';
 
 export default function configureScenario<
   TCreateMocks extends AnyCreateMockReturnType[]
@@ -14,19 +16,26 @@ export default function configureScenario<
   key: string;
   mocks: [...TCreateMocks];
   dashboardConfig?: DashboardConfig;
-}): () => CreateScenarioReturnType<TCreateMocks> {
-  return () => {
+}): (
+  overrides?: CreateScenarioOverrides<TCreateMocks>
+) => CreateScenarioReturnType<TCreateMocks> {
+  return (overrides) => {
     const mocksMap = mocks.reduce((acc, curr) => {
       acc[curr.internals.key] = curr;
       return acc;
     }, {} as Record<string, AnyCreateMockReturnType>);
+
+    if (overrides?.data) {
+      Object.entries(overrides?.data).forEach(([mockKey, mockData]) => {
+        mocksMap[mockKey].internals.overrideData(mockData);
+      });
+    }
+    if (overrides?.parameters) {
+      Object.entries(overrides?.parameters).forEach(([mockKey, parameters]) => {
+        mocksMap[mockKey].internals.overrideParameters(parameters);
+      });
+    }
     return {
-      // TODO: consider changing the API to override default values from the configureScenario returned function parameters
-      overrideDefaultParameterValues: (parameters) => {
-        Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
-          mocksMap[mockKey].overrideDefaultParameterValues?.(mockParameters!);
-        });
-      },
       updateParameters: (parameters) => {
         Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
           mocksMap[mockKey].updateParameters?.(mockParameters!);
@@ -37,11 +46,6 @@ export default function configureScenario<
           mocksMap[mockKey].updateData?.(mockData!);
         });
       },
-      overrideDefaultData: (data) => {
-        Object.entries(data).forEach(([mockKey, mockData]) => {
-          mocksMap[mockKey].overrideDefaultData?.(mockData!);
-        });
-      },
       reset: () => {
         mocks.forEach((mock) => {
           mock.reset();
@@ -50,7 +54,13 @@ export default function configureScenario<
       internals: {
         initialize: (globalStore) => {
           globalStore.dispatch(
-            configureScenarioActions.setOne({ dashboardConfig, id: key })
+            configureScenarioActions.setOne({
+              dashboardConfig: {
+                ...dashboardConfig,
+                ...overrides?.dashboardConfig,
+              },
+              id: key,
+            })
           );
           mocks.forEach((mock) => {
             mock.internals.initialize(globalStore, key);
@@ -66,16 +76,10 @@ export default function configureScenario<
 export type CreateScenarioReturnType<
   TCreateMocks extends AnyCreateMockReturnType[] = AnyCreateMockReturnType[]
 > = {
-  overrideDefaultParameterValues: (
-    parameters: Partial<ConvertedScenarioParamaters<TCreateMocks>>
-  ) => void;
   updateParameters: (
-    parameters: Partial<ConvertedScenarioParamaters<TCreateMocks>>
+    parameters: Partial<ConvertScenarioParamaters<TCreateMocks>>
   ) => void;
-  overrideDefaultData: (
-    data: Partial<ConvertedScenarioData<TCreateMocks>>
-  ) => void;
-  updateData: (data: Partial<ConvertedScenarioData<TCreateMocks>>) => void;
+  updateData: (data: Partial<ConvertScenarioData<TCreateMocks>>) => void;
   reset: () => void;
   internals: {
     initialize: (globalStore: Store) => void;
@@ -83,50 +87,3 @@ export type CreateScenarioReturnType<
     isCreateScenario: true;
   };
 };
-
-type ConvertedScenarioParamaters<
-  TCreateMocks extends AnyCreateMockReturnType[]
-> = TCreateMocks extends [
-  infer Curr extends AnyCreateMockReturnType,
-  ...infer Rest extends AnyCreateMockReturnType[]
-]
-  ? ConvertedScenarioParamaters<Rest> extends never
-    ? OmitUndefinedObjKeys<{
-        [Key in Curr['internals']['key']]: Curr['updateParameters'] extends (
-          ...args: any
-        ) => any
-          ? Parameters<Curr['updateParameters']>[0]
-          : undefined;
-      }>
-    : OmitUndefinedObjKeys<{
-        [Key in Curr['internals']['key']]: Curr['updateParameters'] extends (
-          ...args: any
-        ) => any
-          ? Parameters<Curr['updateParameters']>[0]
-          : undefined;
-      }> &
-        ConvertedScenarioParamaters<Rest>
-  : never;
-
-type ConvertedScenarioData<TCreateMocks extends AnyCreateMockReturnType[]> =
-  TCreateMocks extends [
-    infer Curr extends AnyCreateMockReturnType,
-    ...infer Rest extends AnyCreateMockReturnType[]
-  ]
-    ? ConvertedScenarioData<Rest> extends never
-      ? OmitUndefinedObjKeys<{
-          [Key in Curr['internals']['key']]: Curr['updateData'] extends (
-            ...args: any
-          ) => any
-            ? Parameters<Curr['updateData']>[0]
-            : undefined;
-        }>
-      : OmitUndefinedObjKeys<{
-          [Key in Curr['internals']['key']]: Curr['updateData'] extends (
-            ...args: any
-          ) => any
-            ? Parameters<Curr['updateData']>[0]
-            : undefined;
-        }> &
-          ConvertedScenarioData<Rest>
-    : never;

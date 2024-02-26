@@ -6,6 +6,7 @@
 - [Getting started](#getting-started)
   - [Configure mocks](#configure-mocks)
   - [Configure scenarios](#configure-scenarios)
+  - [Overriding defaults](#overriding-defaults)
   - [Testing](#testing)
   - [Setup worker](#setup-worker)
   - [Setup dashboard](#setup-dashboard)
@@ -203,6 +204,22 @@ const createCheckoutScenario = configureScenario({
 });
 ```
 
+## Overriding defaults
+
+```ts
+import { createTodoMocks } from './createTodoMocks';
+import { createCheckoutScenario } from './createCheckoutScenario';
+
+const todoMocksWithInitialTodo = createTodoMocks({
+  data: { todos: [{ id: 'new-todo', title: 'new-todo', done: false }] },
+  dashboardConfig: {
+    openPageURL: 'http://localhost/todos/bram',
+  },
+});
+
+const checkoutScenarioV1 = createCheckoutScenario({ parameters: { featureFlags: { checkoutProcessVersion: 'v1' } } });
+```
+
 ## Testing
 
 ```ts
@@ -210,9 +227,9 @@ import { setupServer } from '@dynamic-msw/node';
 import { createCheckoutScenario } from './createCheckoutScenario.ts';
 
 const testTodoMock = createTestTodoMock();
-const testScenarioMock = createCheckoutScenario();
+const testCheckoutScenario = createCheckoutScenario();
 
-const server = setupServer(testScenarioMock, testTodoMock);
+const server = setupServer(testCheckoutScenario, testTodoMock);
 
 server.listen();
 

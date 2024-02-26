@@ -6,7 +6,18 @@ import { createScenario, testScenarioMock } from './testScenario';
 import { Todo, createTodoMocks, testTodos } from './dataCrudTestMock';
 const testMock = createTestMock();
 const testTodosMock = createTodoMocks();
-const testScenario = createScenario();
+const testScenario = createScenario({
+  parameters: {
+    testScenarioMock: {
+      boolean: false,
+    },
+  },
+  data: {
+    testScenarioMock: {
+      some: 'other data',
+    },
+  },
+});
 
 const initialParameters = {
   string: 'test-string',

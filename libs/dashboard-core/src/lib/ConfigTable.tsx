@@ -1,4 +1,4 @@
-import { Divider, Table, TableBody } from '@mui/material';
+import { Table, TableBody } from '@mui/material';
 import MockTableRow from './MockTableRow';
 import ScenarioTableRow from './ScenarioTableRow';
 import TableToolBar from './TableToolBar';

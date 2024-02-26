@@ -81,7 +81,9 @@ configureMock(
   }
 );
 
-createTestMock().overrideDefaultParameterValues({ boolean: true });
+createTestMock({
+  parameters: { boolean: true },
+});
 createTestMock().updateParameters({ boolean: true });
 createTestMock().updateData({ test: 'b' });
 

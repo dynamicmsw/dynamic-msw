@@ -9,17 +9,20 @@ import {
 
 export default function normalizeParameters(
   parameters: MockParamaterObject | undefined,
-  overrides: Record<string, MockParameterValueType> | undefined
+  overrides:
+    | Record<string, MockParameterValueType | undefined | null>
+    | undefined
 ): NormalizedMockParameters {
   if (parameters === undefined) {
     return {} as NormalizedMockParameters;
   }
   return Object.entries(parameters).reduce<NormalizedMockParameters>(
     (prev, [key, parameter]) => {
+      const currentOverride = overrides?.[key];
       return {
         ...prev,
-        [key]: overrides?.[key]
-          ? { ...normalizeParameter(parameter), defaultValue: overrides[key] }
+        [key]: currentOverride
+          ? { ...normalizeParameter(parameter), defaultValue: currentOverride }
           : normalizeParameter(parameter),
       };
     },

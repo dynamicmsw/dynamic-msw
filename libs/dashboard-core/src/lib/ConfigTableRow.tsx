@@ -7,7 +7,6 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-  Typography,
 } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
