@@ -40,7 +40,7 @@ jobs:
           git config user.email "bramzijpcode@gmail.com"
       - run: pnpm i --frozen-lockfile
       - name: Build build storybook
-        run: npx nx run-many -t build -p dashboard-button storybook
+        run: npx nx run-many -t build -p storybook
         env:
           STORYBOOK_PREVIEW: true
           STORYBOOK_PUBLIC_PATH: /dynamic-msw/

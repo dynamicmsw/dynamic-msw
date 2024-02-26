@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/storybook/src",
   "projectType": "application",
+  "implicitDependencies": ["dashboard"],
   "targets": {
     "serve": {
       "executor": "@nx/storybook:storybook",
@@ -23,7 +24,6 @@
         "configDir": "apps/storybook/.storybook",
         "outputDir": "dist/apps/storybook"
       },
-      "cache": true,
       "configurations": {
         "ci": {
           "quiet": true
