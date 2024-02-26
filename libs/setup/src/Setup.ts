@@ -1,6 +1,6 @@
 import { Unsubscribe } from '@reduxjs/toolkit';
 import { RequestHandler } from 'msw';
-import { Store, configureMockActions, createStore } from '@dynamic-msw/core';
+import { Store, createStore } from '@dynamic-msw/core';
 
 import { AllHandlerTypes } from '@dynamic-msw/core';
 import { initializeCreateMocks } from './lib/initializeCreateMocks';
