@@ -1,6 +1,6 @@
 {
   "name": "@dynamic-msw/source",
-  "version": "2.3.1",
+  "version": "2.2.2",
   "license": "MIT",
   "scripts": {
     "deleteBackupFiles": "rm -rf **/vite.config.mts.timestamp*"
