@@ -4,7 +4,7 @@ import {
 } from '../state/createMock.slice';
 import { Store } from '../state/store';
 import { CreateMockOverrides } from '../types/CreateMockOverrides';
-import { ConvertMockParameters } from '../types/ConvertMockParameters';
+import { PrimitiveMockParameters } from '../types/PrimitiveMockParameters';
 import { CreateMockConfig } from '../types/CreateMockConfig';
 import {
   AnyDynamicMockHandlerFn,
@@ -143,7 +143,7 @@ export type CreateMockReturnType<
 };
 
 type UpdateParametersFn<TMockParameterObject extends MockParamaterObject> = (
-  parameters: Partial<ConvertMockParameters<TMockParameterObject>>
+  parameters: Partial<PrimitiveMockParameters<TMockParameterObject>>
 ) => void;
 
 export type AnyCreateMockReturnType = CreateMockReturnType<

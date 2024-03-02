@@ -2,11 +2,11 @@ export type MockParamaterObject = Record<string, MockParameterType>;
 
 export type MockParameterType =
   | MockParameterSelect
-  | MockParameterValueType
+  | MockParameterPrimitiveType
   | MockParameterWithInputType
   | MockParameterWithNullableInputType;
 
-export type MockParameterValueType = number | boolean | string;
+export type MockParameterPrimitiveType = number | boolean | string;
 
 export type DashboardInputType = 'string' | 'number' | 'boolean';
 
@@ -14,26 +14,26 @@ export type NormalizedMockParameter = (
   | MockParameterWithInputType
   | MockParameterSelect
   | MockParameterWithNullableInputType
-) & { currentValue?: MockParameterValueType };
+) & { currentValue?: MockParameterPrimitiveType };
 
 export type NormalizedMockParameters = Record<string, NormalizedMockParameter>;
 
 export interface MockParameterWithInputType {
   dashboardInputType: DashboardInputType;
-  defaultValue: MockParameterValueType;
+  defaultValue: MockParameterPrimitiveType;
   selectOptions?: undefined;
   nullable?: never;
 }
 export interface MockParameterWithNullableInputType {
   dashboardInputType: DashboardInputType;
-  defaultValue?: MockParameterValueType;
+  defaultValue?: MockParameterPrimitiveType;
   nullable: true;
   selectOptions?: undefined;
 }
 
 export interface MockParameterSelect {
-  selectOptions: ReadonlyArray<MockParameterValueType>;
-  defaultValue?: MockParameterValueType;
+  selectOptions: ReadonlyArray<MockParameterPrimitiveType>;
+  defaultValue?: MockParameterPrimitiveType;
   dashboardInputType?: undefined;
   nullable?: never;
 }

@@ -1,5 +1,5 @@
 import { RequestHandler } from 'msw';
-import { ConvertMockParameters } from './ConvertMockParameters';
+import { PrimitiveMockParameters } from './PrimitiveMockParameters';
 import { MockParamaterObject } from './MockParamater';
 import { MockData } from './MockData';
 
@@ -7,12 +7,12 @@ export type DynamicMockHandlerFn<TMockParamaterObject, TMockData> =
   TMockParamaterObject extends MockParamaterObject
     ? TMockData extends MockData
       ? (
-          parameters: ConvertMockParameters<TMockParamaterObject>,
+          parameters: PrimitiveMockParameters<TMockParamaterObject>,
           data: TMockData,
           updateData: UpdateMockData<TMockData>
         ) => RequestHandler[] | RequestHandler
       : (
-          parameters: ConvertMockParameters<TMockParamaterObject>
+          parameters: PrimitiveMockParameters<TMockParamaterObject>
         ) => RequestHandler[] | RequestHandler
     : TMockData extends MockData
     ? (

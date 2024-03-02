@@ -9,7 +9,7 @@ import {
 } from '@reduxjs/toolkit';
 import { merge } from 'lodash';
 import {
-  MockParameterValueType,
+  MockParameterPrimitiveType,
   NormalizedMockParameters,
 } from '../types/MockParamater';
 import { DashboardConfig } from '../types/DashboardConfig';
@@ -81,7 +81,7 @@ export const slice = createSlice({
         changes: {
           parameters?: Record<
             string,
-            MockParameterValueType | undefined | null
+            MockParameterPrimitiveType | undefined | null
           >;
           data?: MockData;
           isActive?: boolean;

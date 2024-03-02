@@ -1,4 +1,4 @@
-import { ConvertMockParameters } from './ConvertMockParameters';
+import { PrimitiveMockParameters } from './PrimitiveMockParameters';
 import { DashboardConfig } from './DashboardConfig';
 import { MockData } from './MockData';
 import { MockParamaterObject } from './MockParamater';
@@ -10,7 +10,7 @@ export type CreateMockOverrides<TMockParameterObject, TMockData> =
 
 type MockParametersOverrides<TMockParameterObject> =
   TMockParameterObject extends MockParamaterObject
-    ? { parameters?: Partial<ConvertMockParameters<TMockParameterObject>> }
+    ? { parameters?: Partial<PrimitiveMockParameters<TMockParameterObject>> }
     : { parameters: never };
 
 type MockDataOverrides<TMockData> = TMockData extends MockData
