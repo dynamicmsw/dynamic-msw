@@ -279,7 +279,6 @@ We dynamically import the mock dashboard in a later example to prevent bundling
 import { setupDashboard } from '@dynamic-msw/browser';
 import { createCheckoutScenario } from './createCheckoutScenario.ts';
 import { createFeatureFlagsMock } from './createFeatureFlagsMock.ts';
-import { createTodoMocks } from './createTodoMocks.ts';
 
 export const mockDashboard = setupDashboard([createFeatureFlagsMock(), createCheckoutScenario()], {
   renderDashboardButton: true, // true by default
@@ -288,6 +287,8 @@ export const mockDashboard = setupDashboard([createFeatureFlagsMock(), createChe
 
 This example is based using a React hook solution but the gist is similar with
 other frameworks.
+
+<!-- TODO: there is probably a better example -->
 
 ```ts
 // useLoadMockDashboard.ts
@@ -303,6 +304,7 @@ export default function useLoadMockDashboard() {
     import('./setupMockDashboard').then(async ({ mockDashboard }) => {
       if (cancel) return;
       await mockDashboard.start();
+      if (cancel) return;
       setIsLoaded(true);
     });
     return () => {
