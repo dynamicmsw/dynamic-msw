@@ -41,7 +41,8 @@
         "previewTargetName": "preview",
         "testTargetName": "test",
         "serveTargetName": "serve",
-        "serveStaticTargetName": "serve-static"
+        "serveStaticTargetName": "serve-static",
+        "generatePackageJson": false
       }
     },
     {

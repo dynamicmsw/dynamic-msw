@@ -3,7 +3,9 @@
   "version": "2.2.0",
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
-    "@dynamic-msw/core": "2.2.0",
+    "@dynamic-msw/core": "2.2.0"
+  },
+  "peerDependencies": {
     "msw": "^2.2.1"
   },
   "main": "./index.js",
