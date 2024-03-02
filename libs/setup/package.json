@@ -1,10 +1,10 @@
 {
   "name": "@dynamic-msw/setup",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "license": "MIT",
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
-    "@dynamic-msw/core": "2.2.2"
+    "@dynamic-msw/core": "2.2.3"
   },
   "peerDependencies": {
     "msw": "^2.2.1"
