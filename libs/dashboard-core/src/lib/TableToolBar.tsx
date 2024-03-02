@@ -17,13 +17,13 @@ import {
   configureMockId,
   configureScenarioActions,
   dashboardActions,
+  removeState,
   selectIsOneMockExpanded,
   selectIsOneMockInactive,
   selectIsOneScenarioExpanded,
   useAppDispatch,
   useTypedSelector,
 } from '@dynamic-msw/core';
-import { persistor } from './store';
 import { useFilteredMocksAndScenarios } from './useFilteredMocksAndScenarios';
 import { useMemo } from 'react';
 import DisplayFilter from './DisplayFilter';
@@ -170,7 +170,7 @@ export default function TableToolBar() {
               color="error"
               size="small"
               onClick={() => {
-                persistor?.purge();
+                removeState();
                 dispatch(dashboardActions.reloadPage());
               }}
             >

@@ -47,9 +47,6 @@ dependencies:
   redux:
     specifier: ^5.0.1
     version: 5.0.1
-  redux-persist:
-    specifier: ^6.0.0
-    version: 6.0.0(react@18.2.0)(redux@5.0.1)
   redux-state-sync:
     specifier: ^3.1.4
     version: 3.1.4
@@ -11754,19 +11751,6 @@ packages:
   /reduce-first@1.0.1:
     resolution: {integrity: sha512-/jBjEiF5Oe1xsa7CeCscbOIxSlFJcn4h1gj3OvUHPtxnThCbZ1Wh72uqO/o1zHNSGU4EgFclvCdc5TLJyt1hOQ==}
     dev: true
-
-  /redux-persist@6.0.0(react@18.2.0)(redux@5.0.1):
-    resolution: {integrity: sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==}
-    peerDependencies:
-      react: '>=16'
-      redux: '>4.0.0'
-    peerDependenciesMeta:
-      react:
-        optional: true
-    dependencies:
-      react: 18.2.0
-      redux: 5.0.1
-    dev: false
 
   /redux-state-sync@3.1.4:
     resolution: {integrity: sha512-nhJBzaXVXPXvUhQJ7m0LdoXBnrcw+cTYQ8bzW9DeJKdq6UNYynXwQWAlVUvsbT/hDV+vB6BC4DMLXkUVGpF2yQ==}

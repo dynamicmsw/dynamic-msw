@@ -63,7 +63,7 @@ export class Setup {
   };
 
   public start = () => {
-    this.store = createStore(this.isDashboard, this.isDashboard).store;
+    this.store = createStore(this.isDashboard, this.isDashboard);
 
     if (this.isDashboard) {
       this.unsubscribeToOpenPageURL = subscribeToOpenPageURLChanges(this.store);
