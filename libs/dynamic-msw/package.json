@@ -1,6 +1,7 @@
 {
   "name": "dynamic-msw",
   "version": "2.2.2",
+  "license": "MIT",
   "description": "Dynamic Mock Service Worker (Dynamic MSW) enhances MSW with dynamic request handlers, updateable parameters, and updateable data for easy CRUD testing. The dashboard feature enables on-the-fly mock configuration. Expected familiarity with MSW, consult the official documentation for optimal use.",
   "keywords": [
     "dynamic-msw",

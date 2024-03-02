@@ -1,6 +1,7 @@
 {
   "name": "@dynamic-msw/dashboard-core",
   "version": "2.2.2",
+  "license": "MIT",
   "dependencies": {
     "@mui/material": "^5.15.10",
     "react-redux": "^9.1.0",

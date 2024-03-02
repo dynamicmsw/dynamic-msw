@@ -2,9 +2,6 @@
   "name": "@dynamic-msw/source",
   "version": "2.2.2",
   "license": "MIT",
-  "scripts": {
-    "deleteBackupFiles": "rm -rf **/vite.config.mts.timestamp*"
-  },
   "private": true,
   "engines": {
     "node": "20"

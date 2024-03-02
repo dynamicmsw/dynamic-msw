@@ -1,6 +1,7 @@
 {
   "name": "@dynamic-msw/node",
   "version": "2.2.2",
+  "license": "MIT",
   "dependencies": {
     "@dynamic-msw/core": "2.2.2",
     "@dynamic-msw/setup": "2.2.2"
