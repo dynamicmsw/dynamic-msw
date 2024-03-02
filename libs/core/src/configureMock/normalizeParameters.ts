@@ -2,7 +2,7 @@ import {
   DashboardInputType,
   MockParamaterObject,
   MockParameterType,
-  MockParameterValueType,
+  MockParameterPrimitiveType,
   NormalizedMockParameter,
   NormalizedMockParameters,
 } from '../types/MockParamater';
@@ -10,7 +10,7 @@ import {
 export default function normalizeParameters(
   parameters: MockParamaterObject | undefined,
   overrides:
-    | Record<string, MockParameterValueType | undefined | null>
+    | Record<string, MockParameterPrimitiveType | undefined | null>
     | undefined
 ): NormalizedMockParameters {
   if (parameters === undefined) {
@@ -43,7 +43,7 @@ function normalizeParameter(
   };
 }
 
-function inferInputType(value: MockParameterValueType): DashboardInputType {
+function inferInputType(value: MockParameterPrimitiveType): DashboardInputType {
   switch (typeof value) {
     case 'number':
       return 'number';

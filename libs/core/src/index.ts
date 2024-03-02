@@ -5,7 +5,7 @@ export {
 export { type DashboardConfig } from './types/DashboardConfig';
 export {
   type MockParamaterObject,
-  type MockParameterValueType,
+  type MockParameterPrimitiveType,
 } from './types/MockParamater';
 export {
   type NormalizedMockParameters,
@@ -13,7 +13,7 @@ export {
   type MockParameterType,
   type DashboardInputType,
 } from './types/MockParamater';
-export { type ConvertMockParameters } from './types/ConvertMockParameters';
+export { type PrimitiveMockParameters } from './types/PrimitiveMockParameters';
 export { type ArrayElementType } from './types/utility-types';
 export {
   type Store,

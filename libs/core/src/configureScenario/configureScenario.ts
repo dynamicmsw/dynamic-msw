@@ -2,8 +2,8 @@ import { Store } from '@reduxjs/toolkit';
 import { AnyCreateMockReturnType } from '../configureMock/configureMock';
 import { DashboardConfig } from '../types/DashboardConfig';
 import { configureScenarioActions } from '../state/createScenario.slice';
-import { ConvertScenarioParamaters } from '../types/ConvertScenarioParamaters';
-import { ConvertScenarioData } from '../types/ConvertScenarioData';
+import { PrimitiveScenarioParamaters } from '../types/PrimitiveScenarioParamaters';
+import { ScenarioMockData } from '../types/ScenarioMockData';
 import { CreateScenarioOverrides } from '../types/CreateScenarioOverrides';
 
 export default function configureScenario<
@@ -77,9 +77,9 @@ export type CreateScenarioReturnType<
   TCreateMocks extends AnyCreateMockReturnType[] = AnyCreateMockReturnType[]
 > = {
   updateParameters: (
-    parameters: Partial<ConvertScenarioParamaters<TCreateMocks>>
+    parameters: Partial<PrimitiveScenarioParamaters<TCreateMocks>>
   ) => void;
-  updateData: (data: Partial<ConvertScenarioData<TCreateMocks>>) => void;
+  updateData: (data: Partial<ScenarioMockData<TCreateMocks>>) => void;
   reset: () => void;
   internals: {
     initialize: (globalStore: Store) => void;

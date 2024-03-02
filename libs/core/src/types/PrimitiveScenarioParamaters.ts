@@ -1,13 +1,13 @@
 import { AnyCreateMockReturnType } from '../configureMock/configureMock';
-import { OmitUndefinedObjKeys } from '../types/utility-types';
+import { OmitUndefinedObjKeys } from './utility-types';
 
-export type ConvertScenarioParamaters<
+export type PrimitiveScenarioParamaters<
   TCreateMocks extends AnyCreateMockReturnType[]
 > = TCreateMocks extends [
   infer Curr extends AnyCreateMockReturnType,
   ...infer Rest extends AnyCreateMockReturnType[]
 ]
-  ? ConvertScenarioParamaters<Rest> extends never
+  ? PrimitiveScenarioParamaters<Rest> extends never
     ? OmitUndefinedObjKeys<{
         [Key in Curr['internals']['key']]: Curr['updateParameters'] extends (
           ...args: any
@@ -22,5 +22,5 @@ export type ConvertScenarioParamaters<
           ? Parameters<Curr['updateParameters']>[0]
           : undefined;
       }> &
-        ConvertScenarioParamaters<Rest>
+        PrimitiveScenarioParamaters<Rest>
   : never;
