@@ -60,3 +60,4 @@ export {
   selectDisplayFilter,
   type DashboardDisplayFilter,
 } from './state/dashboard.slice';
+export { removeState } from './state/browserStorage';
