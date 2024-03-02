@@ -1,9 +1,9 @@
 {
   "name": "@dynamic-msw/node",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "dependencies": {
-    "@dynamic-msw/core": "2.2.0",
-    "@dynamic-msw/setup": "2.2.0"
+    "@dynamic-msw/core": "2.2.2",
+    "@dynamic-msw/setup": "2.2.2"
   },
   "peerDependencies": {
     "msw": "^2.2.1"
