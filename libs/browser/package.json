@@ -1,11 +1,11 @@
 {
   "name": "@dynamic-msw/browser",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "license": "MIT",
   "dependencies": {
-    "@dynamic-msw/core": "2.2.2",
-    "@dynamic-msw/setup": "2.2.2",
-    "@dynamic-msw/dashboard-button": "2.2.2"
+    "@dynamic-msw/core": "2.2.3",
+    "@dynamic-msw/setup": "2.2.3",
+    "@dynamic-msw/dashboard-button": "2.2.3"
   },
   "peerDependencies": {
     "msw": "^2.2.1"
