@@ -291,18 +291,18 @@ other frameworks.
 
 ```ts
 // useLoadMockDashboard.ts
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const isUsingMockDashboard = process.env.USE_MOCK_DASHBOARD === 'true';
+const isUsingMockDashboard = .USE_MOCK_DASHBOARD === 'true';
 
 export default function useLoadMockDashboard() {
   const [isLoaded, setIsLoaded] = useState(!isUsingMockDashboard);
   useEffect(() => {
     if (!isUsingMockDashboard) return;
-    const cancel = false;
-    import('./setupMockDashboard.ts').then(({ mockDashboard }) => {
+    let cancel = false;
+    import('./setupMockDashboard').then(async ({ mockDashboard }) => {
       if (cancel) return;
-      mockDashboard.start();
+      await mockDashboard.start();
       setIsLoaded(true);
     });
     return () => {
