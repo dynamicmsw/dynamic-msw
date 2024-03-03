@@ -31,6 +31,7 @@ export default defineConfig({
   build: {
     outDir: '../../dist/apps/storybook',
     reportCompressedSize: true,
+    target: 'esnext',
     commonjsOptions: {
       transformMixedEsModules: true,
     },
