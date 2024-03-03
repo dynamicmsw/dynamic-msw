@@ -10,6 +10,7 @@ export function getRequestHandlers(
   store: Store,
   dynamicHandlerMap: CreateMockReturnValueMap,
   handlers: AllHandlerTypes[],
+  isDashboard: boolean | undefined,
   prevRequestHandlers: RequestHandler[] | undefined
 ) {
   const nextRequestHandlers = handlers.flatMap((handler) => {
@@ -18,6 +19,7 @@ export function getRequestHandlers(
       const configureMockState = selectCreateMockById(entityId)(
         store.getState()
       );
+      if (isDashboard && !configureMockState.isActive) return [];
       return dynamicHandlerMap[entityId].internals.getHandlers()(
         getParameterValues(configureMockState),
         configureMockState.data!,
@@ -29,6 +31,7 @@ export function getRequestHandlers(
         const configureMockState = selectCreateMockById(entityId)(
           store.getState()
         );
+        if (isDashboard && !configureMockState.isActive) return [];
         return dynamicHandlerMap[entityId].internals.getHandlers()(
           getParameterValues(configureMockState),
           configureMockState.data!,
