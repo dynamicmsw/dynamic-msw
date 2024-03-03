@@ -6,6 +6,9 @@
   "engines": {
     "node": "20"
   },
+  "scripts": {
+    "verify": "pnpm nx affected -t lint test typetest build e2e"
+  },
   "packageManager": "pnpm@8.15.3",
   "dependencies": {
     "@emotion/react": "11.11.1",
