@@ -277,51 +277,23 @@ We dynamically import the mock dashboard in a later example to prevent bundling
 ```ts
 // setupMockDashboard.ts
 import { setupDashboard } from '@dynamic-msw/browser';
-import { createCheckoutScenario } from './createCheckoutScenario.ts';
-import { createFeatureFlagsMock } from './createFeatureFlagsMock.ts';
+import { createFeatureFlagsMock } from './createFeatureFlagsMock';
+import { createProductMocks } from './createProductMocks';
+import { createSimpleProductScenarioV1 } from './createSimpleProductScenarioV1';
+import { createTodoMocks } from './createTodoMocks';
 
-export const mockDashboard = setupDashboard([createFeatureFlagsMock(), createCheckoutScenario()], {
+export const setup = setupDashboard([createFeatureFlagsMock(), createTodoMocks(), createProductMocks(), createSimpleProductScenarioV1()], {
   renderDashboardButton: true, // true by default
 });
 ```
 
-This example is based using a React hook solution but the gist is similar with
-other frameworks.
-
-<!-- TODO: there is probably a better example -->
-
-```ts
-// useLoadMockDashboard.ts
-import { useState, useEffect } from 'react';
-
-const isUsingMockDashboard = .USE_MOCK_DASHBOARD === 'true';
-
-export default function useLoadMockDashboard() {
-  const [isLoaded, setIsLoaded] = useState(!isUsingMockDashboard);
-  useEffect(() => {
-    if (!isUsingMockDashboard) return;
-    let cancel = false;
-    import('./setupMockDashboard').then(async ({ mockDashboard }) => {
-      if (cancel) return;
-      await mockDashboard.start();
-      if (cancel) return;
-      setIsLoaded(true);
-    });
-    return () => {
-      cancel = true;
-    };
-  }, []);
-  return { isLoaded };
-}
-```
-
 ```tsx
 // App.tsx
-import { useState } from 'react';
+if (USE_MOCK_DASHBOARD === 'true') {
+  await import('./setupMockDashboard').then(({ setup }) => setup.start());
+}
 
 export default function App() {
-  const { isLoaded } = useLoadMockDashboard();
-  if (!isLoaded) return null;
   return <Layout />;
 }
 ```
