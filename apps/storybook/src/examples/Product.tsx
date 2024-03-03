@@ -158,9 +158,8 @@ const Product = () => {
             corner;
             <br />
             try changing the amount of stock and the "canReview" boolean.
-            Requires reload to see the changes. Toggling "productExists" to
-            false will show this product page example does not handle API errors
-            properly.
+            Toggling "productExists" to false will show this product page
+            example does not handle API errors properly.
           </Typography>
           <Typography variant="subtitle1" color="textSecondary" gutterBottom>
             Try adding a review and reloading the page.
