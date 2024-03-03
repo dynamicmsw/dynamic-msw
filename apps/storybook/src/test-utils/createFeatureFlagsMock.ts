@@ -1,4 +1,5 @@
-import { configureMock } from 'dynamic-msw';
+// ? import from dynamic-msw in your app instead.
+import { configureMock } from '@dynamic-msw/core';
 import { HttpResponse, http } from 'msw';
 import { createApiURL } from './createApiURL';
 

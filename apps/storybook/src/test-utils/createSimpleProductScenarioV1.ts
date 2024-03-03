@@ -1,3 +1,4 @@
+// ? import from dynamic-msw in your app instead.
 import { configureScenario } from '@dynamic-msw/core';
 import { createFeatureFlagsMock } from './createFeatureFlagsMock';
 import { createProductMocks, testProductsData } from './createProductMocks';
