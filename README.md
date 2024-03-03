@@ -315,8 +315,6 @@ import { createTodoMocks } from './createTodoMocks';
 export const setup = setupDashboard([createFeatureFlagsMock(), createTodoMocks(), createProductMocks(), createSimpleProductScenarioV1()], {
   renderDashboardButton: true, // true by default
 });
-
-setup.start();
 ```
 
 This example uses top level await to keep things simple.
