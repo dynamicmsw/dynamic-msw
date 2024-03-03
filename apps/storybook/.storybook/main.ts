@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import { mergeConfig } from 'vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
@@ -15,6 +16,12 @@ const config: StorybookConfig = {
     if (!process.env.STORYBOOK_PUBLIC_PATH) return head;
     return `${head}<base href="${process.env.STORYBOOK_PUBLIC_PATH}">`;
   },
+  viteFinal: (viteConfig) =>
+    mergeConfig(viteConfig, {
+      build: {
+        target: 'esnext',
+      },
+    }),
 };
 
 export default config;
