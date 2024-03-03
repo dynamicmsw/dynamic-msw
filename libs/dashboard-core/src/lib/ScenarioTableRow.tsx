@@ -4,6 +4,7 @@ import {
   useAppDispatch,
   useTypedSelector,
   configureScenarioActions,
+  configureMockActions,
 } from '@dynamic-msw/core';
 import ConfigTableRow from './ConfigTableRow';
 import { Table, TableBody } from '@mui/material';
@@ -55,5 +56,15 @@ export default function ScenarioTableRow({
         changes: { isActive },
       })
     );
+    // TODO: scenarios should also update their mock state
+    scenarioMocks.forEach((scenarioMock) => {
+      dispatch(
+        configureMockActions.updateOne({
+          mockKey: scenarioMock.mockKey,
+          scenarioKey: scenarioMock.scenarioKey,
+          changes: { isActive },
+        })
+      );
+    });
   }
 }
