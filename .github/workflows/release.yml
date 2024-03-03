@@ -13,7 +13,7 @@ on:
 jobs:
   release:
     name: release
-    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release')
+    if: startsWith(github.ref, 'refs/heads/release/')
     environment: release
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +21,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
-          token: ${{ secrets.PAT }}
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -53,13 +52,12 @@ jobs:
       - run: npx nx affected -t lint test typetest e2e-ci --parallel=5
         env:
           NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-      # - run: npx nx release version ${{ github.event.inputs.version }} --git-tag --git-commit
-      - run: npx nx release version ${{ github.event.inputs.version }} --git-commit
-      # - run: npx nx run-many -t build --parallel=10
-      #   env:
-      #     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-      # - run: npx nx run-many -t can-publish --parallel=40
-      - run: git push
-      # - run: npx nx release publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      - run: npx nx release version ${{ github.event.inputs.version }} --git-tag --git-commit
+      - run: npx nx run-many -t build --parallel=10
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      - run: npx nx run-many -t can-publish --parallel=40
+      - run: git push --follow-tags
+      - run: npx nx release publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
