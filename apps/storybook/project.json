@@ -23,6 +23,11 @@
         "configDir": "apps/storybook/.storybook",
         "outputDir": "dist/apps/storybook"
       },
+      "inputs": [
+        "default",
+        "storybook",
+        { "runtime": "echo $VITE_STORYBOOK_PUBLIC_PATH" }
+      ],
       "configurations": {
         "ci": {
           "quiet": true
