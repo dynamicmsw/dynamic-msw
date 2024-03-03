@@ -98,7 +98,11 @@
     "@nx/storybook:build": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["storybook", { "runtime": "echo $VITE_STORYBOOK_PUBLIC_PATH" }]
+      "inputs": [
+        "default",
+        "storybook",
+        { "runtime": "echo $VITE_STORYBOOK_PUBLIC_PATH" }
+      ]
     },
     "@nx/storybook:serve": {
       "cache": true,
