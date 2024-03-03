@@ -16,7 +16,7 @@ on:
           - rc
 jobs:
   pre-release:
-    if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release')
+    if: startsWith(github.ref, 'refs/heads/release/')
     environment: release
     runs-on: ubuntu-latest
     steps:
