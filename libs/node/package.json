@@ -1,10 +1,10 @@
 {
   "name": "@dynamic-msw/node",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "license": "MIT",
   "dependencies": {
-    "@dynamic-msw/core": "2.4.0",
-    "@dynamic-msw/setup": "2.4.0"
+    "@dynamic-msw/core": "2.5.0",
+    "@dynamic-msw/setup": "2.5.0"
   },
   "peerDependencies": {
     "msw": "^2.2.1"
