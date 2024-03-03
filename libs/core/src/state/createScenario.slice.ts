@@ -27,7 +27,11 @@ export const slice = createSlice({
       configureScenarioAdapter.setOne(state, {
         ...payload,
         isExpanded: payload.isExpanded ?? wasExpanded ?? false,
-        isActive: payload.isActive ?? wasActive ?? true,
+        isActive:
+          payload.isActive ??
+          wasActive ??
+          payload.dashboardConfig?.isActiveByDefault ??
+          true,
       });
     },
     updateOne: (

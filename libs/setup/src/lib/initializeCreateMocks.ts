@@ -13,7 +13,7 @@ export function initializeCreateMocks(
 ) {
   handlers.forEach((handler) => {
     if (handlerIsCreateMock(handler)) {
-      handler.internals.initialize(store, undefined);
+      handler.internals.initialize(store, undefined, undefined);
     } else if (handlerIsCreateScenario(handler)) {
       handler.internals.initialize(store);
     }

@@ -54,7 +54,7 @@ export const slice = createSlice({
           parameters,
           data,
           dashboardConfig,
-          isActive: true,
+          isActive: dashboardConfig?.isActiveByDefault ?? true,
           isExpanded: false,
         });
       }
@@ -65,7 +65,8 @@ export const slice = createSlice({
         data: prevState.data ?? data,
         parameters: merge(prevState.parameters, parameters),
         dashboardConfig,
-        isActive: prevState.isActive ?? true,
+        isActive:
+          prevState.isActive ?? dashboardConfig?.isActiveByDefault ?? true,
         isExpanded: prevState.isExpanded ?? false,
       });
     },

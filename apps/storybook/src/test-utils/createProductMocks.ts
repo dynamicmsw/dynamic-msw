@@ -59,6 +59,7 @@ export const createProductMocks = configureMock(
     },
     dashboardConfig: {
       pageURL: `/products/${testProductsData.id}`,
+      isActiveByDefault: false,
     },
   },
   ({ productExists, availableStock, canReview }, data, updateData) => {
