@@ -17,4 +17,9 @@ const setup = setupDashboard(
 );
 await setup.start({
   onUnhandledRequest: 'bypass',
+  serviceWorker: {
+    url: `${
+      import.meta.env.VITE_STORYBOOK_PUBLIC_PATH || '/'
+    }mockServiceWorker.js`,
+  },
 });
