@@ -15,4 +15,6 @@ const setup = setupDashboard(
     renderDashboardButton: true, // true by default
   }
 );
-await setup.start({ onUnhandledRequest: 'bypass' });
+await setup.start({
+  onUnhandledRequest: 'bypass',
+});

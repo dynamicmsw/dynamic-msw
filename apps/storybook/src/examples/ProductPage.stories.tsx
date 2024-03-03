@@ -3,6 +3,9 @@ import ProductPage from './ProductPage';
 
 const meta: Meta<typeof ProductPage> = {
   component: ProductPage,
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
 
 export default meta;

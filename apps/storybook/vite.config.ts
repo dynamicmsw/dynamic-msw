@@ -10,7 +10,6 @@ process.env.VITE_DASHBOARD_HTML = getDashboardHTML();
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/storybook',
-  base: process.env.STORYBOOK_PUBLIC_PATH || '/',
   server: {
     port: 4200,
     host: 'localhost',
