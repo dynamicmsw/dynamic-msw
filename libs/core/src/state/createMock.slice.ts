@@ -128,7 +128,8 @@ export const slice = createSlice({
     resetAll: (state) => {
       state.ids.forEach((id) => {
         const parameters = state.entities[id].parameters;
-        state.entities[id].isActive = true;
+        state.entities[id].isActive =
+          state.entities[id].dashboardConfig?.isActiveByDefault ?? true;
         state.entities[id].isExpanded = false;
         if (parameters) {
           Object.keys(parameters).forEach((key) => {
