@@ -36,6 +36,7 @@ export default function injectDashboardButton(
     } else {
       dashboardButton.textContent = 'Mocks';
       dashboardIframe.style.display = 'none';
+      window.location.reload();
     }
   });
 }
