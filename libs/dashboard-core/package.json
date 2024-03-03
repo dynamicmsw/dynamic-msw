@@ -1,11 +1,11 @@
 {
   "name": "@dynamic-msw/dashboard-core",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "license": "MIT",
   "dependencies": {
     "@mui/material": "^5.15.10",
     "react-redux": "^9.1.0",
-    "@dynamic-msw/core": "2.5.0",
+    "@dynamic-msw/core": "2.6.0",
     "react": "18.2.0",
     "@mui/icons-material": "^5.15.10",
     "fuse.js": "^7.0.0"
