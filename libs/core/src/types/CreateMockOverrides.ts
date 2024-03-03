@@ -11,10 +11,10 @@ export type CreateMockOverrides<TMockParameterObject, TMockData> =
 type MockParametersOverrides<TMockParameterObject> =
   TMockParameterObject extends MockParamaterObject
     ? { parameters?: Partial<PrimitiveMockParameters<TMockParameterObject>> }
-    : { parameters: never };
+    : { parameters?: never };
 
 type MockDataOverrides<TMockData> = TMockData extends MockData
   ? { data?: TMockData }
-  : { data: never };
+  : { data?: never };
 
 type DashboardConfigOverrides = { dashboardConfig?: DashboardConfig };
