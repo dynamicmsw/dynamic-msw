@@ -23,7 +23,7 @@ export const slice = createSlice({
     setOne: (state, { payload }: PayloadAction<CreateScenarioEntity>) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const wasActive = state.entities[payload.id]?.isActive;
-      const wasExpanded = state.entities[payload.id]?.isActive;
+      const wasExpanded = state.entities[payload.id]?.isExpanded;
       configureScenarioAdapter.setOne(state, {
         ...payload,
         isExpanded: payload.isExpanded ?? wasExpanded ?? false,
