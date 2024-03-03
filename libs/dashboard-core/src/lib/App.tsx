@@ -1,11 +1,21 @@
 import { Paper, Typography } from '@mui/material';
 import ConfigTable from './ConfigTable';
 import { Provider } from 'react-redux';
-import { store } from './store';
+import { createStore } from '@dynamic-msw/core';
+import { useEffect, useState } from 'react';
 
 function App() {
-  return (
-    <Provider store={store}>
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsLoaded(true);
+    }, 1000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+  return isLoaded ? (
+    <Provider store={createStore(true, true)}>
       <Typography variant="h4" gutterBottom>
         Dynamic MSW dashboard
       </Typography>
@@ -13,6 +23,8 @@ function App() {
         <ConfigTable />
       </Paper>
     </Provider>
+  ) : (
+    <>Loading...</>
   );
 }
 
