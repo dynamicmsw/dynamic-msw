@@ -13,8 +13,8 @@ const config: StorybookConfig = {
     },
   },
   managerHead: (head) => {
-    if (!process.env.STORYBOOK_PUBLIC_PATH) return head;
-    return `${head}<base href="${process.env.STORYBOOK_PUBLIC_PATH}">`;
+    if (!process.env.VITE_STORYBOOK_PUBLIC_PATH) return head;
+    return `${head}<base href="${process.env.VITE_STORYBOOK_PUBLIC_PATH}">`;
   },
   viteFinal: (viteConfig) =>
     mergeConfig(viteConfig, {
