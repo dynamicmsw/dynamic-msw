@@ -12,6 +12,9 @@ export const createFeatureFlagsMock = configureMock(
         defaultValue: 'v1',
       },
     },
+    dashboardConfig: {
+      isActiveByDefault: false,
+    },
   },
   ({ checkoutProcessVersion }) => {
     return http.get(createApiURL('/feature-flags'), () => {

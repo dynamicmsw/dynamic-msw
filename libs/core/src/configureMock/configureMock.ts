@@ -14,6 +14,7 @@ import { MockData } from '../types/MockData';
 import { MockParamaterObject } from '../types/MockParamater';
 import normalizeParameters from './normalizeParameters';
 import { EntityId } from '@reduxjs/toolkit';
+import { DashboardConfig } from '../types/DashboardConfig';
 
 export default function configureMock<
   TMockKey extends string,
@@ -81,8 +82,9 @@ export default function configureMock<
       },
       internals: {
         initialize: (
-          globalStore: Store,
-          passedScenarioKey: string | undefined
+          globalStore,
+          passedScenarioKey,
+          scenarioDashboardConfig
         ) => {
           isInitialized = true;
           store = globalStore;
@@ -96,7 +98,7 @@ export default function configureMock<
               data: overrides?.data ?? data,
               mockKey: key,
               scenarioKey,
-              dashboardConfig: {
+              dashboardConfig: scenarioDashboardConfig ?? {
                 ...dashboardConfig,
                 ...overrides?.dashboardConfig,
               },
@@ -107,14 +109,14 @@ export default function configureMock<
         getEntityId,
         key,
         isCreateMock: true,
-        overrideData: (dataOverrides: any) => {
+        overrideData: (dataOverrides) => {
           overrides.data = dataOverrides;
         },
-        overrideParameters: (parameterOverrides: any) => {
+        overrideParameters: (parameterOverrides) => {
           overrides.parameters = parameterOverrides;
         },
       },
-    };
+    } satisfies AnyCreateMockReturnType;
   };
 }
 
@@ -131,7 +133,11 @@ export type CreateMockReturnType<
     : undefined;
   reset: () => void;
   internals: {
-    initialize: (store: Store, scenarioKey: string | undefined) => void;
+    initialize: (
+      store: Store,
+      scenarioKey: string | undefined,
+      scenarioDashboardConfig: DashboardConfig | undefined
+    ) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getHandlers: () => AnyDynamicMockHandlerFn;
     getEntityId: () => EntityId;
