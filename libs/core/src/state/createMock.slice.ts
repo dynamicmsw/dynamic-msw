@@ -23,7 +23,6 @@ export type CreateMockEntity = {
   mockKey: string;
   scenarioKey: string | undefined;
   parameters?: NormalizedMockParameters;
-  initialData?: MockData;
   data?: MockData;
   dashboardConfig?: DashboardConfig;
   isActive?: boolean;
@@ -53,7 +52,6 @@ export const slice = createSlice({
           mockKey,
           scenarioKey,
           parameters,
-          initialData: data,
           data,
           dashboardConfig,
           isActive: true,
@@ -64,7 +62,7 @@ export const slice = createSlice({
       return configureMockAdapater.upsertOne(state, {
         mockKey,
         scenarioKey,
-        initialData: data,
+        data: prevState.data ?? data,
         parameters: merge(prevState.parameters, parameters),
         dashboardConfig,
         isActive: prevState.isActive ?? true,
