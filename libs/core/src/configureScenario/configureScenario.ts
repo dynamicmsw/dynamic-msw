@@ -35,6 +35,10 @@ export default function configureScenario<
         mocksMap[mockKey].internals.overrideParameters(parameters);
       });
     }
+    const finalDashboardConfig = {
+      ...dashboardConfig,
+      ...overrides?.dashboardConfig,
+    };
     return {
       updateParameters: (parameters) => {
         Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
@@ -55,15 +59,16 @@ export default function configureScenario<
         initialize: (globalStore) => {
           globalStore.dispatch(
             configureScenarioActions.setOne({
-              dashboardConfig: {
-                ...dashboardConfig,
-                ...overrides?.dashboardConfig,
-              },
+              dashboardConfig: finalDashboardConfig,
               id: key,
             })
           );
           mocks.forEach((mock) => {
-            mock.internals.initialize(globalStore, key);
+            mock.internals.initialize(
+              globalStore,
+              key,
+              dashboardConfig ? finalDashboardConfig : undefined
+            );
           });
         },
         getMocks: () => mocks,
