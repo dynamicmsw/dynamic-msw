@@ -42,6 +42,7 @@ export class Setup {
       this.store,
       this.dynamicHandlerInternalsMap,
       this.currentHandlers,
+      this.isDashboard,
       this.initializedHandlers
     );
   };
@@ -76,6 +77,7 @@ export class Setup {
           this.store,
           this.dynamicHandlerInternalsMap,
           this.currentHandlers,
+          this.isDashboard,
           this.initializedHandlers
         )
       )
