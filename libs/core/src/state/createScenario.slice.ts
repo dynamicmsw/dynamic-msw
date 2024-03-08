@@ -71,6 +71,14 @@ export const slice = createSlice({
         state.entities[id].isActive = true;
       });
     },
+    pruneEntities: (state, { payload }: PayloadAction<string[]>) => {
+      state.ids.forEach((id) => {
+        if (payload.includes(id)) return;
+        delete state.entities[id];
+        return false;
+      });
+      state.ids = payload;
+    },
   },
 });
 
