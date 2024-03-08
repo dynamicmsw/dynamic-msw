@@ -7,7 +7,6 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-import { merge } from 'lodash';
 import {
   MockParameterPrimitiveType,
   NormalizedMockParameters,
@@ -18,6 +17,7 @@ import {
   selectIsScenarioActive,
 } from './createScenario.slice';
 import { type MockData } from '../types/MockData';
+import mergeOwnTop from '../utils/mergeOwnTop';
 
 export type CreateMockEntity = {
   mockKey: string;
@@ -63,7 +63,10 @@ export const slice = createSlice({
         mockKey,
         scenarioKey,
         data: prevState.data ?? data,
-        parameters: merge(prevState.parameters, parameters),
+        parameters:
+          parameters && prevState.parameters
+            ? mergeOwnTop(parameters, prevState.parameters)
+            : parameters,
         dashboardConfig,
         isActive:
           prevState.isActive ?? dashboardConfig?.isActiveByDefault ?? true,
