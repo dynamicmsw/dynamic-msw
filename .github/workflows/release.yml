@@ -45,6 +45,8 @@ jobs:
         run: |
           git config user.name "GitHub Bot"
           git config user.email "bramzijpcode@gmail.com"
+      - name: fetch and rebase
+        run: git fetch && git rebase origin/main
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
       - run: pnpm i --frozen-lockfile
