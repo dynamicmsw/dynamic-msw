@@ -149,6 +149,14 @@ export const slice = createSlice({
         });
       }
     },
+    pruneEntities: (state, { payload }: PayloadAction<EntityId[]>) => {
+      state.ids.forEach((id) => {
+        if (payload.includes(id)) return;
+        delete state.entities[id];
+        return false;
+      });
+      state.ids = payload;
+    },
   },
 });
 
