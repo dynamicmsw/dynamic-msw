@@ -2,7 +2,7 @@ import { DashboardConfig } from './DashboardConfig';
 import { MockData } from './MockData';
 import { MockParamaterObject } from './MockParamater';
 
-export type CreateMockConfig<
+export type ConfigureMockConfig<
   TMockKey extends string,
   TMockParameterObject,
   TMockData

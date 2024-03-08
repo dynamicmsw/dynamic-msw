@@ -5,7 +5,7 @@ import {
 import { Store } from '../state/store';
 import { CreateMockOverrides } from '../types/CreateMockOverrides';
 import { PrimitiveMockParameters } from '../types/PrimitiveMockParameters';
-import { CreateMockConfig } from '../types/CreateMockConfig';
+import { ConfigureMockConfig } from '../types/ConfigureMockConfig';
 import {
   AnyDynamicMockHandlerFn,
   DynamicMockHandlerFn,
@@ -26,7 +26,7 @@ export default function configureMock<
     parameters,
     data,
     dashboardConfig,
-  }: CreateMockConfig<TMockKey, TMockParameterObject, TMockData>,
+  }: ConfigureMockConfig<TMockKey, TMockParameterObject, TMockData>,
   handlers: DynamicMockHandlerFn<TMockParameterObject, TMockData>
 ): (
   overrides?: CreateMockOverrides<TMockParameterObject, TMockData>
