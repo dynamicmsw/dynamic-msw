@@ -15,6 +15,6 @@ export default function getDashboardIframe(buttonElement: HTMLButtonElement) {
   dashboardIframe.style.border = 'solid 1px rgba(0,0,0,0.05)';
   dashboardIframe.style.borderRadius = '6px';
   dashboardIframe.style.boxShadow = '0px 1px 2px rgba(0,0,0,.25)';
+  dashboardIframe.style.zIndex = '99999';
   return dashboardIframe;
 }
-// change
