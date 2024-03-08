@@ -72,6 +72,7 @@ export default function configureScenario<
           });
         },
         getMocks: () => mocks,
+        key,
         isCreateScenario: true,
       },
     };
@@ -89,6 +90,7 @@ export type CreateScenarioReturnType<
   internals: {
     initialize: (globalStore: Store) => void;
     getMocks: () => TCreateMocks;
+    key: string;
     isCreateScenario: true;
   };
 };
