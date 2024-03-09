@@ -181,47 +181,52 @@ export const selectScenarioMocksById = createSelector(
   (entities, id) => entities.filter((mock) => mock.scenarioKey === id)
 );
 
-export type ScenarioOrMockKey = {
-  search: string;
-} & (ScenarioKeyData | MockKeyData);
+export type ScenarioOrMockKey = ScenarioKeyData | MockKeyData;
 
 type ScenarioKeyData = {
+  type: 'scenario';
   scenarioKey: string;
   mockKey?: undefined;
   mockKeys: string[];
 };
 type MockKeyData = {
+  type: 'mock';
   scenarioKey?: undefined;
   mockKey: string;
   mockKeys?: undefined;
 };
 
-export const selectOrderedScenariosAndMocks = createSelector(
-  (state: StateWithCreateMockSlice) => state[slice.name].ids,
+export const selectScenarioAndMockKeys = createSelector(
+  [(state: StateWithCreateMockSlice) => state[slice.name].ids],
   (ids) =>
-    ids.reduce((acc, id, index) => {
+    ids.reduce<ScenarioOrMockKey[]>((acc, id, index) => {
       const { mockKey, scenarioKey: currentScenarioKey } = parseMockId(
         id.toString()
       );
-      const prevScenarioKey = acc[index - 1]?.scenarioKey;
-      if (currentScenarioKey && currentScenarioKey === prevScenarioKey) {
-        (acc[index - 1] as ScenarioKeyData) = {
-          ...(acc[index - 1] as ScenarioKeyData),
-          mockKeys: [...(acc[index - 1] as ScenarioKeyData).mockKeys, mockKey],
+      const prevItem = acc[index - 1];
+      const prevScenarioKey = prevItem?.scenarioKey;
+      const belongsToPreviousScenario =
+        currentScenarioKey && currentScenarioKey === prevScenarioKey;
+
+      if (belongsToPreviousScenario) {
+        acc[index - 1] = {
+          ...prevItem,
+          mockKeys: [...prevItem.mockKeys, mockKey],
         };
         return acc;
       }
+
       if (currentScenarioKey) {
         acc.push({
           scenarioKey: currentScenarioKey,
-          search: 'scenario',
+          type: 'scenario',
           mockKeys: [mockKey],
         });
         return acc;
       }
-      acc.push({ mockKey, search: 'mock' });
+      acc.push({ mockKey, type: 'mock' });
       return acc;
-    }, [] as Array<ScenarioOrMockKey>)
+    }, [])
 );
 
 export const selectAllNonScenarioMocks = (state: StateWithCreateMockSlice) =>
@@ -230,15 +235,6 @@ export const selectAllNonScenarioMocks = (state: StateWithCreateMockSlice) =>
 export const selectAllNonScenarioMocksIds = (state: StateWithCreateMockSlice) =>
   selectAllNonScenarioMocks(state).map((mock) => mock.mockKey);
 
-export const selectIsMockActive =
-  (id: EntityId) =>
-  (state: StateWithCreateMockSlice & StateWithCreateScenarioSlice) => {
-    const mock = selectCreateMockById(id)(state);
-    if (mock.scenarioKey) {
-      return !!selectIsScenarioActive(mock.scenarioKey)(state);
-    }
-    return mock.isActive;
-  };
 export const selectIsMockExpanded =
   (id: EntityId) => (state: StateWithCreateMockSlice) =>
     selectCreateMockById(id)(state).isExpanded;
@@ -252,6 +248,17 @@ export const selectIsOneMockInactive = (state: StateWithCreateMockSlice) =>
     (id) => !state[slice.name].entities[id].isActive
   );
 
+export const selectIsMockActive =
+  (id: EntityId) =>
+  (state: StateWithCreateMockSlice & StateWithCreateScenarioSlice) => {
+    const mock = selectCreateMockById(id)(state);
+    if (mock.scenarioKey) {
+      return !!selectIsScenarioActive(mock.scenarioKey)(state);
+    }
+    return mock.isActive;
+  };
+
+// ? Acceptable
 export function configureMockId(
   mockKey: string,
   scenarioKey: string | undefined

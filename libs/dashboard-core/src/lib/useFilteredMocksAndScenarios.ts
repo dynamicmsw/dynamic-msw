@@ -1,8 +1,7 @@
 import {
-  DashboardDisplayFilter,
   ScenarioOrMockKey,
   selectDisplayFilter,
-  selectOrderedScenariosAndMocks,
+  selectScenarioAndMockKeys,
   selectSearchQuery,
   useTypedSelector,
 } from '@dynamic-msw/core';
@@ -10,28 +9,25 @@ import { useMemo } from 'react';
 import Fuse from 'fuse.js';
 
 export function useFilteredMocksAndScenarios() {
-  const mocksAndScenarios = useTypedSelector(selectOrderedScenariosAndMocks);
+  const mocksAndScenarios = useTypedSelector(selectScenarioAndMockKeys);
   const searchQuery = useTypedSelector(selectSearchQuery);
   const displayFilter = useTypedSelector(selectDisplayFilter);
   const fuse = useMemo(
     () =>
       new Fuse<ScenarioOrMockKey>(mocksAndScenarios, {
-        keys: ['mockKey', 'scenarioKey', 'search'],
+        keys: ['mockKey', 'scenarioKey', 'type'],
         includeScore: false,
         shouldSort: false,
         threshold: 0.3,
       }),
     [mocksAndScenarios]
   );
-  return (
-    searchQuery
-      ? fuse.search(searchQuery).map((value) => value.item)
-      : mocksAndScenarios
-  ).filter(filterBasedOnDisplayFilter(displayFilter));
-}
 
-function filterBasedOnDisplayFilter(displayFilter: DashboardDisplayFilter) {
-  return (item: ScenarioOrMockKey) => {
+  const filteredBySearchQuery = searchQuery
+    ? fuse.search(searchQuery).map((value) => value.item)
+    : mocksAndScenarios;
+
+  return filteredBySearchQuery.filter((item: ScenarioOrMockKey) => {
     switch (displayFilter) {
       case 'mocks':
         return item.mockKey ? true : false;
@@ -40,5 +36,5 @@ function filterBasedOnDisplayFilter(displayFilter: DashboardDisplayFilter) {
       default:
         return true;
     }
-  };
+  });
 }
