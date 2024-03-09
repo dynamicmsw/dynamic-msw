@@ -21,6 +21,9 @@ export default function MockTableRow({ mockKey }: { mockKey: string }) {
       isActive={!!mock.isActive}
       setIsActive={setIsActive}
       dashboardConfig={mock.dashboardConfig}
+      hasParameters={
+        !!mock.parameters && Object.keys(mock.parameters).length > 0
+      }
     >
       <Stack gap={3} direction="column" sx={{ width: 300, my: 3 }}>
         <MockConfig

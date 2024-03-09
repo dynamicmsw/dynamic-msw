@@ -48,6 +48,7 @@ export default function ConfigTableRow({
   isScenario,
   isActive,
   setIsActive,
+  hasParameters,
   dashboardConfig = {},
 }: PropsWithChildren<
   {
@@ -55,6 +56,7 @@ export default function ConfigTableRow({
     isActive: boolean;
     setIsActive: (isActive: boolean) => unknown;
     dashboardConfig?: DashboardConfig;
+    hasParameters: boolean;
   } & MockKeyOrScenarioKey
 >) {
   // TODO: add this logics to consumers of this component
@@ -69,26 +71,28 @@ export default function ConfigTableRow({
     <>
       <TableRow>
         <TableCell sx={tableCellSx}>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() =>
-              dispatch(
-                isScenario
-                  ? configureScenarioActions.updateOne({
-                      id: scenarioKey,
-                      changes: { isExpanded: !isExpanded },
-                    })
-                  : configureMockActions.updateOne({
-                      mockKey,
-                      scenarioKey,
-                      changes: { isExpanded: !isExpanded },
-                    })
-              )
-            }
-          >
-            {isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
+          {hasParameters && (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() =>
+                dispatch(
+                  isScenario
+                    ? configureScenarioActions.updateOne({
+                        id: scenarioKey,
+                        changes: { isExpanded: !isExpanded },
+                      })
+                    : configureMockActions.updateOne({
+                        mockKey,
+                        scenarioKey,
+                        changes: { isExpanded: !isExpanded },
+                      })
+                )
+              }
+            >
+              {isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          )}
         </TableCell>
         <TableCell sx={{ ...tableCellSx, px: 0 }}>
           <Tooltip
