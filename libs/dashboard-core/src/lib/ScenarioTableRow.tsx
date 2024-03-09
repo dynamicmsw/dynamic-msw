@@ -28,6 +28,7 @@ export default function ScenarioTableRow({
       isActive={!!scenario.isActive}
       setIsActive={setIsActive}
       dashboardConfig={scenario.dashboardConfig}
+      hasParameters={true}
     >
       <Table>
         <colgroup>

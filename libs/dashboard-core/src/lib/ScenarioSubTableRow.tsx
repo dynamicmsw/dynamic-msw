@@ -28,25 +28,28 @@ export default function ScenarioSubTableRow({
     selectIsMockExpanded(configureMockId(mockKey, scenarioKey))
   );
   const dispatch = useAppDispatch();
+  const hasParameters = !!parameters && Object.keys(parameters).length > 0;
   return (
     <>
       <TableRow sx={{ '&:last-child > *': { borderBottom: 'none' } }}>
         <TableCell sx={tableCellSx}>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() =>
-              dispatch(
-                configureMockActions.updateOne({
-                  mockKey,
-                  scenarioKey,
-                  changes: { isExpanded: !isExpanded },
-                })
-              )
-            }
-          >
-            {isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
+          {hasParameters && (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() =>
+                dispatch(
+                  configureMockActions.updateOne({
+                    mockKey,
+                    scenarioKey,
+                    changes: { isExpanded: !isExpanded },
+                  })
+                )
+              }
+            >
+              {isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          )}
         </TableCell>
         <TableCell sx={tableCellSx}>{title}</TableCell>
       </TableRow>
