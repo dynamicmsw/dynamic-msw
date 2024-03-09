@@ -95,22 +95,6 @@ export const selectCreateScenarioById =
   (id: string) => (state: StateWithCreateScenarioSlice) =>
     selectors.selectById(state.configureScenario, id);
 
-export const selectActiveSortedCreateScenarioIds = (
-  state: StateWithCreateScenarioSlice
-) =>
-  selectors
-    .selectIds(state.configureScenario)
-    .slice()
-    .sort((a, b) => {
-      if (
-        state.configureScenario.entities[b].isActive ===
-        state.configureScenario.entities[a].isActive
-      ) {
-        return 0;
-      }
-      return state.configureScenario.entities[b].isActive ? 1 : -1;
-    });
-
 export const selectIsScenarioActive =
   (id: string) => (state: StateWithCreateScenarioSlice) =>
     selectCreateScenarioById(id)(state).isActive;
