@@ -38,7 +38,7 @@ export {
   configureMockId,
   selectAllNonScenarioMocksIds,
   selectScenarioMocksById,
-  selectOrderedScenariosAndMocks,
+  selectScenarioAndMockKeys,
   selectIsMockExpanded,
   selectIsOneMockInactive,
   selectIsOneMockExpanded,
@@ -46,7 +46,6 @@ export {
   type ScenarioOrMockKey,
 } from './state/createMock.slice';
 export {
-  selectActiveSortedCreateScenarioIds,
   selectCreateScenarioById,
   configureScenarioActions,
   selectIsScenarioExpanded,
