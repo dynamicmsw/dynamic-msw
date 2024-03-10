@@ -1,12 +1,12 @@
-import { ScenarioMockData } from './ScenarioMockData';
-import { PrimitiveScenarioParamaters } from './PrimitiveScenarioParamaters';
-import { DashboardConfig } from './DashboardConfig';
-import { MockData } from './MockData';
-import { MockParameterPrimitiveType } from './MockParamater';
-import { AnyCreateMockPublicApi } from './AnyCreateMockApi';
+import { type ScenarioMockData } from './ScenarioMockData';
+import { type PrimitiveScenarioParamaters } from './PrimitiveScenarioParamaters';
+import { type DashboardConfig } from './DashboardConfig';
+import { type MockData } from './MockData';
+import { type MockParameterPrimitiveType } from './MockParamater';
+import { type AnyCreateMockPublicApi } from './AnyCreateMockApi';
 
 export type CreateScenarioOverrides<
-  TCreateMocks extends AnyCreateMockPublicApi[]
+  TCreateMocks extends AnyCreateMockPublicApi[],
 > = {
   parameters?: Partial<PrimitiveScenarioParamaters<TCreateMocks>>;
   data?: Partial<ScenarioMockData<TCreateMocks>>;

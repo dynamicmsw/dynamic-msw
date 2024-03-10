@@ -1,5 +1,5 @@
 import {
-  DashboardDisplayFilter,
+  type DashboardDisplayFilter,
   dashboardActions,
   selectDisplayFilter,
   useAppDispatch,
@@ -28,8 +28,8 @@ export default function DisplayFilter() {
       onChange={(e) => {
         dispatch(
           dashboardActions.setDisplayFilter(
-            e.target.value as DashboardDisplayFilter
-          )
+            e.target.value as DashboardDisplayFilter,
+          ),
         );
       }}
     >

@@ -1,5 +1,5 @@
-import { Unsubscribe } from '@reduxjs/toolkit';
-import { RequestHandler } from 'msw';
+import { type Unsubscribe } from '@reduxjs/toolkit';
+import { type RequestHandler } from 'msw';
 import {
   type AllHandlerTypes,
   type Store,
@@ -12,9 +12,9 @@ import {
 import { initializeCreateMocks } from './lib/initializeCreateMocks';
 import { getRequestHandlers } from './lib/getRequestHandlers';
 import { subscribeToChanges } from './lib/subscribeToChanges';
-import { HandleUpdate } from './types/HandleUpdate';
+import { type HandleUpdate } from './types/HandleUpdate';
 import { subscribeToOpenPageURLChanges } from './lib/subscribeToOpenPageURL';
-import { CreateMockReturnValueMap } from './types/CreateMockReturnValueMap';
+import { type CreateMockReturnValueMap } from './types/CreateMockReturnValueMap';
 import { getCreateMockReturnValueMap } from './lib/getCreateMockReturnValueMap';
 import resetAllCreateMocks from './lib/resetAllCreateMocks';
 import getMockEntityIds from './lib/getMockEntityIds';
@@ -34,7 +34,7 @@ export class Setup {
   constructor(
     handlers: AllPublicHandlerTypes[],
     handleUpdate: HandleUpdate,
-    isDashboard: boolean
+    isDashboard: boolean,
   ) {
     this.handleUpdate = handleUpdate;
     this.initialHandlers = castToInternalHandlerTypes(handlers);
@@ -44,14 +44,14 @@ export class Setup {
   private initialize = () => {
     initializeCreateMocks(this.store, this.currentHandlers);
     this.dynamicHandlerInternalsMap = getCreateMockReturnValueMap(
-      this.currentHandlers
+      this.currentHandlers,
     );
     this.initializedHandlers = getRequestHandlers(
       this.store,
       this.dynamicHandlerInternalsMap,
       this.currentHandlers,
       this.isDashboard,
-      this.initializedHandlers
+      this.initializedHandlers,
     );
   };
 
@@ -88,17 +88,19 @@ export class Setup {
           this.dynamicHandlerInternalsMap,
           this.currentHandlers,
           this.isDashboard,
-          this.initializedHandlers
-        )
-      )
+          this.initializedHandlers,
+        ),
+      ),
     );
     this.store.dispatch(
-      configureMockActions.pruneEntities(getMockEntityIds(this.currentHandlers))
+      configureMockActions.pruneEntities(
+        getMockEntityIds(this.currentHandlers),
+      ),
     );
     this.store.dispatch(
       configureScenarioActions.pruneEntities(
-        getScenarioEntityIds(this.currentHandlers)
-      )
+        getScenarioEntityIds(this.currentHandlers),
+      ),
     );
   };
   public stop = () => {
@@ -108,7 +110,7 @@ export class Setup {
 }
 
 function castToInternalHandlerTypes(
-  handlers: AllPublicHandlerTypes[]
+  handlers: AllPublicHandlerTypes[],
 ): AllHandlerTypes[] {
   return handlers as AllHandlerTypes[];
 }

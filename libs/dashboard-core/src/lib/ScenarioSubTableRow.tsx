@@ -2,7 +2,7 @@ import { Box, Collapse, IconButton, TableCell, TableRow } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
-  NormalizedMockParameters,
+  type NormalizedMockParameters,
   configureMockActions,
   configureMockId,
   selectIsMockExpanded,
@@ -25,7 +25,7 @@ export default function ScenarioSubTableRow({
   parameters: NormalizedMockParameters | undefined;
 }) {
   const isExpanded = useTypedSelector(
-    selectIsMockExpanded(configureMockId(mockKey, scenarioKey))
+    selectIsMockExpanded(configureMockId(mockKey, scenarioKey)),
   );
   const dispatch = useAppDispatch();
   const hasParameters = !!parameters && Object.keys(parameters).length > 0;
@@ -43,7 +43,7 @@ export default function ScenarioSubTableRow({
                     mockKey,
                     scenarioKey,
                     changes: { isExpanded: !isExpanded },
-                  })
+                  }),
                 )
               }
             >

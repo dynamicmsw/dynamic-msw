@@ -1,7 +1,7 @@
 import { SetupServerApi as SetupServerApiOriginal } from 'msw/node';
-import { RequestHandler, SharedOptions } from 'msw';
+import { type RequestHandler, type SharedOptions } from 'msw';
 import { Setup } from '@dynamic-msw/setup';
-import { AllPublicHandlerTypes } from '@dynamic-msw/core';
+import { type AllPublicHandlerTypes } from '@dynamic-msw/core';
 
 export default class SetupServerApi extends SetupServerApiOriginal {
   private dynamicSetup: Setup;

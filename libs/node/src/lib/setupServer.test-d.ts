@@ -16,5 +16,5 @@ setupServer(
   createTestMock(),
   createTestMockNoParametersAndNoData(),
   createTestScenario(),
-  nonDynamicHandler
+  nonDynamicHandler,
 );

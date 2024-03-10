@@ -1,5 +1,5 @@
 import {
-  ScenarioOrMockKey,
+  type ScenarioOrMockKey,
   selectDisplayFilter,
   selectScenarioAndMockKeys,
   selectSearchQuery,
@@ -20,7 +20,7 @@ export function useFilteredMocksAndScenarios() {
         shouldSort: false,
         threshold: 0.3,
       }),
-    [mocksAndScenarios]
+    [mocksAndScenarios],
   );
 
   const filteredBySearchQuery = searchQuery

@@ -1,7 +1,7 @@
-import { PrimitiveMockParameters } from './PrimitiveMockParameters';
-import { DashboardConfig } from './DashboardConfig';
-import { MockData } from './MockData';
-import { MockParamaterObject } from './MockParamater';
+import { type PrimitiveMockParameters } from './PrimitiveMockParameters';
+import { type DashboardConfig } from './DashboardConfig';
+import { type MockData } from './MockData';
+import { type MockParamaterObject } from './MockParamater';
 
 export interface CreateMockOverrides<TMockParameterObject, TMockData>
   extends MockParametersOverrides<TMockParameterObject>,

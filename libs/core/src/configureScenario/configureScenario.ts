@@ -1,12 +1,12 @@
-import { DashboardConfig } from '../types/DashboardConfig';
-import { CreateScenarioOverrides } from '../types/CreateScenarioOverrides';
+import { type DashboardConfig } from '../types/DashboardConfig';
+import { type CreateScenarioOverrides } from '../types/CreateScenarioOverrides';
 import CreateScenarioApi, {
-  CreateScenarioPublicApi,
+  type CreateScenarioPublicApi,
 } from './CreateScenarioApi';
-import { AnyCreateMockPublicApi } from '../types/AnyCreateMockApi';
+import { type AnyCreateMockPublicApi } from '../types/AnyCreateMockApi';
 
 export default function configureScenario<
-  TCreateMocks extends AnyCreateMockPublicApi[]
+  TCreateMocks extends AnyCreateMockPublicApi[],
 >({
   key,
   mocks,
@@ -16,7 +16,7 @@ export default function configureScenario<
   mocks: [...TCreateMocks];
   dashboardConfig?: DashboardConfig;
 }): (
-  overrides?: CreateScenarioOverrides<TCreateMocks>
+  overrides?: CreateScenarioOverrides<TCreateMocks>,
 ) => CreateScenarioPublicApi<TCreateMocks> {
   return (overrides) => {
     return new CreateScenarioApi(key, mocks, dashboardConfig, overrides);

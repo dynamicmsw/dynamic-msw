@@ -1,9 +1,9 @@
-import { Store, selectCreateMockById } from '@dynamic-msw/core';
-import { RequestHandler } from 'msw';
+import { type Store, selectCreateMockById } from '@dynamic-msw/core';
+import { type RequestHandler } from 'msw';
 import { handlerIsCreateMock } from './handlerIsCreateMock';
 import { getParameterValues } from './getParameterValues';
 import { handlerIsCreateScenario } from './handlerIsCreateScenario';
-import { AllHandlerTypes } from '@dynamic-msw/core';
+import { type AllHandlerTypes } from '@dynamic-msw/core';
 import { type CreateMockReturnValueMap } from '../types/CreateMockReturnValueMap';
 
 export function getRequestHandlers(
@@ -11,31 +11,31 @@ export function getRequestHandlers(
   dynamicHandlerMap: CreateMockReturnValueMap,
   handlers: AllHandlerTypes[],
   isDashboard: boolean | undefined,
-  prevRequestHandlers: RequestHandler[] | undefined
+  prevRequestHandlers: RequestHandler[] | undefined,
 ) {
   const nextRequestHandlers = handlers.flatMap((handler) => {
     if (handlerIsCreateMock(handler)) {
       const entityId = handler.internals.getEntityId();
       const configureMockState = selectCreateMockById(entityId)(
-        store.getState()
+        store.getState(),
       );
       if (isDashboard && !configureMockState.isActive) return [];
       return dynamicHandlerMap[entityId].internals.getHandlers()(
         getParameterValues(configureMockState),
         configureMockState.data!,
-        dynamicHandlerMap[entityId].updateData!
+        dynamicHandlerMap[entityId].updateData!,
       );
     } else if (handlerIsCreateScenario(handler)) {
       return handler.internals.getMocks().flatMap((mock) => {
         const entityId = mock.internals.getEntityId();
         const configureMockState = selectCreateMockById(entityId)(
-          store.getState()
+          store.getState(),
         );
         if (isDashboard && !configureMockState.isActive) return [];
         return dynamicHandlerMap[entityId].internals.getHandlers()(
           getParameterValues(configureMockState),
           configureMockState.data!,
-          dynamicHandlerMap[entityId].updateData!
+          dynamicHandlerMap[entityId].updateData!,
         );
       });
     }

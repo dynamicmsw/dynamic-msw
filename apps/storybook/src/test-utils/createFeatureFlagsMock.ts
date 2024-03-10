@@ -20,5 +20,5 @@ export const createFeatureFlagsMock = configureMock(
     return http.get(createApiURL('/feature-flags'), () => {
       return HttpResponse.json({ checkoutProcessVersion });
     });
-  }
+  },
 );

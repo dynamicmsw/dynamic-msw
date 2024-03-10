@@ -2,33 +2,33 @@ import {
   configureMockActions,
   configureMockId,
 } from '../state/createMock.slice';
-import { Store } from '../state/store';
-import { CreateMockOverrides } from '../types/CreateMockOverrides';
-import { PrimitiveMockParameters } from '../types/PrimitiveMockParameters';
-import { MockConfig } from '../types/MockConfig';
+import { type Store } from '../state/store';
+import { type CreateMockOverrides } from '../types/CreateMockOverrides';
+import { type PrimitiveMockParameters } from '../types/PrimitiveMockParameters';
+import { type MockConfig } from '../types/MockConfig';
 import {
-  AnyDynamicMockHandlerFn,
-  DynamicMockHandlerFn,
+  type AnyDynamicMockHandlerFn,
+  type DynamicMockHandlerFn,
 } from '../types/DynamicMockHandlerFn';
-import { MockData } from '../types/MockData';
+import { type MockData } from '../types/MockData';
 import {
-  MockParamaterObject,
-  NormalizedMockParameters,
+  type MockParamaterObject,
+  type NormalizedMockParameters,
 } from '../types/MockParamater';
 import normalizeParameters from './normalizeParameters';
-import { EntityId } from '@reduxjs/toolkit';
-import { DashboardConfig } from '../types/DashboardConfig';
+import { type EntityId } from '@reduxjs/toolkit';
+import { type DashboardConfig } from '../types/DashboardConfig';
 import {
-  MaybeUpdateMockDataFn,
-  MaybeUpdateMockParametersFn,
-  UpdateMockDataFn,
-  UpdateMockParametersFn,
+  type MaybeUpdateMockDataFn,
+  type MaybeUpdateMockParametersFn,
+  type UpdateMockDataFn,
+  type UpdateMockParametersFn,
 } from '../types/CreateMockUpdateFunctions';
 
 export default class CreateMockApi<
   TMockKey extends string,
   TMockParameterObject,
-  TMockData
+  TMockData,
 > implements CreateMockPublicApi<TMockKey, TMockParameterObject, TMockData>
 {
   public readonly mockKey: TMockKey;
@@ -42,7 +42,7 @@ export default class CreateMockApi<
   constructor(
     config: MockConfig<TMockKey, TMockParameterObject, TMockData>,
     handlers: DynamicMockHandlerFn<TMockParameterObject, TMockData>,
-    overrides: CreateMockOverrides<TMockParameterObject, TMockData> | undefined
+    overrides: CreateMockOverrides<TMockParameterObject, TMockData> | undefined,
   ) {
     this.mockKey = config.key;
     this.dashboardConfig = {
@@ -63,7 +63,7 @@ export default class CreateMockApi<
         mockKey: this.mockKey,
         scenarioKey: this.scenarioKey,
         changes: { parameters: updates },
-      })
+      }),
     );
   }) satisfies UpdateMockParametersFn<MockParamaterObject> as MaybeUpdateMockParametersFn<TMockParameterObject>;
 
@@ -74,14 +74,14 @@ export default class CreateMockApi<
         mockKey: this.mockKey,
         scenarioKey: this.scenarioKey,
         changes: { data: newData },
-      })
+      }),
     );
   }) satisfies UpdateMockDataFn<MockData> as MaybeUpdateMockDataFn<TMockData>;
 
   public reset = () => {
     this.throwOnUninitialized();
     this.store.dispatch(
-      configureMockActions.resetOne(this.internals.getEntityId())
+      configureMockActions.resetOne(this.internals.getEntityId()),
     );
     if (this.data) {
       this.store.dispatch(
@@ -89,7 +89,7 @@ export default class CreateMockApi<
           mockKey: this.mockKey,
           scenarioKey: this.scenarioKey,
           changes: { data: this.data },
-        })
+        }),
       );
     }
   };
@@ -115,16 +115,16 @@ export default class CreateMockApi<
             mockKey: this.mockKey,
             scenarioKey,
             dashboardConfig: this.dashboardConfig,
-          })
+          }),
         );
       },
       getHandlers: () => this.handlers as AnyDynamicMockHandlerFn,
       overrideParameters: (
-        parameterOverrides: PrimitiveMockParameters<any>
+        parameterOverrides: PrimitiveMockParameters<any>,
       ) => {
         this.parameters = normalizeParameters(
           this.parameters,
-          parameterOverrides
+          parameterOverrides,
         );
       },
       overrideData: (dataOverrides: MockData) => {
@@ -141,7 +141,7 @@ export default class CreateMockApi<
   private throwOnUninitialized = () => {
     if (!this.isInitialized) {
       throw new Error(
-        'An mock or scenario method has been called while not being instantiated in the server/worker/dashboard.'
+        'An mock or scenario method has been called while not being instantiated in the server/worker/dashboard.',
       );
     }
   };
@@ -149,7 +149,7 @@ export default class CreateMockApi<
     this.throwOnUninitialized();
     if (!this[updateType]) {
       throw new Error(
-        `You tried to update ${updateType} on a mock that has no ${updateType} configuration.`
+        `You tried to update ${updateType} on a mock that has no ${updateType} configuration.`,
       );
     }
     return true;
@@ -159,7 +159,7 @@ export default class CreateMockApi<
 export interface CreateMockPublicApi<
   TMockKey extends string,
   TMockParameterObject,
-  TMockData
+  TMockData,
 > {
   updateParameters: MaybeUpdateMockParametersFn<TMockParameterObject>;
   updateData: MaybeUpdateMockDataFn<TMockData>;
@@ -171,7 +171,7 @@ export type CreateMockInternals = {
   initialize: (
     store: Store,
     scenarioKey: string | undefined,
-    scenarioDashboardConfig: DashboardConfig | undefined
+    scenarioDashboardConfig: DashboardConfig | undefined,
   ) => void;
   getHandlers: () => AnyDynamicMockHandlerFn;
   getEntityId: () => EntityId;

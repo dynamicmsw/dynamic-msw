@@ -1,19 +1,19 @@
 /// <reference types="reselect" />
 import {
-  EntityId,
-  EntityState,
-  PayloadAction,
+  type EntityId,
+  type EntityState,
+  type PayloadAction,
   createEntityAdapter,
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
 import {
-  MockParameterPrimitiveType,
-  NormalizedMockParameters,
+  type MockParameterPrimitiveType,
+  type NormalizedMockParameters,
 } from '../types/MockParamater';
-import { DashboardConfig } from '../types/DashboardConfig';
+import { type DashboardConfig } from '../types/DashboardConfig';
 import {
-  StateWithCreateScenarioSlice,
+  type StateWithCreateScenarioSlice,
   selectIsScenarioActive,
 } from './createScenario.slice';
 import { type MockData } from '../types/MockData';
@@ -42,7 +42,7 @@ export const slice = createSlice({
       state,
       {
         payload: { mockKey, scenarioKey, parameters, data, dashboardConfig },
-      }: PayloadAction<CreateMockEntity>
+      }: PayloadAction<CreateMockEntity>,
     ) => {
       const id = configureMockId(mockKey, scenarioKey);
       const prevState = state.entities[id];
@@ -89,7 +89,7 @@ export const slice = createSlice({
           isActive?: boolean;
           isExpanded?: boolean;
         };
-      }>
+      }>,
     ) => {
       const entitiy = state.entities[configureMockId(mockKey, scenarioKey)];
       entitiy.data = changes.data ?? entitiy.data;
@@ -97,7 +97,7 @@ export const slice = createSlice({
         const currentParameter = entitiy.parameters?.[key];
         if (!currentParameter) {
           throw new Error(
-            `You are trying to update a parameter that does not exists; mockKey: ${mockKey}, scenarioKey: ${scenarioKey}`
+            `You are trying to update a parameter that does not exists; mockKey: ${mockKey}, scenarioKey: ${scenarioKey}`,
           );
         }
         if (value === null && !currentParameter.nullable) {
@@ -178,7 +178,7 @@ export const selectCreateMockById =
 
 export const selectScenarioMocksById = createSelector(
   [(state) => selectAllCreateMocks(state), (_state, id: EntityId) => id],
-  (entities, id) => entities.filter((mock) => mock.scenarioKey === id)
+  (entities, id) => entities.filter((mock) => mock.scenarioKey === id),
 );
 
 export type ScenarioOrMockKey = ScenarioKeyData | MockKeyData;
@@ -201,7 +201,7 @@ export const selectScenarioAndMockKeys = createSelector(
   (ids) =>
     ids.reduce<ScenarioOrMockKey[]>((acc, id, index) => {
       const { mockKey, scenarioKey: currentScenarioKey } = parseMockId(
-        id.toString()
+        id.toString(),
       );
       const prevItem = acc[index - 1];
       const prevScenarioKey = prevItem?.scenarioKey;
@@ -226,7 +226,7 @@ export const selectScenarioAndMockKeys = createSelector(
       }
       acc.push({ mockKey, type: 'mock' });
       return acc;
-    }, [])
+    }, []),
 );
 
 export const selectAllNonScenarioMocks = (state: StateWithCreateMockSlice) =>
@@ -241,11 +241,11 @@ export const selectIsMockExpanded =
 
 export const selectIsOneMockExpanded = (state: StateWithCreateMockSlice) =>
   !!state[slice.name].ids.find(
-    (id) => state[slice.name].entities[id].isExpanded
+    (id) => state[slice.name].entities[id].isExpanded,
   );
 export const selectIsOneMockInactive = (state: StateWithCreateMockSlice) =>
   !!state[slice.name].ids.find(
-    (id) => !state[slice.name].entities[id].isActive
+    (id) => !state[slice.name].entities[id].isActive,
   );
 
 export const selectIsMockActive =
@@ -261,7 +261,7 @@ export const selectIsMockActive =
 // ? Acceptable
 export function configureMockId(
   mockKey: string,
-  scenarioKey: string | undefined
+  scenarioKey: string | undefined,
 ): EntityId {
   return `${
     scenarioKey ? `__scenarioKey__:${scenarioKey}` : ''

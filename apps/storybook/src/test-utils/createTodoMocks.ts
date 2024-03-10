@@ -20,11 +20,11 @@ export const createTodoMocks = configureMock(
           const newTodos = [...data.todos, newTodo];
           updateData({ todos: newTodos });
           return HttpResponse.json<Todo>(newTodo);
-        }
+        },
       ),
       http.get(createApiURL('/todos'), () => {
         return HttpResponse.json<Todo[]>(data.todos);
       }),
     ];
-  }
+  },
 );

@@ -1,11 +1,11 @@
-import { AnyCreateMockPublicApi } from './AnyCreateMockApi';
-import { OmitUndefinedObjKeys } from './utility-types';
+import { type AnyCreateMockPublicApi } from './AnyCreateMockApi';
+import { type OmitUndefinedObjKeys } from './utility-types';
 
 export type PrimitiveScenarioParamaters<
-  TCreateMocks extends AnyCreateMockPublicApi[]
+  TCreateMocks extends AnyCreateMockPublicApi[],
 > = TCreateMocks extends [
   infer Curr extends AnyCreateMockPublicApi,
-  ...infer Rest extends AnyCreateMockPublicApi[]
+  ...infer Rest extends AnyCreateMockPublicApi[],
 ]
   ? PrimitiveScenarioParamaters<Rest> extends never
     ? OmitUndefinedObjKeys<{

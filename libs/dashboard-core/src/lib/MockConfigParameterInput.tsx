@@ -1,5 +1,5 @@
 import {
-  NormalizedMockParameter,
+  type NormalizedMockParameter,
   configureMockActions,
   configureMockId,
   useAppDispatch,
@@ -52,7 +52,7 @@ export default function MockConfigParameterInput({
                         [parameterKey]: !currentValue,
                       },
                     },
-                  })
+                  }),
                 )
               }
             />
@@ -92,12 +92,12 @@ export default function MockConfigParameterInput({
                         ? JSON.parse(
                             e.target.value
                               .toString()
-                              .split('dynamic-msw-boolean:')[1]
+                              .split('dynamic-msw-boolean:')[1],
                           )
                         : e.target.value,
                     },
                   },
-                })
+                }),
               );
             }}
           >
@@ -137,7 +137,7 @@ export default function MockConfigParameterInput({
                     [parameterKey]: Number(e.target.value),
                   },
                 },
-              })
+              }),
             );
           }}
         />
@@ -163,7 +163,7 @@ export default function MockConfigParameterInput({
                     [parameterKey]: e.target.value,
                   },
                 },
-              })
+              }),
             );
           }}
         />

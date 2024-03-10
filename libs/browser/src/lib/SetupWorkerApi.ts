@@ -1,10 +1,10 @@
 import {
   SetupWorkerApi as SetupWorkerApiOriginal,
-  StartOptions,
+  type StartOptions,
 } from 'msw/browser';
-import { RequestHandler } from 'msw';
+import { type RequestHandler } from 'msw';
 
-import { AllPublicHandlerTypes } from '@dynamic-msw/core';
+import { type AllPublicHandlerTypes } from '@dynamic-msw/core';
 import { Setup } from '@dynamic-msw/setup';
 
 export default class SetupWorkerApi extends SetupWorkerApiOriginal {

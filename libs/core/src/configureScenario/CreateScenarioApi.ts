@@ -1,21 +1,21 @@
 import { configureScenarioActions } from '../state/createScenario.slice';
-import { Store } from '../state/store';
-import { AnyCreateMockPublicApi } from '../types/AnyCreateMockApi';
-import { AnyCreateMockApi } from '../types/AnyCreateMockApi';
-import { CreateScenarioOverrides } from '../types/CreateScenarioOverrides';
+import { type Store } from '../state/store';
+import { type AnyCreateMockPublicApi } from '../types/AnyCreateMockApi';
+import { type AnyCreateMockApi } from '../types/AnyCreateMockApi';
+import { type CreateScenarioOverrides } from '../types/CreateScenarioOverrides';
 import {
-  UpdateScenarioDataFn,
-  UpdateScenarioParametersFn,
+  type UpdateScenarioDataFn,
+  type UpdateScenarioParametersFn,
 } from '../types/CreateScenarioUpdateFunctions';
-import { DashboardConfig } from '../types/DashboardConfig';
+import { type DashboardConfig } from '../types/DashboardConfig';
 import createScenarioMockEntities, {
-  ScenarioMockEntities,
+  type ScenarioMockEntities,
 } from './createScenarioMockEntities';
 import overrideScenarioData from './overrideScenarioData';
 import overrideScenarioParameters from './overrideScenarioParameters';
 
 export default class CreateScenarioApi<
-  TCreateMocks extends AnyCreateMockPublicApi[]
+  TCreateMocks extends AnyCreateMockPublicApi[],
 > implements CreateScenarioPublicApi<TCreateMocks>
 {
   public scenarioKey: string;
@@ -26,7 +26,7 @@ export default class CreateScenarioApi<
     key: string,
     mocks: [...TCreateMocks],
     dashboardConfig?: DashboardConfig,
-    overrides?: CreateScenarioOverrides<TCreateMocks>
+    overrides?: CreateScenarioOverrides<TCreateMocks>,
   ) {
     this.scenarioKey = key;
     this.mocks = mocks as unknown as AnyCreateMockApi[];
@@ -43,7 +43,7 @@ export default class CreateScenarioApi<
     }
   }
   public updateParameters: UpdateScenarioParametersFn<TCreateMocks> = (
-    parameters
+    parameters,
   ) => {
     Object.entries(parameters).forEach(([mockKey, mockParameters]) => {
       this.mockEntities[mockKey].updateParameters?.(mockParameters);
@@ -66,7 +66,7 @@ export default class CreateScenarioApi<
           configureScenarioActions.setOne({
             dashboardConfig: this.dashboardConfig,
             id: this.scenarioKey,
-          })
+          }),
         );
         this.mocks.forEach((mock) => {
           mock.internals.initialize(globalStore, this.scenarioKey, {
@@ -81,7 +81,7 @@ export default class CreateScenarioApi<
 }
 
 export interface CreateScenarioPublicApi<
-  TCreateMocks extends AnyCreateMockPublicApi[]
+  TCreateMocks extends AnyCreateMockPublicApi[],
 > {
   updateParameters: UpdateScenarioParametersFn<TCreateMocks>;
   updateData: UpdateScenarioDataFn<TCreateMocks>;

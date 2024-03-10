@@ -32,8 +32,8 @@ export const createTestScenarioMock = configureMock(
         () => {
           return HttpResponse.json({ onceResponse: true });
         },
-        { once: true }
+        { once: true },
       ),
     ];
-  }
+  },
 );

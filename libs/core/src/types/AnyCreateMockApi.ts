@@ -1,6 +1,6 @@
-import CreateMockApi from '../configureMock/CreateMockApi';
-import { MockParamaterObject } from './MockParamater';
-import { CreateMockPublicApi } from '../configureMock/CreateMockApi';
+import type CreateMockApi from '../configureMock/CreateMockApi';
+import { type MockParamaterObject } from './MockParamater';
+import { type CreateMockPublicApi } from '../configureMock/CreateMockApi';
 
 export type AnyCreateMockPublicApi = CreateMockPublicApi<
   string,
