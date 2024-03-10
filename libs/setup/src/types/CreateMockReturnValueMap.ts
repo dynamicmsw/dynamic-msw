@@ -1,7 +1,4 @@
-import { AnyCreateMockReturnType } from '@dynamic-msw/core';
+import { AnyCreateMockApi } from '@dynamic-msw/core';
 import { EntityId } from '@reduxjs/toolkit';
 
-export type CreateMockReturnValueMap = Record<
-  EntityId,
-  AnyCreateMockReturnType
->;
+export type CreateMockReturnValueMap = Record<EntityId, AnyCreateMockApi>;

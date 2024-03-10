@@ -1,9 +1,9 @@
-import { AllHandlerTypes, CreateScenarioReturnType } from '@dynamic-msw/core';
+import { AllHandlerTypes, AnyCreateScenarioApi } from '@dynamic-msw/core';
 
 export function handlerIsCreateScenario(
   handler: AllHandlerTypes
-): handler is CreateScenarioReturnType {
+): handler is AnyCreateScenarioApi {
   if (typeof handler !== 'object') return false;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  return !!(handler as CreateScenarioReturnType)?.internals?.isCreateScenario;
+  return !!(handler as AnyCreateScenarioApi)?.scenarioKey;
 }

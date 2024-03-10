@@ -1,13 +1,14 @@
 import { Unsubscribe } from '@reduxjs/toolkit';
 import { RequestHandler } from 'msw';
 import {
-  Store,
+  type AllHandlerTypes,
+  type Store,
+  type AllPublicHandlerTypes,
   configureMockActions,
   configureScenarioActions,
   createStore,
 } from '@dynamic-msw/core';
 
-import { AllHandlerTypes } from '@dynamic-msw/core';
 import { initializeCreateMocks } from './lib/initializeCreateMocks';
 import { getRequestHandlers } from './lib/getRequestHandlers';
 import { subscribeToChanges } from './lib/subscribeToChanges';
@@ -31,13 +32,13 @@ export class Setup {
   public initializedHandlers?: RequestHandler[];
 
   constructor(
-    handlers: AllHandlerTypes[],
+    handlers: AllPublicHandlerTypes[],
     handleUpdate: HandleUpdate,
     isDashboard: boolean
   ) {
     this.handleUpdate = handleUpdate;
-    this.initialHandlers = handlers;
-    this.currentHandlers = handlers;
+    this.initialHandlers = castToInternalHandlerTypes(handlers);
+    this.currentHandlers = castToInternalHandlerTypes(handlers);
     this.isDashboard = !!isDashboard;
   }
   private initialize = () => {
@@ -54,19 +55,22 @@ export class Setup {
     );
   };
 
-  public resetHandlers = (...nextHandlers: AllHandlerTypes[]) => {
+  public resetHandlers = (...nextHandlers: AllPublicHandlerTypes[]) => {
     resetAllCreateMocks(this.dynamicHandlerInternalsMap);
     this.initializedHandlers = undefined;
     if (nextHandlers.length > 0) {
-      this.initialHandlers = nextHandlers;
-      this.currentHandlers = nextHandlers;
+      this.initialHandlers = castToInternalHandlerTypes(nextHandlers);
+      this.currentHandlers = castToInternalHandlerTypes(nextHandlers);
     } else {
       this.currentHandlers = this.initialHandlers;
     }
     this.initialize();
   };
-  public use = (...nextHandlers: AllHandlerTypes[]) => {
-    this.currentHandlers = [...this.currentHandlers, ...nextHandlers];
+  public use = (...nextHandlers: AllPublicHandlerTypes[]) => {
+    this.currentHandlers = [
+      ...this.currentHandlers,
+      ...castToInternalHandlerTypes(nextHandlers),
+    ];
     this.initialize();
   };
 
@@ -101,4 +105,10 @@ export class Setup {
     this.unsubscribe?.();
     this.unsubscribeToOpenPageURL?.();
   };
+}
+
+function castToInternalHandlerTypes(
+  handlers: AllPublicHandlerTypes[]
+): AllHandlerTypes[] {
+  return handlers as AllHandlerTypes[];
 }

@@ -3,18 +3,19 @@ import { DashboardConfig } from './DashboardConfig';
 import { MockData } from './MockData';
 import { MockParamaterObject } from './MockParamater';
 
-export type CreateMockOverrides<TMockParameterObject, TMockData> =
-  MockParametersOverrides<TMockParameterObject> &
-    MockDataOverrides<TMockData> &
-    DashboardConfigOverrides;
+export interface CreateMockOverrides<TMockParameterObject, TMockData>
+  extends MockParametersOverrides<TMockParameterObject>,
+    MockDataOverrides<TMockData>,
+    DashboardConfigOverrides {}
 
-type MockParametersOverrides<TMockParameterObject> =
-  TMockParameterObject extends MockParamaterObject
-    ? { parameters?: Partial<PrimitiveMockParameters<TMockParameterObject>> }
-    : { parameters?: never };
+interface MockParametersOverrides<TMockParameterObject> {
+  parameters?: TMockParameterObject extends MockParamaterObject
+    ? Partial<PrimitiveMockParameters<TMockParameterObject>>
+    : never;
+}
 
-type MockDataOverrides<TMockData> = TMockData extends MockData
-  ? { data?: TMockData }
-  : { data?: never };
+interface MockDataOverrides<TMockData> {
+  data?: TMockData extends MockData ? TMockData : never;
+}
 
 type DashboardConfigOverrides = { dashboardConfig?: DashboardConfig };
