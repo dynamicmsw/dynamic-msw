@@ -1,8 +1,8 @@
-import { AllHandlerTypes } from '@dynamic-msw/core';
+import { type AllHandlerTypes } from '@dynamic-msw/core';
 import { handlerIsCreateScenario } from './handlerIsCreateScenario';
 
 export default function getScenarioEntityIds(
-  dynamicHandlers: AllHandlerTypes[]
+  dynamicHandlers: AllHandlerTypes[],
 ): string[] {
   return dynamicHandlers
     .filter(handlerIsCreateScenario)

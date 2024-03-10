@@ -5,5 +5,5 @@ import { DashboardApp } from '@dynamic-msw/dashboard-core';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <DashboardApp />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

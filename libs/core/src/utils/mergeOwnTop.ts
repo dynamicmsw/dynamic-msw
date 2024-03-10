@@ -1,9 +1,9 @@
 import { merge, pick } from 'lodash';
-import { UnknownObject } from '../types/UnknownObject';
+import { type UnknownObject } from '../types/UnknownObject';
 
 export default function mergeOwnTop<TOwnObject>(
   own: TOwnObject & UnknownObject,
-  source: UnknownObject
+  source: UnknownObject,
 ): TOwnObject {
   const ownKeys = Object.keys(own);
   const pickedFromSource = pick(source, ownKeys);

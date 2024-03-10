@@ -12,7 +12,7 @@ import { Stack } from '@mui/material';
 export default function MockTableRow({ mockKey }: { mockKey: string }) {
   const dispatch = useAppDispatch();
   const mock = useTypedSelector(
-    selectCreateMockById(configureMockId(mockKey, undefined))
+    selectCreateMockById(configureMockId(mockKey, undefined)),
   );
   return (
     <ConfigTableRow
@@ -42,7 +42,7 @@ export default function MockTableRow({ mockKey }: { mockKey: string }) {
         mockKey,
         scenarioKey: undefined,
         changes: { isActive },
-      })
+      }),
     );
   }
 }

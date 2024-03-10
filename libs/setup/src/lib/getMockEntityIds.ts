@@ -1,10 +1,10 @@
-import { AllHandlerTypes } from '@dynamic-msw/core';
+import { type AllHandlerTypes } from '@dynamic-msw/core';
 import { handlerIsCreateMock } from './handlerIsCreateMock';
 import { handlerIsCreateScenario } from './handlerIsCreateScenario';
-import { EntityId } from '@reduxjs/toolkit';
+import { type EntityId } from '@reduxjs/toolkit';
 
 export default function getMockEntityIds(
-  dynamicHandlers: AllHandlerTypes[]
+  dynamicHandlers: AllHandlerTypes[],
 ): EntityId[] {
   return dynamicHandlers.flatMap((handler) => {
     if (handlerIsCreateMock(handler)) {

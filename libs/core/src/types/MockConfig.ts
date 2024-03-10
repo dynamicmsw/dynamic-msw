@@ -1,11 +1,11 @@
-import { DashboardConfig } from './DashboardConfig';
-import { MockData } from './MockData';
-import { MockParamaterObject } from './MockParamater';
+import { type DashboardConfig } from './DashboardConfig';
+import { type MockData } from './MockData';
+import { type MockParamaterObject } from './MockParamater';
 
 export interface MockConfig<
   TMockKey extends string,
   TMockParameterObject,
-  TMockData
+  TMockData,
 > {
   key: TMockKey;
   parameters?: TMockParameterObject & MockParamaterObject;

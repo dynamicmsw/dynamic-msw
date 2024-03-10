@@ -18,7 +18,7 @@ export default function ScenarioTableRow({
   const dispatch = useAppDispatch();
   const scenario = useTypedSelector(selectCreateScenarioById(scenarioId));
   const scenarioMocks = useTypedSelector((state) =>
-    selectScenarioMocksById(state, scenarioId)
+    selectScenarioMocksById(state, scenarioId),
   );
   return (
     <ConfigTableRow
@@ -55,7 +55,7 @@ export default function ScenarioTableRow({
       configureScenarioActions.updateOne({
         id: scenarioId,
         changes: { isActive },
-      })
+      }),
     );
     // TODO: scenarios should also update their mock state
     scenarioMocks.forEach((scenarioMock) => {
@@ -64,7 +64,7 @@ export default function ScenarioTableRow({
           mockKey: scenarioMock.mockKey,
           scenarioKey: scenarioMock.scenarioKey,
           changes: { isActive },
-        })
+        }),
       );
     });
   }

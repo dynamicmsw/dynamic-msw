@@ -1,11 +1,11 @@
 import {
-  EntityState,
-  PayloadAction,
+  type EntityState,
+  type PayloadAction,
   createEntityAdapter,
   createSlice,
 } from '@reduxjs/toolkit';
 
-import { DashboardConfig } from '../types/DashboardConfig';
+import { type DashboardConfig } from '../types/DashboardConfig';
 
 export type CreateScenarioEntity = {
   id: string;
@@ -38,7 +38,7 @@ export const slice = createSlice({
       state,
       {
         payload: { changes, id },
-      }: PayloadAction<{ changes: Partial<CreateScenarioEntity>; id: string }>
+      }: PayloadAction<{ changes: Partial<CreateScenarioEntity>; id: string }>,
     ) =>
       configureScenarioAdapter.updateOne(state, {
         changes,
@@ -102,8 +102,8 @@ export const selectIsScenarioExpanded =
   (id: string) => (state: StateWithCreateScenarioSlice) =>
     selectCreateScenarioById(id)(state).isExpanded;
 export const selectIsOneScenarioExpanded = (
-  state: StateWithCreateScenarioSlice
+  state: StateWithCreateScenarioSlice,
 ) =>
   !!state[slice.name].ids.find(
-    (id) => state[slice.name].entities[id].isExpanded
+    (id) => state[slice.name].entities[id].isExpanded,
   );

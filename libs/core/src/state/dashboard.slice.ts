@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export type DashboardDisplayFilter =
   | 'mocks'
@@ -30,7 +30,7 @@ export const slice = createSlice({
     },
     setDisplayFilter: (
       state,
-      { payload }: PayloadAction<DashboardDisplayFilter>
+      { payload }: PayloadAction<DashboardDisplayFilter>,
     ) => {
       state.displayFilter = payload;
     },

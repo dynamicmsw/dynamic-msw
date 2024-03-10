@@ -7,13 +7,17 @@ import {
   createStateSyncMiddleware,
   initMessageListener,
 } from 'redux-state-sync';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import {
+  type TypedUseSelectorHook,
+  useDispatch,
+  useSelector,
+} from 'react-redux';
 import { debounce } from 'lodash';
 import { loadState, saveState } from './browserStorage';
 
 export const createStore = (
   persistToLocalStorage = false,
-  broadcastSync = false
+  broadcastSync = false,
 ) => {
   const store = configureStore({
     reducer: rootReducer,
@@ -24,7 +28,7 @@ export const createStore = (
               channel: 'dynamic-msw',
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }) as any)
-          : []
+          : [],
       ),
     preloadedState: loadState(),
   });
@@ -32,7 +36,7 @@ export const createStore = (
     store.subscribe(
       debounce(() => {
         saveState(store.getState());
-      }, 100)
+      }, 100),
     );
   }
   if (broadcastSync) {

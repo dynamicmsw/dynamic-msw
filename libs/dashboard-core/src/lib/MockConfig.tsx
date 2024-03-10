@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material';
 import MockConfigParameterInput from './MockConfigParameterInput';
-import { NormalizedMockParameters } from '@dynamic-msw/core';
+import { type NormalizedMockParameters } from '@dynamic-msw/core';
 
 export default function MockConfig({
   title,

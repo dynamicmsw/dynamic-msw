@@ -8,12 +8,12 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
-import { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LaunchIcon from '@mui/icons-material/Launch';
 import {
-  DashboardConfig,
+  type DashboardConfig,
   configureMockActions,
   configureMockId,
   configureScenarioActions,
@@ -63,7 +63,7 @@ export default function ConfigTableRow({
   const isExpanded = useTypedSelector(
     isScenario
       ? selectIsScenarioExpanded(scenarioKey)
-      : selectIsMockExpanded(configureMockId(mockKey, scenarioKey))
+      : selectIsMockExpanded(configureMockId(mockKey, scenarioKey)),
   );
   const dispatch = useAppDispatch();
   const pageURL = dashboardConfig?.pageURL;
@@ -86,7 +86,7 @@ export default function ConfigTableRow({
                         mockKey,
                         scenarioKey,
                         changes: { isExpanded: !isExpanded },
-                      })
+                      }),
                 )
               }
             >

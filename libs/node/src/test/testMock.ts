@@ -28,8 +28,8 @@ export const createTestMock = configureMock(
         () => {
           return HttpResponse.json({ onceResponse: true });
         },
-        { once: true }
+        { once: true },
       ),
     ];
-  }
+  },
 );

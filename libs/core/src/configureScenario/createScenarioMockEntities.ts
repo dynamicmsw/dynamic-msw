@@ -1,4 +1,4 @@
-import { AnyCreateMockApi } from '../types/AnyCreateMockApi';
+import { type AnyCreateMockApi } from '../types/AnyCreateMockApi';
 
 export default function createScenarioMockEntities(mocks: AnyCreateMockApi[]) {
   return mocks.reduce<ScenarioMockEntities>((acc, curr) => {

@@ -41,7 +41,7 @@ function getDashboardHTML(): string {
   try {
     return fs.readFileSync(
       path.join(__dirname, '../../dist/dashboard/index.html'),
-      'utf-8'
+      'utf-8',
     );
   } catch {
     return '<div>Fallback: Dashboard build output is missing</div>';

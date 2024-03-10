@@ -43,18 +43,18 @@ export default function TableToolBar() {
       filteredMocksAndScenarios.flatMap((mock) =>
         mock.scenarioKey
           ? mock.mockKeys.map((mockKey) =>
-              configureMockId(mockKey, mock.scenarioKey)
+              configureMockId(mockKey, mock.scenarioKey),
             )
-          : configureMockId(mock.mockKey!, undefined)
+          : configureMockId(mock.mockKey!, undefined),
       ),
-    [filteredMocksAndScenarios]
+    [filteredMocksAndScenarios],
   );
   const filteredScenarioMocksIds = useMemo(
     () =>
       filteredMocksAndScenarios
         .filter((scenario) => scenario.scenarioKey)
         .map((scenario) => scenario.scenarioKey!),
-    [filteredMocksAndScenarios]
+    [filteredMocksAndScenarios],
   );
   const isOneExpanded = isOneMockExpanded || isOneScenarioExpanded;
   return (
@@ -76,19 +76,19 @@ export default function TableToolBar() {
             onClick={() => {
               if (isOneExpanded) {
                 dispatch(
-                  configureMockActions.collapseEntities(filteredMockIds)
+                  configureMockActions.collapseEntities(filteredMockIds),
                 );
                 dispatch(
                   configureScenarioActions.collapseEntities(
-                    filteredScenarioMocksIds
-                  )
+                    filteredScenarioMocksIds,
+                  ),
                 );
               } else {
                 dispatch(configureMockActions.expandEntities(filteredMockIds));
                 dispatch(
                   configureScenarioActions.expandEntities(
-                    filteredScenarioMocksIds
-                  )
+                    filteredScenarioMocksIds,
+                  ),
                 );
               }
             }}
@@ -122,21 +122,21 @@ export default function TableToolBar() {
               onChange={() => {
                 if (isOneMockInactive) {
                   dispatch(
-                    configureMockActions.activateEntities(filteredMockIds)
+                    configureMockActions.activateEntities(filteredMockIds),
                   );
                   dispatch(
                     configureScenarioActions.activateEntities(
-                      filteredScenarioMocksIds
-                    )
+                      filteredScenarioMocksIds,
+                    ),
                   );
                 } else {
                   dispatch(
-                    configureMockActions.deactiveEntities(filteredMockIds)
+                    configureMockActions.deactiveEntities(filteredMockIds),
                   );
                   dispatch(
                     configureScenarioActions.deactiveEntities(
-                      filteredScenarioMocksIds
-                    )
+                      filteredScenarioMocksIds,
+                    ),
                   );
                 }
               }}

@@ -1,17 +1,17 @@
 import {
-  DashboardInputType,
-  MockParamaterObject,
-  MockParameterType,
-  MockParameterPrimitiveType,
-  NormalizedMockParameter,
-  NormalizedMockParameters,
+  type DashboardInputType,
+  type MockParamaterObject,
+  type MockParameterType,
+  type MockParameterPrimitiveType,
+  type NormalizedMockParameter,
+  type NormalizedMockParameters,
 } from '../types/MockParamater';
 
 export default function normalizeParameters(
   parameters: MockParamaterObject | undefined,
   overrides:
     | Record<string, MockParameterPrimitiveType | undefined | null>
-    | undefined
+    | undefined,
 ): NormalizedMockParameters {
   if (parameters === undefined) {
     return {};
@@ -26,12 +26,12 @@ export default function normalizeParameters(
           : normalizeParameter(parameter),
       };
     },
-    {}
+    {},
   );
 }
 
 function normalizeParameter(
-  option: MockParameterType
+  option: MockParameterType,
 ): NormalizedMockParameter {
   const isObject = typeof option === 'object';
   if (isObject) {

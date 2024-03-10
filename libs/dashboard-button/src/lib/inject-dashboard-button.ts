@@ -4,10 +4,10 @@ import getDashboardIframe from './dashboard-iframe';
 export const dashboardButtonWrapperId = 'dynamic-msw-dashboard-button-wrapper';
 
 export default function injectDashboardButton(
-  wrapper: HTMLElement = document.body
+  wrapper: HTMLElement = document.body,
 ) {
   const existingDashboardButtonWrapper = wrapper.querySelector(
-    `#${dashboardButtonWrapperId}`
+    `#${dashboardButtonWrapperId}`,
   );
   if (existingDashboardButtonWrapper !== null) {
     wrapper.removeChild(existingDashboardButtonWrapper);

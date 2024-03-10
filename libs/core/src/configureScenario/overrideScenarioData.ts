@@ -1,9 +1,9 @@
-import { AnyInternalScenarioDataOverrides } from '../types/CreateScenarioOverrides';
-import { ScenarioMockEntities } from './createScenarioMockEntities';
+import { type AnyInternalScenarioDataOverrides } from '../types/CreateScenarioOverrides';
+import { type ScenarioMockEntities } from './createScenarioMockEntities';
 
 export default function overrideScenarioData(
   changes: AnyInternalScenarioDataOverrides,
-  mockEntities: ScenarioMockEntities
+  mockEntities: ScenarioMockEntities,
 ) {
   Object.entries(changes).forEach(([mockKey, mockData]) => {
     if (mockData) {

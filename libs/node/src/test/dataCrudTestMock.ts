@@ -24,5 +24,5 @@ export const createTodoMocks = configureMock(
         return HttpResponse.json(data.todos);
       }),
     ];
-  }
+  },
 );

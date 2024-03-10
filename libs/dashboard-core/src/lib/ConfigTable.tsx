@@ -16,7 +16,7 @@ export default function ConfigTable() {
               <MockTableRow key={mockKey} mockKey={mockKey} />
             ) : (
               <ScenarioTableRow key={scenarioKey} scenarioId={scenarioKey!} />
-            )
+            ),
           )}
         </TableBody>
         <colgroup>

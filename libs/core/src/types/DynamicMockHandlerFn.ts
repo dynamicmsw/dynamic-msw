@@ -1,7 +1,7 @@
-import { RequestHandler } from 'msw';
-import { PrimitiveMockParameters } from './PrimitiveMockParameters';
-import { MockParamaterObject } from './MockParamater';
-import { MockData } from './MockData';
+import { type RequestHandler } from 'msw';
+import { type PrimitiveMockParameters } from './PrimitiveMockParameters';
+import { type MockParamaterObject } from './MockParamater';
+import { type MockData } from './MockData';
 
 export type DynamicMockHandlerFn<TMockParamaterObject, TMockData> =
   TMockParamaterObject extends MockParamaterObject
@@ -9,18 +9,18 @@ export type DynamicMockHandlerFn<TMockParamaterObject, TMockData> =
       ? (
           parameters: PrimitiveMockParameters<TMockParamaterObject>,
           data: TMockData,
-          updateData: UpdateMockData<TMockData>
+          updateData: UpdateMockData<TMockData>,
         ) => RequestHandler[] | RequestHandler
       : (
-          parameters: PrimitiveMockParameters<TMockParamaterObject>
+          parameters: PrimitiveMockParameters<TMockParamaterObject>,
         ) => RequestHandler[] | RequestHandler
     : TMockData extends MockData
-    ? (
-        parameters: undefined,
-        data: TMockData,
-        updateData: UpdateMockData<TMockData>
-      ) => RequestHandler[] | RequestHandler
-    : () => RequestHandler[] | RequestHandler;
+      ? (
+          parameters: undefined,
+          data: TMockData,
+          updateData: UpdateMockData<TMockData>,
+        ) => RequestHandler[] | RequestHandler
+      : () => RequestHandler[] | RequestHandler;
 
 export type AnyDynamicMockHandlerFn = DynamicMockHandlerFn<
   MockParamaterObject,

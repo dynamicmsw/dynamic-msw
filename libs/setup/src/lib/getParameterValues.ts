@@ -1,4 +1,4 @@
-import { CreateMockEntity } from '@dynamic-msw/core';
+import { type CreateMockEntity } from '@dynamic-msw/core';
 
 export function getParameterValues(configureMockEntity: CreateMockEntity) {
   if (!configureMockEntity.parameters) return {};
@@ -9,6 +9,6 @@ export function getParameterValues(configureMockEntity: CreateMockEntity) {
         [key]: value.currentValue ?? value.defaultValue ?? null,
       };
     },
-    {}
+    {},
   );
 }

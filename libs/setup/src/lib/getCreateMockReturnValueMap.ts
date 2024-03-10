@@ -1,7 +1,7 @@
 import { handlerIsCreateMock } from './handlerIsCreateMock';
 import { handlerIsCreateScenario } from './handlerIsCreateScenario';
-import { AllHandlerTypes } from '@dynamic-msw/core';
-import { CreateMockReturnValueMap } from '../types/CreateMockReturnValueMap';
+import { type AllHandlerTypes } from '@dynamic-msw/core';
+import { type CreateMockReturnValueMap } from '../types/CreateMockReturnValueMap';
 
 export function getCreateMockReturnValueMap(handlers: AllHandlerTypes[]) {
   return handlers.reduce((acc, handler) => {

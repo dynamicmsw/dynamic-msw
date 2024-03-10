@@ -43,7 +43,7 @@ export const createTestMock = configureMock(
     // @ts-expect-error 'e' is not an possible value of the select array
     parameters.select satisfies 'e';
     return [];
-  }
+  },
 );
 configureMock(
   {
@@ -55,7 +55,7 @@ configureMock(
     updateData satisfies (update: { some: string }) => void;
     parameters satisfies undefined;
     return [];
-  }
+  },
 );
 export const createTestMockNoParametersAndNoData = configureMock(
   {
@@ -64,7 +64,7 @@ export const createTestMockNoParametersAndNoData = configureMock(
   // @ts-expect-error parameters is never
   (_parameters) => {
     return [];
-  }
+  },
 );
 configureMock(
   {
@@ -78,7 +78,7 @@ configureMock(
     // @ts-expect-error not a valid key
     parameters.dontExist satisfies return[];
     return [];
-  }
+  },
 );
 
 createTestMock({

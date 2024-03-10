@@ -1,8 +1,7 @@
-import CreateScenarioApi, {
-  CreateScenarioPublicApi,
-} from '../configureScenario/CreateScenarioApi';
-import { AnyCreateMockApi } from './AnyCreateMockApi';
-import { AnyCreateMockPublicApi } from './AnyCreateMockApi';
+import { type CreateScenarioPublicApi } from '../configureScenario/CreateScenarioApi';
+import type CreateScenarioApi from '../configureScenario/CreateScenarioApi';
+import { type AnyCreateMockApi } from './AnyCreateMockApi';
+import { type AnyCreateMockPublicApi } from './AnyCreateMockApi';
 
 export type AnyCreateScenarioPublicApi = CreateScenarioPublicApi<
   AnyCreateMockPublicApi[]

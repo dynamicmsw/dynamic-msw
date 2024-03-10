@@ -1,9 +1,9 @@
-import { MockData } from './MockData';
-import { MockParamaterObject } from './MockParamater';
-import { PrimitiveMockParameters } from './PrimitiveMockParameters';
+import { type MockData } from './MockData';
+import { type MockParamaterObject } from './MockParamater';
+import { type PrimitiveMockParameters } from './PrimitiveMockParameters';
 
 export type UpdateMockParametersFn<
-  TMockParameterObject extends MockParamaterObject
+  TMockParameterObject extends MockParamaterObject,
 > = (updates: Partial<PrimitiveMockParameters<TMockParameterObject>>) => void;
 
 export type MaybeUpdateMockParametersFn<TMockParameterObject> =
@@ -12,7 +12,7 @@ export type MaybeUpdateMockParametersFn<TMockParameterObject> =
     : never;
 
 export type UpdateMockDataFn<TMockData extends MockData> = (
-  newData: TMockData
+  newData: TMockData,
 ) => void;
 
 export type MaybeUpdateMockDataFn<TMockData> = TMockData extends MockData
