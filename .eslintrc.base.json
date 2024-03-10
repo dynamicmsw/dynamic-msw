@@ -40,6 +40,10 @@
             "varsIgnorePattern": "^_",
             "ignoreRestSiblings": true
           }
+        ],
+        "@typescript-eslint/consistent-type-imports": [
+          "warn",
+          { "fixStyle": "inline-type-imports", "prefer": "type-imports" }
         ]
       }
     },
