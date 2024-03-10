@@ -6,5 +6,5 @@ export default function getScenarioEntityIds(
 ): string[] {
   return dynamicHandlers
     .filter(handlerIsCreateScenario)
-    .map((scenario) => scenario.internals.key);
+    .map((scenario) => scenario.scenarioKey);
 }

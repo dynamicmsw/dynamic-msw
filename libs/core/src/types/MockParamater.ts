@@ -1,4 +1,6 @@
-export type MockParamaterObject = Record<string, MockParameterType>;
+export interface MockParamaterObject {
+  [key: string]: MockParameterType;
+}
 
 export type MockParameterType =
   | MockParameterSelect
