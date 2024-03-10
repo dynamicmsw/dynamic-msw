@@ -1,14 +1,6 @@
-import { RequestHandler } from 'msw';
 import SetupServerApi from './SetupServerApi';
-import {
-  AnyCreateMockReturnType,
-  CreateScenarioReturnType,
-} from '@dynamic-msw/core';
+import { AllPublicHandlerTypes } from '@dynamic-msw/core';
 
-export default function setupServer(
-  ...handlers: Array<
-    RequestHandler | AnyCreateMockReturnType | CreateScenarioReturnType
-  >
-) {
+export default function setupServer(...handlers: AllPublicHandlerTypes[]) {
   return new SetupServerApi(handlers);
 }

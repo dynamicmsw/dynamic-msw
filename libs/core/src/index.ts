@@ -21,16 +21,19 @@ export {
   useAppDispatch,
   useTypedSelector,
 } from './state/store';
+export { default as CreateMockApi } from './configureMock/CreateMockApi';
+export { type AnyCreateMockPublicApi } from './types/AnyCreateMockApi';
+export { type AnyCreateMockApi } from './types/AnyCreateMockApi';
+export { type AnyCreateScenarioPublicApi } from './types/AnyCreateScenarioApi';
+export { type AnyCreateScenarioApi } from './types/AnyCreateScenarioApi';
+export { default as CreateScenarioApi } from './configureScenario/CreateScenarioApi';
+export { default as configureMock } from './configureMock/configureMock';
+export { default as CreateScenarioReturnType } from './configureScenario/configureScenario';
+export { default as configureScenario } from './configureScenario/configureScenario';
 export {
-  type CreateMockReturnType,
-  type AnyCreateMockReturnType,
-  default as configureMock,
-} from './configureMock/configureMock';
-export {
-  type CreateScenarioReturnType,
-  default as configureScenario,
-} from './configureScenario/configureScenario';
-export { type AllHandlerTypes } from './types/AllHandlerTypes';
+  type AllPublicHandlerTypes,
+  type AllHandlerTypes,
+} from './types/AllHandlerTypes';
 export {
   selectAllCreateMocks,
   selectCreateMockById,
@@ -38,10 +41,10 @@ export {
   configureMockId,
   selectAllNonScenarioMocksIds,
   selectScenarioMocksById,
-  selectScenarioAndMockKeys,
   selectIsMockExpanded,
   selectIsOneMockInactive,
   selectIsOneMockExpanded,
+  selectScenarioAndMockKeys,
   type CreateMockEntity,
   type ScenarioOrMockKey,
 } from './state/createMock.slice';

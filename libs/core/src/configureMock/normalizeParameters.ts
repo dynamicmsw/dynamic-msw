@@ -14,7 +14,7 @@ export default function normalizeParameters(
     | undefined
 ): NormalizedMockParameters {
   if (parameters === undefined) {
-    return {} as NormalizedMockParameters;
+    return {};
   }
   return Object.entries(parameters).reduce<NormalizedMockParameters>(
     (prev, [key, parameter]) => {
@@ -26,7 +26,7 @@ export default function normalizeParameters(
           : normalizeParameter(parameter),
       };
     },
-    {} as NormalizedMockParameters
+    {}
   );
 }
 
