@@ -23,25 +23,25 @@ export const createTestMock = configureMock(
     },
     data: { test: 'x' },
   },
-  (parameters) => {
-    parameters.string satisfies string | number;
-    parameters.number satisfies number;
-    parameters.boolean satisfies boolean;
-    // parameters.nullableStringWithoutDefault satisfies string | null;
-    parameters.stringWithInputTypeAndDefaultValue satisfies string | null;
+  ({ getParams }) => {
+    getParams().string satisfies string | number;
+    getParams().number satisfies number;
+    getParams().boolean satisfies boolean;
+    // getParams().nullableStringWithoutDefault satisfies string | null;
+    getParams().stringWithInputTypeAndDefaultValue satisfies string | null;
 
     // TODO add no unused lint rules warning
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (parameters.stringWithInputTypeAndDefaultValue === null) {
+    if (getParams().stringWithInputTypeAndDefaultValue === null) {
       //
     }
 
     //@ts-expect-error can't be null
-    parameters.boolean satisfies null;
+    getParams().boolean satisfies null;
     //@ts-expect-error does not exist
-    parameters.dontExist satisfies unknown;
+    getParams().dontExist satisfies unknown;
     // @ts-expect-error 'e' is not an possible value of the select array
-    parameters.select satisfies 'e';
+    getParams().select satisfies 'e';
     return [];
   },
 );
@@ -50,10 +50,10 @@ configureMock(
     key: 'testMockNoParametersAndData',
     data: { some: 'data' },
   },
-  (parameters, data, updateData) => {
-    data satisfies { some: string };
-    updateData satisfies (update: { some: string }) => void;
-    parameters satisfies undefined;
+  ({ getParams, getData, setData }) => {
+    getData() satisfies { some: string };
+    setData satisfies (update: { some: string }) => void;
+    getParams satisfies never;
     return [];
   },
 );
@@ -61,22 +61,8 @@ export const createTestMockNoParametersAndNoData = configureMock(
   {
     key: 'testMockParametersAndNoData',
   },
-  // @ts-expect-error parameters is never
-  (_parameters) => {
-    return [];
-  },
-);
-configureMock(
-  {
-    key: 'testMockParametersAndData',
-    data: { some: 'data' },
-  },
-  (parameters, data, updateData) => {
-    data satisfies { some: string };
-    updateData satisfies (update: { some: string }) => void;
-    parameters satisfies undefined;
-    // @ts-expect-error not a valid key
-    parameters.dontExist satisfies return[];
+  // @ts-expect-error param should be never without data and parameters
+  (_x) => {
     return [];
   },
 );
@@ -85,8 +71,8 @@ createTestMock({
   parameters: { boolean: true },
 });
 createTestMock().updateParameters({ boolean: true });
-createTestMock().updateData({ test: 'b' });
+createTestMock().setData({ test: 'b' });
 
 // TODO: try omit the object key "updateParameters" while keeping type defs sane
 createTestMockNoParametersAndNoData().updateParameters satisfies undefined;
-createTestMockNoParametersAndNoData().updateData satisfies undefined;
+createTestMockNoParametersAndNoData().setData satisfies undefined;

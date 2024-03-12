@@ -1,2 +1,2 @@
-export { default as setupDashboard } from './lib/setupDashboard';
-export { default as setupWorker } from './lib/setupWorker';
+export { default as setupDashboard } from './setupDashboard';
+export { type DashboardConfig } from './DashboardConfig';

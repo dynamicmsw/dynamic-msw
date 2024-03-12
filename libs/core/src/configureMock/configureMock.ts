@@ -1,6 +1,6 @@
-import { type CreateMockOverrides } from '../types/CreateMockOverrides';
-import { type MockConfig } from '../types/MockConfig';
-import { type DynamicMockHandlerFn } from '../types/DynamicMockHandlerFn';
+import { type CreateMockOverrides } from './types/CreateMockOverrides';
+import { type MockConfig } from './types/MockConfig';
+import { type DynamicHandlerFn } from './types/DynamicHandlerFn';
 import CreateMockApi, { type CreateMockPublicApi } from './CreateMockApi';
 
 export default function configureMock<
@@ -14,14 +14,14 @@ export default function configureMock<
     data,
     dashboardConfig,
   }: MockConfig<TMockKey, TMockParameterObject, TMockData>,
-  handlers: DynamicMockHandlerFn<TMockParameterObject, TMockData>,
+  initializer: DynamicHandlerFn<TMockParameterObject, TMockData>,
 ): (
   overrides?: CreateMockOverrides<TMockParameterObject, TMockData>,
 ) => CreateMockPublicApi<TMockKey, TMockParameterObject, TMockData> {
   return (overrides) => {
     return new CreateMockApi(
       { key, parameters, data, dashboardConfig },
-      handlers,
+      initializer,
       overrides,
     );
   };

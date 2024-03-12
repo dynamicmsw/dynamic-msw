@@ -11,19 +11,19 @@ export const createTodoMocks = configureMock(
     key: 'todos',
     data: { todos: initialTodos },
   },
-  (_parameters, data, updateData) => {
+  ({ getData, setData }) => {
     return [
       http.post<never, Todo>(
         createApiURL('/todos/create'),
         async ({ request }) => {
           const newTodo = await request.json();
-          const newTodos = [...data.todos, newTodo];
-          updateData({ todos: newTodos });
+          const newTodos = [...getData().todos, newTodo];
+          setData({ todos: newTodos });
           return HttpResponse.json<Todo>(newTodo);
         },
       ),
       http.get(createApiURL('/todos'), () => {
-        return HttpResponse.json<Todo[]>(data.todos);
+        return HttpResponse.json<Todo[]>(getData().todos);
       }),
     ];
   },

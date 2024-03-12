@@ -7,6 +7,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "noUncheckedIndexedAccess": true,
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
@@ -19,8 +20,6 @@
       "@dynamic-msw/core": ["libs/core/src/index.ts"],
       "@dynamic-msw/dashboard-button": ["libs/dashboard-button/src/index.ts"],
       "@dynamic-msw/dashboard-core": ["libs/dashboard-core/src/index.ts"],
-      "@dynamic-msw/node": ["libs/node/src/index.ts"],
-      "@dynamic-msw/setup": ["libs/setup/src/index.ts"],
       "dynamic-msw": ["libs/dynamic-msw/src/index.ts"]
     }
   },

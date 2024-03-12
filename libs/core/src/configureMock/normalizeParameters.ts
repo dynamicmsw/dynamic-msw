@@ -5,27 +5,18 @@ import {
   type MockParameterPrimitiveType,
   type NormalizedMockParameter,
   type NormalizedMockParameters,
-} from '../types/MockParamater';
+} from './types/MockParamater';
 
 export default function normalizeParameters(
   parameters: MockParamaterObject | undefined,
-  overrides:
-    | Record<string, MockParameterPrimitiveType | undefined | null>
-    | undefined,
-): NormalizedMockParameters {
-  if (parameters === undefined) {
-    return {};
-  }
+): NormalizedMockParameters | undefined {
+  if (!parameters) return undefined;
+
   return Object.entries(parameters).reduce<NormalizedMockParameters>(
-    (prev, [key, parameter]) => {
-      const currentOverride = overrides?.[key];
-      return {
-        ...prev,
-        [key]: currentOverride
-          ? { ...normalizeParameter(parameter), defaultValue: currentOverride }
-          : normalizeParameter(parameter),
-      };
-    },
+    (prev, [key, parameter]) => ({
+      ...prev,
+      [key]: normalizeParameter(parameter),
+    }),
     {},
   );
 }
