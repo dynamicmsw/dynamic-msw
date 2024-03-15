@@ -1,7 +1,11 @@
+/**
+ * @public
+ */
 export {
   configureScenario,
   configureMock,
-  type CreateScenarioReturnType,
+  setupHandlers,
+  type CreateScenarioPublicApi,
   type AllPublicHandlerTypes,
-  type CreateMockApi,
+  type CreateMockPublicApi,
 } from '@dynamic-msw/core';

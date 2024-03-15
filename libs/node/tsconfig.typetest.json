@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "noEmit": true,
-    "types": ["node", "vite/client"]
-  },
-  "include": ["src/**/*.test-d.ts"]
-}

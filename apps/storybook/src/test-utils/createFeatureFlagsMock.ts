@@ -16,9 +16,11 @@ export const createFeatureFlagsMock = configureMock(
       isActiveByDefault: false,
     },
   },
-  ({ checkoutProcessVersion }) => {
+  ({ getParams }) => {
     return http.get(createApiURL('/feature-flags'), () => {
-      return HttpResponse.json({ checkoutProcessVersion });
+      return HttpResponse.json({
+        checkoutProcessVersion: getParams().checkoutProcessVersion,
+      });
     });
   },
 );

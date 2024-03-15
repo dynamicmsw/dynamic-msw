@@ -121,7 +121,8 @@ const Product = () => {
       'Bob Anderson',
       'Eva Brown',
     ];
-    return possibleNames[Math.floor(Math.random() * possibleNames.length)];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return possibleNames[Math.floor(Math.random() * possibleNames.length)]!;
   };
 
   const generateRandomReviewText = () => {
@@ -132,7 +133,8 @@ const Product = () => {
       'I love it!',
       'Disappointing.',
     ];
-    return possibleTexts[Math.floor(Math.random() * possibleTexts.length)];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return possibleTexts[Math.floor(Math.random() * possibleTexts.length)]!;
   };
 
   const generateRandomRating = () => {

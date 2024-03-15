@@ -3,8 +3,9 @@ import { createFeatureFlagsMock } from './createFeatureFlagsMock';
 import { createProductMocks } from './createProductMocks';
 import { createSimpleProductScenarioV1 } from './createSimpleProductScenarioV1';
 import { createTodoMocks } from './createTodoMocks';
+import { setupWorker } from 'msw/browser';
 
-const setup = setupDashboard(
+const dashboard = setupDashboard(
   [
     createFeatureFlagsMock(),
     createTodoMocks(),
@@ -15,7 +16,10 @@ const setup = setupDashboard(
     renderDashboardButton: true, // true by default
   },
 );
-await setup.start({
+
+const worker = setupWorker(...dashboard.handlers);
+
+await worker.start({
   onUnhandledRequest: 'bypass',
   serviceWorker: {
     url: `${

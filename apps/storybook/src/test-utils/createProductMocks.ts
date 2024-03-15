@@ -3,25 +3,25 @@ import { configureMock } from '@dynamic-msw/core';
 import { HttpResponse, http } from 'msw';
 import { createApiURL } from './createApiURL';
 
-export type ProductReview = {
+type ProductReview = {
   id: string;
   customerName: string;
   review: string;
   rating: 1 | 2 | 3 | 4 | 5;
 };
 
-export type ProductResponse = {
+type ProductResponse = {
   id: string;
   title: string;
   availableStock: number;
   canReview: boolean;
 };
 
-export type ProductApiError = {
+type ProductApiError = {
   errorType: 'out-of-stock' | 'product-not-found';
 };
 
-export type ProductWithoutParamaters = Omit<
+type ProductWithoutParamaters = Omit<
   ProductResponse,
   'availableStock' | 'canReview'
 >;
@@ -62,11 +62,12 @@ export const createProductMocks = configureMock(
       isActiveByDefault: false,
     },
   },
-  ({ productExists, availableStock, canReview }, data, updateData) => {
+  ({ getParams, getData, setData }) => {
     return [
       http.get<never, ProductApiError | ProductResponse>(
         createApiURL(`/products/${testProductsData.id}`),
         () => {
+          const { productExists, availableStock, canReview } = getParams();
           if (!productExists) {
             return productNotFoundResponse;
           }
@@ -80,16 +81,17 @@ export const createProductMocks = configureMock(
       http.get<never, ProductApiError | ProductReview[]>(
         createApiURL(`/products/${testProductsData.id}/reviews`),
         () => {
-          if (!productExists) return productNotFoundResponse;
-          return HttpResponse.json<ProductReview[]>(data.reviews);
+          if (!getParams().productExists) return productNotFoundResponse;
+          return HttpResponse.json<ProductReview[]>(getData().reviews);
         },
       ),
       http.post<never, ProductReview, ProductApiError | ProductReview>(
         createApiURL(`/products/${testProductsData.id}/reviews/create`),
         async ({ request }) => {
-          if (!productExists) return productNotFoundResponse;
+          if (!getParams().productExists) return productNotFoundResponse;
           const newReview = await request.json();
-          updateData({ ...data, reviews: [...data.reviews, newReview] });
+          const data = getData();
+          setData({ ...data, reviews: [...data.reviews, newReview] });
           return HttpResponse.json<ProductReview>(newReview);
         },
       ),

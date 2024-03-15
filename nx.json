@@ -101,7 +101,9 @@
       "inputs": [
         "default",
         "storybook",
-        { "runtime": "echo $VITE_STORYBOOK_PUBLIC_PATH" }
+        {
+          "runtime": "echo $VITE_STORYBOOK_PUBLIC_PATH"
+        }
       ]
     },
     "@nx/storybook:serve": {

@@ -72,8 +72,8 @@ The example are used in the [demo](#demo).
 
 #### Simple mock
 
-```ts
-// createFeatureFlagsMock.ts
+```js
+// createFeatureFlagsMock.js
 import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
 
@@ -87,41 +87,39 @@ export const createFeatureFlagsMock = configureMock(
       },
     },
   },
-  ({ checkoutProcessVersion }) => {
+  ({ getParams }) => {
     return http.get('/feature-flags', () => {
-      return HttpResponse.json({ checkoutProcessVersion });
+      return HttpResponse.json({ checkoutProcessVersion: getParams().checkoutProcessVersion });
     });
-  }
+  },
 );
 ```
 
 #### CRUD mock
 
-```ts
-// createTodoMocks.ts
+```js
+// createTodoMocks.js
 import { configureMock } from 'dynamic-msw';
 import { HttpResponse, http } from 'msw';
-
-type Todo = { id: string; title: string; done: boolean };
 
 export const createTodoMocks = configureMock(
   {
     key: 'todos',
-    data: { todos: [] satisfies Todo[] as Todo[] },
+    data: { todos: [] },
   },
-  (parameters, data, updateData) => {
+  ({ getData, setData }) => {
     return [
       http.post('/todos/create', async ({ request }) => {
-        const newTodo = (await request.json()) as Todo;
-        const newTodos = [...data.todos, newTodo];
-        updateData({ todos: newTodos });
+        const newTodo = await request.json();
+        const newTodos = [...getData().todos, newTodo];
+        setData({ todos: newTodos });
         return HttpResponse.json(newTodos);
       }),
       http.get('/todos', () => {
         return HttpResponse.json(data.todos);
       }),
     ];
-  }
+  },
 );
 ```
 
@@ -171,7 +169,7 @@ const productNotFoundResponse = HttpResponse.json<ProductApiError>(
   {
     errorType: 'product-not-found',
   },
-  { status: 404 }
+  { status: 404 },
 );
 
 export const createProductMocks = configureMock(
@@ -189,9 +187,10 @@ export const createProductMocks = configureMock(
       pageURL: `/products/${testProductsData.id}`,
     },
   },
-  ({ productExists, availableStock, canReview }, data, updateData) => {
+  ({ getParams, getData, setData }) => {
     return [
-      http.get<never, ProductApiError | ProductResponse>(`/products/${testProductsData.id}`, () => {
+      http.get<never, ProductApiError | ProductResponse>('/products/:productId', () => {
+        const { productExists, availableStock, canReview } = getParams();
         if (!productExists) {
           return productNotFoundResponse;
         }
@@ -201,18 +200,20 @@ export const createProductMocks = configureMock(
           canReview,
         });
       }),
-      http.get<never, ProductApiError | ProductReview[]>(`/products/${testProductsData.id}/reviews`), () => {
+      http.get<never, ProductApiError | ProductReview[]>('/products/:productId/reviews', () => {
+        const { productExists } = getParams();
         if (!productExists) return productNotFoundResponse;
-        return HttpResponse.json<ProductReview[]>(data.reviews);
+        return HttpResponse.json<ProductReview[]>(getData().reviews);
       }),
       http.post<never, ProductReview, ProductApiError | ProductReview>(`/products/${testProductsData.id}/reviews/create`, async ({ request }) => {
+        const { productExists } = getParams();
         if (!productExists) return productNotFoundResponse;
         const newReview = await request.json();
-        updateData({ ...data, reviews: [...data.reviews, newReview] });
+        setData({ ...data, reviews: [...getData().reviews, newReview] });
         return HttpResponse.json<ProductReview>(newReview);
       }),
     ];
-  }
+  },
 );
 ```
 
@@ -221,7 +222,7 @@ export const createProductMocks = configureMock(
 ## Configure scenarios
 
 ```ts
-// createCheckoutScenario.ts
+// createCheckoutScenario.js
 import { createFeatureFlagsMock } from './createFeatureFlagsMock';
 import { createProductMocks } from './createProductMocks';
 
@@ -252,23 +253,26 @@ const checkoutScenarioV1 = createCheckoutScenario({ parameters: { featureFlags: 
 
 ## Testing
 
-```ts
-import { setupServer } from '@dynamic-msw/node';
+```js
+import { setupServer } from 'msw/node';
+import { setupHandlers } from 'dynamic-msw';
 import { createCheckoutScenario } from './createCheckoutScenario';
 
 const testTodoMock = createTestTodoMock();
 const testCheckoutScenario = createCheckoutScenario();
+const dynamicMsw = setupHandlers(testCheckoutScenario, testTodoMock);
 
-const server = setupServer(testCheckoutScenario, testTodoMock);
+const server = setupServer(...dynamicMsw.handlers);
 
 server.listen();
 
 afterEach(() => {
+  dynamicMsw.resetAll();
   server.resetHandlers();
 });
 
 test('Initial todos', () => {
-  testTodoMock.updateData({ todos: [{ id: 'new-todo', title: 'new-todo', done: false }] });
+  testTodoMock.setData({ todos: [{ id: 'new-todo', title: 'new-todo', done: false }] });
   // Assert what ever needs to happen with a list of initial todos.
 });
 
@@ -290,11 +294,11 @@ test('Checkout scenario v2', () => {
 
 ## Setup worker
 
-```ts
-import { setupWorker } from '@dynamic-msw/browser';
+```js
+import { setupWorker } from 'msw/browser';
 import { createCheckoutScenario } from './createCheckoutScenario';
 
-const worker = setupWorker(createCheckoutScenario());
+const worker = setupWorker(...setupHandlers(createCheckoutScenario()).handlers);
 
 worker.start();
 ```
@@ -305,7 +309,7 @@ We dynamically import the mock dashboard in a later example to prevent bundling
 (dynamic) MSW dependencies into production builds.
 
 ```ts
-// setupMockDashboard.ts
+// setupMockDashboard.js
 import { setupDashboard } from '@dynamic-msw/browser';
 import { createFeatureFlagsMock } from './createFeatureFlagsMock';
 import { createProductMocks } from './createProductMocks';
@@ -315,14 +319,16 @@ import { createTodoMocks } from './createTodoMocks';
 export const setup = setupDashboard([createFeatureFlagsMock(), createTodoMocks(), createProductMocks(), createSimpleProductScenarioV1()], {
   renderDashboardButton: true, // true by default
 });
+
+export const worker = setupWorker(...setup.handlers);
 ```
 
 This example uses top level await to keep things simple.
 
-```tsx
+```jsx
 // App.tsx
 if (USE_MOCK_DASHBOARD === 'true') {
-  await import('./setupMockDashboard').then(({ setup }) => setup.start());
+  await import('./setupMockDashboard').then(({ worker }) => worker.start());
 }
 
 export default function App() {

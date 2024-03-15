@@ -35,9 +35,6 @@ export const slice = createSlice({
       state.displayFilter = payload;
     },
     reset: getInitialState,
-    reloadPage: () => {
-      window.location.reload();
-    },
   },
 });
 

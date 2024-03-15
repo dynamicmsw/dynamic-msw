@@ -1,5 +1,5 @@
 import { Paper, Typography } from '@mui/material';
-import ConfigTable from './ConfigTable';
+import ConfigTable from './config-table/ConfigTableWrapper';
 import { Provider } from 'react-redux';
 import { createStore } from '@dynamic-msw/core';
 import { useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ function App() {
     };
   }, []);
   return isLoaded ? (
-    <Provider store={createStore(true, true)}>
+    <Provider store={createStore(true)}>
       <Typography variant="h4" gutterBottom>
         Dynamic MSW dashboard
       </Typography>
