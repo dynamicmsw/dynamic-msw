@@ -1,0 +1,30 @@
+{
+  "name": "react-loader",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/react-loader/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/react-loader",
+        "main": "libs/react-loader/src/index.ts",
+        "tsConfig": "libs/react-loader/tsconfig.lib.json",
+        "assets": ["libs/react-loader/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs dynamic-msw {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "can-publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx can-npm-publish",
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}
